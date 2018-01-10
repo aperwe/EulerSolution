@@ -21,7 +21,7 @@ namespace EulerProblems.Problems
             DateTime start = DateTime.Now;
 
             long n = 220;
-            long f = d(n);
+            long f = CalculateSumOfProperDivisors(n);
             Answer = f.ToString();
 
             Dictionary<long, long> mapOfNumbersToDivisors = new Dictionary<long, long>();
@@ -29,7 +29,7 @@ namespace EulerProblems.Problems
             // Identify the list of all d() functions under 10000.
             foreach (int number in Enumerable.Range(1, 10000))
             {
-                long dFunction = d(number);
+                long dFunction = CalculateSumOfProperDivisors(number);
                 mapOfNumbersToDivisors.Add(number, dFunction);
             }
             //mapOfNumbersToDivisors.Add(220, d(220));
@@ -72,14 +72,14 @@ namespace EulerProblems.Problems
         }
 
         /// <summary>
-        /// Calculates the sum of proper divisors of <paramref name="n"/>.
+        /// Calculates the sum of proper divisors of <paramref name="number"/>.
         /// </summary>
-        private long d(long n)
+        private long CalculateSumOfProperDivisors(long number)
         {
             PrimeSolver solver = new PrimeSolver();
-            var divisors = solver.GetDivisors(n);
+            var divisors = solver.GetDivisors(number);
             var sum = divisors.Aggregate((p, acc) => acc + p);
-            sum -= n; //n is not a proper divisor of itself, so remove it from the count.
+            sum -= number; //n is not a proper divisor of itself, so remove it from the count.
             return sum;
         }
     }
