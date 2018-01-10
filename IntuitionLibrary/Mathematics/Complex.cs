@@ -1,0 +1,147 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace QBits.Intuition.Mathematics
+{
+    /// <summary>
+    /// A class of complex numbers.
+    /// Some equations for implementations were based on descriptions in this help:
+    /// <see cref="http://commons.apache.org/math/apidocs/org/apache/commons/math/complex/Complex.html"/>
+    /// </summary>
+    public class Complex
+    {
+        /// <summary>
+        /// Creates a complex number from a real part only.
+        /// <para/>Imaginary part will be 0.0.
+        /// </summary>
+        public static Complex Make(double real) { return new Complex(real, 0); }
+        /// <summary>
+        /// Creates a complex number from real and imaginary components.
+        /// </summary>
+        /// <param name="real">Value of the real part of the complex number being constructed.</param>
+        /// <param name="img">Value of the imaginary part of the complex number being constructed.</param>
+        public static Complex Make(double real, double img) { return new Complex(real, img); }
+        /// <summary>
+        /// Default value of the complex number. Real part will be 0.0 and imaginary part will be 0.0.
+        /// </summary>
+        public Complex() { Real = 0.0; Img = 0.0; }
+        /// <summary>
+        /// Creates a complex number from real and imaginary components.
+        /// </summary>
+        /// <param name="real">Value of the real part of the complex number being constructed.</param>
+        /// <param name="img">Value of the imaginary part of the complex number being constructed.</param>
+        public Complex(double real, double img) { Real = real; Img = img; }
+        /// <summary>
+        /// Real part of this complex number.
+        /// </summary>
+        public double Real { get; set; }
+        /// <summary>
+        /// Imaginary part of this complex number.
+        /// </summary>
+        public double Img { get; set; }
+        /// <summary>
+        /// Convenient formatting of the value of complex numbers. Depending on the values of real and imaginary parts,
+        /// this method tries to produce output similar to that used in math books (skipping zeros as necessary, etc.)
+        /// </summary>
+        /// <returns>String representation of the complex number. To be used directly as output to user.</returns>
+        public override string ToString()
+        {
+            if ((Img == 0.0) && (Real == 0.0)) return string.Format("{0}", 0.0);
+            if (Img == 0.0) return string.Format("{0}", Real);
+            if (Real == 0.0) return string.Format("{0}i", Img);
+            if (Img < 0) return string.Format("{0}{1}i", Real, Img);
+            return string.Format("{0}+{1}i", Real, Img);
+        }
+        /// <summary>
+        /// Adds two complex numbers using complex addition rules.
+        /// </summary>
+        /// <param name="left">Number to be added.</param>
+        /// <param name="right">Number to be added.</param>
+        /// <returns>Complex number representing a sum of input complex numbers.</returns>
+        public static Complex operator +(Complex left, Complex right) { return new Complex(left.Real + right.Real, left.Img + right.Img); }
+        /// <summary>
+        /// (a+ib)*(c+id) = ac + iad + ibc + iibd = (ac-bd) + i(ad+bc)
+        /// </summary>
+        /// <returns>Multiplication</returns>
+        public static Complex operator *(Complex left, Complex right) { return new Complex(left.Real * right.Real - left.Img * right.Img, left.Real * right.Img + right.Real * left.Img); }
+        /// <summary>
+        /// Computes <paramref name="num"/> raised to <paramref name="exp"/> power.
+        /// <para/>Implements this formula:
+        /// <para/>  num^exp = Exp(exp * Ln(num))
+        /// </summary>
+        /// <param name="num">Base number that is raised to exp</param>
+        /// <param name="exp">Exponent of the power</param>
+        /// <returns><paramref name="num"/> raised to <paramref name="exp"/> power</returns>
+        public static Complex Pow(Complex num, Complex exp) { return Complex.Exp(exp * Complex.Ln(num)); }
+        /// <summary>
+        /// Compute the natural logarithm of this complex number.
+        /// <para/>Implements the formula: 
+        /// <para/>  ln(a + bi) = ln(|a + bi|) + arg(a + bi)i
+        /// </summary>
+        /// <param name="num">Number to compute natural logarithm from.</param>
+        /// <returns>Natural logarithm of <paramref name="num"/> value.</returns>
+        public static Complex Ln(Complex num) { return num.Ln(); }
+        /// <summary>
+        /// Compute the natural logarithm of this complex number.
+        /// </summary>
+        /// <returns>Natural logarithm of this complex number.</returns>
+        public Complex Ln() { return Complex.Make(Math.Log(this.Mod()), this.Arg()); }
+        /// <summary>
+        /// Computes argument of this complex number.
+        /// <para/>Implements this formula:
+        /// <para/>   Arg(a + bi) = Math.Atan2(b, a)
+        /// </summary>
+        /// <returns>Return value is still a Complex, but the imaginary part is 0.</returns>
+        public static Complex Arg(Complex num) { return num.Arg(); }
+        /// <summary>
+        /// Computes argument of this complex number.
+        /// <para/>Implements this formula:
+        /// <para/>   Arg(a + bi) = Math.Atan2(b, a)
+        /// </summary>
+        /// <returns>Return value is still a Complex, but the imaginary part is 0.</returns>
+        public Complex Arg() { return Complex.Make(Math.Atan2(this.Img, this.Real), 0.0); }
+        /// <summary>
+        /// Compute the exponential function of this complex number.
+        /// <para/>Implements the formula: 
+        /// <para/>  exp(a + bi) = exp(a)cos(b) + exp(a)sin(b)i
+        /// <para/>  where the (real) functions on the right-hand side are: Math.exp(double), Math.cos(double), and Math.sin(double).
+        /// </summary>
+        public static Complex Exp(Complex num) { return num.Exp(); }
+        /// <summary>
+        /// Compute the exponential function of this complex number.
+        /// <para/>Implements the formula: 
+        /// <para/>  exp(a + bi) = exp(a)cos(b) + exp(a)sin(b)i
+        /// <para/>  where the (real) functions on the right-hand side are: Math.exp(double), Math.cos(double), and Math.sin(double).
+        /// </summary>
+        public Complex Exp()
+        {
+            double expR = Math.Exp(this.Real); //Declared for speed
+            return Complex.Make(expR * Math.Cos(this.Img), expR * Math.Sin(this.Img));
+        }
+        /// <summary>
+        /// Computes a modus (or length of imaginary vector).
+        /// </summary>
+        /// <returns>Return value is still a Complex, but the imaginary part is 0.</returns>
+        public static Complex Mod(Complex num) { return num.Mod(); }
+        /// <summary>
+        /// Computes a modus (or length of imaginary vector).
+        /// </summary>
+        /// <returns>Return value is still a Complex, but the imaginary part is 0.</returns>
+        public Complex Mod() { return Complex.Make(Math.Sqrt(this.Real * this.Real + this.Img * this.Img), 0.0); }
+        /// <summary>
+        /// Constant equal to 0+i.
+        /// </summary>
+        public static readonly Complex I = new Complex(0.0, 1);
+        /// <summary>
+        /// Converts a Complex number to double by returning only its real part. Imaginary part is discarded.
+        /// </summary>
+        public static implicit operator double(Complex num) { return num.Real; }
+        /// <summary>
+        /// Default assignment of a real number - creates a complex number whose real part equals to the specified real value,
+        /// and imaginary part is 0.
+        /// </summary>
+        public static implicit operator Complex(double real) { return Complex.Make(real, 0.0); }
+    }
+}

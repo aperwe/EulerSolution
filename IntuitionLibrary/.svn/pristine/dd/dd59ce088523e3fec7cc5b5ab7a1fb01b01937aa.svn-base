@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace QBits.Intuition.Collections
+{
+    /// <summary>
+    /// Supports adding strings to colletion, limiting its maximum count of elements, and returning the cached collection.
+    /// </summary>
+    public class StringCache
+    {
+        /// <summary>
+        /// Internal set of string cache.
+        /// </summary>
+        protected HashSet<string> Cache { get; set; }
+        protected int Capacity { get; set; }
+        public StringCache()
+        {
+            InitializeCache(10);
+        }
+        public StringCache(int capacity)
+        {
+            InitializeCache(capacity);
+        }
+
+        protected void InitializeCache(int capacity)
+        {
+            Capacity = capacity;
+            Cache = new HashSet<string>();
+            CacheDirty = true;
+            ReturnedCache = null;
+        }
+        protected IEnumerable<string> ReturnedCache;
+        protected bool CacheDirty;
+        public virtual IEnumerable<string> CachedStrings
+        {
+            get
+            {
+                if (CacheDirty)
+                {
+                    ReturnedCache = Cache.ToList().AsReadOnly();
+                    CacheDirty = false;
+                }
+                return ReturnedCache;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Supports adding strings to colletion, limiting its maximum count of elements, and returning the cached collection which is sorted by the cached string.
+    /// </summary>
+    public class SortedStringCache : StringCache
+    {
+        public override IEnumerable<string> CachedStrings
+        {
+            get
+            {
+                if (CacheDirty)
+                {
+                    ReturnedCache = Cache.OrderBy(item => item).ToList().AsReadOnly();
+                    CacheDirty = false;
+                }
+                return ReturnedCache;
+            }
+        }
+    }
+}

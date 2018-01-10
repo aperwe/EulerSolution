@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3167357C-4B58-4D55-80EC-4E9BACD83F7C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>QBits.Intuition</RootNamespace>
+    <AssemblyName>IntuitionLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\IntuitionLibrary.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\IntuitionLibrary.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractLanguageIntelligence\Model\AliModel.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\Axon.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\BaseBrain.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\BaseCell.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\CellComparer.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\InputLayer.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\InterfaceLayer.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\MiddleLayer.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\OutputLayer.cs" />
+    <Compile Include="Assemblies\AssemblyHelper.cs" />
+    <Compile Include="Collections\StringCache.cs" />
+    <Compile Include="Logger\ConsoleLogger.cs" />
+    <Compile Include="Mathematics\BigInteger.cs" />
+    <Compile Include="Mathematics\Fibonacci\FibonacciSequence.cs" />
+    <Compile Include="Mathematics\Geometry\Cube.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\Dendrite.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\Glia.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\Layer.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\Network.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Brains\Neuron.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Concept.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Context.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\IConcept.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\IDictionary.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\Languages.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ModelFactory.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\AbstractThreadedMesh.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\Coordinate.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\EdbCsvMeshBuilder.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\MeshNode.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\Metric.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\SimpleMesh.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Meshes\Test.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\ProbabilityCloud.cs" />
+    <Compile Include="AbstractLanguageIntelligence\Model\ProbabilityClouds\Quant.cs" />
+    <Compile Include="Crosswords\Crossword.cs" />
+    <Compile Include="Crosswords\CrosswordLoader.cs" />
+    <Compile Include="Crosswords\CrosswordTypeRegistrar.cs" />
+    <Compile Include="Crosswords\Definitions\BaseDefinition.cs" />
+    <Compile Include="Crosswords\Definitions\Container.cs" />
+    <Compile Include="Crosswords\Definitions\HorizontalDefinition.cs" />
+    <Compile Include="Crosswords\Definitions\VerticalDefinition.cs" />
+    <Compile Include="Crosswords\Elements\BaseCrosswordElement.cs" />
+    <Compile Include="Crosswords\Elements\Definition.cs" />
+    <Compile Include="Crosswords\Elements\ElementsFactory.cs" />
+    <Compile Include="Crosswords\Elements\EmptyElement.cs" />
+    <Compile Include="Crosswords\Elements\Letter.cs" />
+    <Compile Include="Crosswords\Jolka.cs" />
+    <Compile Include="DesignPatterns\Factory\FactorableByString.cs" />
+    <Compile Include="DesignPatterns\Factory\UniversalFactory.cs" />
+    <Compile Include="DesignPatterns\Observer\IObservable.cs" />
+    <Compile Include="DesignPatterns\Observer\IObserver.cs" />
+    <Compile Include="DesignPatterns\Test.cs" />
+    <Compile Include="Financials\Banking\AccountTransaction.cs" />
+    <Compile Include="Financials\Banking\TransactionRecord.cs" />
+    <Compile Include="Logger\ILogger.cs" />
+    <Compile Include="Logger\LoggerSAP.cs" />
+    <Compile Include="Logger\LogLevel.cs" />
+    <Compile Include="Logger\TextLogger.cs" />
+    <Compile Include="Mathematics\Complex.cs" />
+    <Compile Include="Mathematics\ContinuedFractionSquare.cs" />
+    <Compile Include="Mathematics\MoreMath.cs" />
+    <Compile Include="Mathematics\Primes\PrimeSolver.cs" />
+    <Compile Include="Mathematics\Real.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\SettingsManagement.cs" />
+    <Compile Include="Settings\SettingsPath.cs" />
+    <Compile Include="SysUtils\DotNetFramework.cs" />
+    <Compile Include="Text\TextExtensions.cs" />
+    <Compile Include="Text\ByteSizeConverter.cs" />
+    <Compile Include="Text\Diff\StringDiffer.cs" />
+    <Compile Include="Text\FinancialHelper.cs" />
+    <Compile Include="Text\Palindroms\Palindromer.cs" />
+    <Compile Include="Text\ByteSizes.cs" />
+    <Compile Include="Threading\IEventWatcher.cs" />
+    <Compile Include="Threading\ThreadSafeObject.cs" />
+    <Compile Include="UI\UIExtensions.cs" />
+    <Compile Include="UI\UIHelper.cs" />
+    <Compile Include="WPF\Converters\NumberSumConverter.cs" />
+    <Compile Include="WPF\Converters\VisibilityConverter.cs" />
+    <Compile Include="Xml\NonPersistentXmlDocument.cs" />
+    <Compile Include="Xml\SimpleXmlDocument.cs" />
+    <Compile Include="Xml\SpecializedConfigXml.cs" />
+    <Compile Include="Xml\XmlSerializable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mathematics\big.cpp" />
+    <Content Include="Mathematics\flash.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,54 @@
+﻿<Window x:Class="EulerStarter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0">
+            <WrapPanel.Resources>
+                <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}" x:Key="problemButton">
+                    <Setter Property="Margin" Value="2 2"/>
+                    <Setter Property="Padding" Value="4 1"/>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FF3DB83D" Offset="0"/>
+                                <GradientStop Color="#FF6A6FE6" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </WrapPanel.Resources>
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 1" Click="Problem1Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 2" Click="Problem2Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 3" Click="Problem3Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 4" Click="Problem4Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 6" Click="Problem6Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 7" Click="Problem7Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 8" Click="Problem8Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 10" Click="Problem10Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 11" Click="Problem11Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 12" Click="Problem12Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 13" Click="Problem13Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 14" Click="Problem14Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 15" Click="Problem15Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 16" Click="Problem16Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 17" Click="Problem17Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 18" Click="Problem18Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 19" Click="Problem19Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 20" Click="Problem20Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 21" Click="Problem21Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 22" Click="Problem22Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 23" Click="Problem23Button_Click" />
+
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 67" Click="Problem67Button_Click" />
+        </WrapPanel>
+        <GroupBox Grid.Row="1" Header="Answer box">
+            <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+
+        </GroupBox>
+    </Grid>
+</Window>
