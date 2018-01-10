@@ -143,6 +143,7 @@
     <Compile Include="Mathematics\Complex.cs" />
     <Compile Include="Mathematics\ContinuedFractionSquare.cs" />
     <Compile Include="Mathematics\MoreMath.cs" />
+    <Compile Include="Mathematics\Primes\NumberDivisor.cs" />
     <Compile Include="Mathematics\Primes\PrimeSolver.cs" />
     <Compile Include="Mathematics\Real.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
