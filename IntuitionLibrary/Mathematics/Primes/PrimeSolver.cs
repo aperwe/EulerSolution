@@ -23,6 +23,7 @@ namespace QBits.Intuition.Mathematics.Primes
             }
         }
 
+        /// <returns>Count of known primes.</returns>
         public override string ToString()
         {
             return string.Format("Known primes: {0}", knownPrimes.Count);
@@ -55,7 +56,7 @@ namespace QBits.Intuition.Mathematics.Primes
         /// Calculates and returns the number of divisors of <paramref name="testedInteger"/>.
         /// </summary>
         /// <param name="testedInteger">Positive number to be tested.</param>
-        /// <returns></returns>
+        /// <returns>Number of divisors of <paramref name="testedInteger"/></returns>
         public int CalculateDivisors(long testedInteger)
         {
             int result = 0;
