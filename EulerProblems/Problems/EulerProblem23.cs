@@ -24,10 +24,62 @@ namespace EulerProblems.Problems
         {
             DateTime start = DateTime.Now;
 
+            var testedRange = Enumerable.Range(1, 28123).AsParallel();
+
+            long summator = 0;
+            //Parallel.ForEach()
+            testedRange.ForAll(number =>
+            {
+                NumberDivisor numberDivisor = new NumberDivisor();
+                bool hasBeenWrittenAsSumOfTwoAbundantNumbers = false; //Will be set to true only if at least one sum can be expressed using abundant numbers.
+                long midpoint = (number / 2) + 1;
+                for (int i = 1; i <= midpoint; i++)
+                {
+                    #region Get left and right portions of the number in all combinations
+                    var left = i;
+                    var right = number - left;
+                    #endregion
+                    var leftAbundancyType = numberDivisor.IsAbundantOrDeficientOrPerfect(left);
+                    var rightAbundancyType = numberDivisor.IsAbundantOrDeficientOrPerfect(right);
+                    if (leftAbundancyType == AbundancyType.Abundant && rightAbundancyType == AbundancyType.Abundant)
+                    {
+                        hasBeenWrittenAsSumOfTwoAbundantNumbers = true;
+                        break;
+                    }
+                }
+                if (!hasBeenWrittenAsSumOfTwoAbundantNumbers)
+                {
+                    lock (this) summator += number; //Increase the sum if combination of 2 abundant numbers could not be found.
+                }
+
+            });
 
 
             var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. Total sum of all the name scores in the file is.", elapsedTime);
+            var sb = new StringBuilder();
+            sb.AppendFormat("Elapsed computation time: {0}. Sum of all the positive integers which cannot be written as the sum of two abundant numbers is {1}.", elapsedTime, summator); sb.AppendLine();
+            Answer = sb.ToString();
+        }
+
+        public void TestPerfects()
+        {
+            DateTime start = DateTime.Now;
+
+            long temp = 28;
+            NumberDivisor numberDivisor = new NumberDivisor();
+            var sumDivisors = numberDivisor.CalculateSumOfProperDivisors(temp);
+
+            var is28Abundant = numberDivisor.IsAbundantOrDeficientOrPerfect(temp);
+            var is12Abundant = numberDivisor.IsAbundantOrDeficientOrPerfect(12);
+            var is57Abundant = numberDivisor.IsAbundantOrDeficientOrPerfect(57);
+
+            var elapsedTime = DateTime.Now - start;
+            var sb = new StringBuilder();
+            sb.AppendFormat("Elapsed computation time: {0}. Sum of properDivisors of {1} = {2}.", elapsedTime, temp, sumDivisors); sb.AppendLine();
+            sb.AppendFormat("Number {0} is {1}.", temp, is28Abundant); sb.AppendLine();
+            sb.AppendFormat("Number {0} is {1}.", 12, is12Abundant); sb.AppendLine();
+            sb.AppendFormat("Number {0} is {1}.", 57, is57Abundant); sb.AppendLine();
+            Answer = sb.ToString();
         }
     }
 }
