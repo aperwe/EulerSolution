@@ -177,6 +177,13 @@ namespace EulerStarter
             problem.Solve();
         }
 
+        private void Problem24Button_Click(object sender, RoutedEventArgs e)
+        {
+            AbstractEulerProblem problem = new EulerProblem24();
+            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
+            problem.Solve();
+        }
+
         private void Problem67Button_Click(object sender, RoutedEventArgs e)
         {
             AbstractEulerProblem problem = new EulerProblem67();
