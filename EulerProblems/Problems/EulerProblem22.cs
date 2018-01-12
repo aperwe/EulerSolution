@@ -14,10 +14,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem22 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             string dataFile = "ProblemData\\p022_names.txt";
             var data = File.OpenText(dataFile);
             var namesString = data.ReadToEnd();
@@ -41,8 +39,7 @@ namespace EulerProblems.Problems
                 currentPos++;
             }
 
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. Total sum of all the name scores in the file is {1}.", elapsedTime, totalValue);
+            answer = string.Format("Total sum of all the name scores in the file is {0}.", totalValue);
         }
 
 

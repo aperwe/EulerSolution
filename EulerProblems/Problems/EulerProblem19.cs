@@ -20,10 +20,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem19 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             Day currentDay = new Day(DayOfWeek.Monday);
             DateObject currentDate = new DateObject(1900, Month.January, 1);
             DateManipulator dateManipulator = new DateManipulator(currentDay, currentDate);
@@ -43,10 +41,7 @@ namespace EulerProblems.Problems
                 }
             }
 
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. The number of Sundays that fell on the first of the month during the twentieth century (1 Jan 1901 to 31 Dec 2000) is {1}.", elapsedTime, sundaysCount);
-
-
+            answer = string.Format("The number of Sundays that fell on the first of the month during the twentieth century (1 Jan 1901 to 31 Dec 2000) is {0}.", sundaysCount);
         }
     }
 

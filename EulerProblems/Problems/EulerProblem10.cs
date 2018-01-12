@@ -12,20 +12,16 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem10 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             PrimeSolver prime = new PrimeSolver();
             long border = 2000000;
             long sumOfPrimes = 0;
 
-            DateTime start = DateTime.Now;
-
             Enumerable.Range(0, (int)border).AsParallel().ForAll(a => prime.IsPrime(a));
             sumOfPrimes = prime.KnownPrimes.Aggregate((a, b) => a + b);
 
-            var elapsedTime = DateTime.Now - start;
-
-            Answer = string.Format("The sum of all primes below {0} is equal to {1}. Computation took: {2}", border, sumOfPrimes, elapsedTime);
+            answer = string.Format("The sum of all primes below {0} is equal to {1}.", border, sumOfPrimes);
         }
     }
 }

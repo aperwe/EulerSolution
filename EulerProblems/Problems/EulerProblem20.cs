@@ -16,10 +16,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem20 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             BigInteger ten = 10;
 
             BigInteger number = 1;
@@ -37,8 +35,7 @@ namespace EulerProblems.Problems
                 searcherValue /= ten;
             }
 
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. 100! is equal to: {1}. The sum of the digits in the number 100! is equal to {2}.", elapsedTime, number, sumOfDigits);
+            answer = string.Format("100! is equal to: {0}. The sum of the digits in the number 100! is equal to {1}.", number, sumOfDigits);
         }
     }
 }

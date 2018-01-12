@@ -20,10 +20,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem23 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             var testedRange = Enumerable.Range(1, 28123).AsParallel();
 
             long summator = 0;
@@ -55,10 +53,7 @@ namespace EulerProblems.Problems
             });
 
 
-            var elapsedTime = DateTime.Now - start;
-            var sb = new StringBuilder();
-            sb.AppendFormat("Elapsed computation time: {0}. Sum of all the positive integers which cannot be written as the sum of two abundant numbers is {1}.", elapsedTime, summator); sb.AppendLine();
-            Answer = sb.ToString();
+            answer = string.Format("Sum of all the positive integers which cannot be written as the sum of two abundant numbers is {0}.", summator);
         }
 
         public void TestPerfects()

@@ -12,10 +12,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem16 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             BigInteger power = 1;
             foreach(int iterator in Enumerable.Range(1, 1000))
             {
@@ -30,8 +28,7 @@ namespace EulerProblems.Problems
                 var digit = int.Parse(c.ToString());
                 sum += digit;
             }
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. 2^1000 = {1}. Sum of digits = {2}.", elapsedTime, power, sum);
+            answer = string.Format("2^1000 = {0}. Sum of digits = {1}.", power, sum);
         }
     }
 }

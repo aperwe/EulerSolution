@@ -110,18 +110,14 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem13 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             DataManipulator manipulator = new DataManipulator();
             var response = manipulator.DoMagic();
 
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. The first ten digits of the sum of the given one-hundred 50-digit numbers is: {1}", elapsedTime,
+            answer = string.Format("The first ten digits of the sum of the given one-hundred 50-digit numbers is: {0}",
                 string.Concat(response.Take(10).Select(a => a.digit.ToString()))
                 );
-
         }
 
 

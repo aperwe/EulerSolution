@@ -11,7 +11,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem1 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             var inList = Enumerable.Range(1, 999);
             if (inList.Last() != 999)
@@ -22,7 +22,7 @@ namespace EulerProblems.Problems
                                           where (item % 3 == 0) || (item % 5 == 0)
                                           select item;
             var sumOfMultiples = listOfMultiplesOf3_or_5.Aggregate((workingSum, nextNumber) => workingSum + nextNumber);
-            var result = sumOfMultiples;
+            answer = string.Format("Sum of the multiples of 3 or 5 below 1000 is: {0}.", sumOfMultiples);
         }
     }
 }

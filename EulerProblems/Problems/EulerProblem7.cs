@@ -13,7 +13,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem7 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             PrimeSolver primeSolver = new PrimeSolver();
             long value = 2;
@@ -24,7 +24,7 @@ namespace EulerProblems.Problems
                 while (!primeSolver.IsPrime(++value)) ;
                 whichPrime++;
             }
-            Answer = string.Format("Checked {0}th answer. The answer is: {1}", whichPrime, value);
+            answer = string.Format("Checked {0}th answer. The answer is: {1}", whichPrime, value);
         }
     }
 }

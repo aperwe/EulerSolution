@@ -14,7 +14,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem3 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             #region Setting up initial variables
             long testedNumber = 600851475143;
@@ -38,9 +38,8 @@ namespace EulerProblems.Problems
 
             var allPrimes = listOfSolutions.Where(t => primes.IsPrime(t)).ToList();
             allPrimes.Sort();
-            var answer = allPrimes.Last();
-            Answer = answer.ToString();
-
+            var largestFactor = allPrimes.Last();
+            answer = string.Format("The largest prime factor of 600851475143 is: {0}", largestFactor);
         }
     }
 }

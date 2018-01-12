@@ -37,9 +37,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem18 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
             string[] testData = {
                             "3",
                             "7 4",
@@ -68,9 +67,7 @@ namespace EulerProblems.Problems
             };
 
             var max2 = FindMaximum(actualData);
-
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. Maximum total from top to bottom of the triangle is {1}.", elapsedTime, max2);
+            answer = string.Format("Maximum total from top to bottom of the triangle is {0}.", max2);
         }
 
         internal int FindMaximum(string[] inputData)

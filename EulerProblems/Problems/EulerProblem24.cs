@@ -20,9 +20,8 @@ namespace EulerProblems.Problems
         const char c0 = '0';
         const char c9 = '9';
 
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
             //Perm[0000001]: 0 1 2 3 4 5 6 7 8 9
             //Perm[0000002]: 0 1 2 3 4 5 6 7 9 8
             //Perm[0000003]: 0 1 2 3 4 5 6 8 7 9
@@ -122,16 +121,11 @@ namespace EulerProblems.Problems
             );
 
             //Now sort the permutations alphabetically and get the millionth
-            var computationTime = DateTime.Now - start;
             permutations.Sort();
             var millionthPermutation = permutations.Skip(999999).First();
 
 
-            var elapsedTime = DateTime.Now - start;
-            var sb = new StringBuilder();
-            sb.AppendFormat("Computation time: {0}.", computationTime); sb.AppendLine();
-            sb.AppendFormat("Elapsed computation time: {0}. All permuations {1}. Millionth permutation is {2}.", elapsedTime, permutations.Count, millionthPermutation); sb.AppendLine();
-            Answer = sb.ToString();
+            answer = string.Format("All permuations {0}. Millionth permutation is {1}.", permutations.Count, millionthPermutation);
         }
 
     }

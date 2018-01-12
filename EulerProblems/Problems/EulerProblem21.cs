@@ -16,10 +16,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem21 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             NumberDivisor numberDivisor = new NumberDivisor();
 
             long n = 220;
@@ -68,10 +66,7 @@ namespace EulerProblems.Problems
             });
             var sumOfAmicableNumbers = amicableNumbers.Sum();
 
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. The sum of all the amicable numbers under 10000 is {1}", elapsedTime, sumOfAmicableNumbers);
-
+            answer = string.Format("The sum of all the amicable numbers under 10000 is {0}.", sumOfAmicableNumbers);
         }
-
     }
 }
