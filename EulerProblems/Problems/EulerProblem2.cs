@@ -28,7 +28,6 @@ namespace EulerProblems.Problems
                 currentValue = fib.Get(iterator);
                 if (MoreMath.IsEven(currentValue)) resultingSum += currentValue;
 
-
                 iterator++;
             }
 
