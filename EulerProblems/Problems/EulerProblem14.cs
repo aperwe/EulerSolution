@@ -21,27 +21,19 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem14 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             List<Map> map = new List<Map>();
             ParallelEnumerable.Range(1, 1000000).ForAll(index =>
             {
                 Map testedMap = new Map() { Number = index };
                 var collatz = testedMap.CalculateCollatzSequence();
                 testedMap.CollatzLength = collatz.Count;
-                lock(map) map.Add(testedMap);
+                lock (map) map.Add(testedMap);
             });
 
-            var elapsedTime = DateTime.Now - start;
             var longestCollatz = map.OrderBy(m => m.CollatzLength).Last();
-            Answer = string.Format("Elapsed computation time: {0}. The number (under one million) that produces the longest chain is: {1}. Chain length: {2}.", elapsedTime,
-                longestCollatz.Number, longestCollatz.CollatzLength
-                //string.Concat(response.Take(10).Select(a => a.digit.ToString()))
-                );
-
-
+            answer = string.Format("The number (under one million) that produces the longest chain is: {0}. Chain length: {1}.", longestCollatz.Number, longestCollatz.CollatzLength);
         }
         class Map
         {

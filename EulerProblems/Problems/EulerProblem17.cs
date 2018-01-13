@@ -16,13 +16,10 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem17 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             int countOfLetters = Enumerable.Range(0, 1001).Aggregate((p, q) => p + CountLetters(q));
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, the number of letters that would be used is {1}.", elapsedTime, countOfLetters);
+            answer = string.Format("If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, the number of letters that would be used is {0}.", countOfLetters);
         }
 
         /// <summary>

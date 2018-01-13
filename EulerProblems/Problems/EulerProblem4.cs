@@ -12,7 +12,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem4 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             //Start with largest numbers to smallest.
             var left = Enumerable.Range(100, 900).Reverse().AsParallel();
@@ -30,7 +30,7 @@ namespace EulerProblems.Problems
                 }
             });
             var result = palindromeCandidates.Last().Number;
-            Answer = result.ToString();
+            answer = string.Format("The largest palindrome made from the product of two 3-digit numbers is: {0}.", result);
         }
     }
 

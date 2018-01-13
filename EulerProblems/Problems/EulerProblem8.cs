@@ -32,7 +32,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem8 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             AnswerContainer largestAnswer = new AnswerContainer();
             string thousandDigitsNumber = "73167176531330624919225119674426574742355349194934" +
@@ -64,11 +64,10 @@ namespace EulerProblems.Problems
                 currentAnswer.thirteenChars = thousandDigitsNumber.Skip(skip).Take(adjacentLength).Select(a => long.Parse(char.ToString(a)));
                 if (currentAnswer.Product > largestAnswer.Product) largestAnswer = currentAnswer;
             }
-            Answer = string.Format("Thirteen adjacent digits with the greatest product are: {0}. The value of the product is: {1} = {2}",
+            answer = string.Format("Thirteen adjacent digits with the greatest product are: {0}. The value of the product is: {1} = {2}",
                 string.Concat(largestAnswer.thirteenChars),
                 string.Join(" * ", largestAnswer.thirteenChars),
                 largestAnswer.Product);
-
         }
         internal class AnswerContainer
         {

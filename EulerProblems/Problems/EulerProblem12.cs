@@ -30,10 +30,8 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem12 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             long currentTriangle = 0;
             long currentNaturalNumber = 0;
             int divisors = 0;
@@ -45,8 +43,7 @@ namespace EulerProblems.Problems
                 currentTriangle += currentNaturalNumber;
                 divisors = primeSolver.CalculateDivisors(currentTriangle);
             }
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. Sequence: {1}, Triangle number: {2}, Divisors: {3}", elapsedTime, currentNaturalNumber, currentTriangle, divisors);
+            answer = string.Format("Sequence: {0}, Triangle number: {1}, Divisors: {2}", currentNaturalNumber, currentTriangle, divisors);
         }
     }
 }

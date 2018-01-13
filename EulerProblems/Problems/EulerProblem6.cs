@@ -16,9 +16,9 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem6 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            Func<SumCalculator, string> format = (answer) => string.Format("n={0}, Sum of squares = {1}, Square of sum = {2}, Diff = {3}", answer.n, answer.SumOfSquares, answer.SquareOfSum, answer.Diff);
+            Func<SumCalculator, string> format = (sc) => string.Format("n={0}, Sum of squares = {1}, Square of sum = {2}, Diff = {3}", sc.n, sc.SumOfSquares, sc.SquareOfSum, sc.Diff);
 
             SumCalculator test = new SumCalculator(1);
             foreach (int iterator in Enumerable.Range(2,99))
@@ -35,7 +35,7 @@ namespace EulerProblems.Problems
             var compare = string.Compare(another, method2string);
             //both strings should be equal, if both methods work the same way.
             if (compare != 0) throw new InvalidOperationException("Unit test failed. 2 methods for calculating the answer do not produce the same result.");
-            Answer = method2string;
+            answer = string.Format("The difference between the sum of the squares of the first one hundred natural numbers and the square of the sum is: {0}.", method2string);
         }
 
         internal class SumCalculator

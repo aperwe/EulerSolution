@@ -14,7 +14,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem2 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             FibonacciSequence fib = new FibonacciSequence();
             Int64 limitValue = 4000000;
@@ -32,7 +32,7 @@ namespace EulerProblems.Problems
                 iterator++;
             }
 
-            var theResult = resultingSum;
+            answer = string.Format("Sum of even valued fibonacci numbers under 1 million is: {0}.", resultingSum);
         }
     }
 }

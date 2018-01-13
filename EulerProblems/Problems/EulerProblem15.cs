@@ -12,7 +12,7 @@ namespace EulerProblems.Problems
     /// </summary>
     public class EulerProblem15 : AbstractEulerProblem
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
             int gridSize = 20;
             //BigInteger answer = 1;
@@ -31,8 +31,8 @@ namespace EulerProblems.Problems
                 manipulator.CalculateNewRow();
 
             }
-            long answer = manipulator.CalculatePaths();
-            Answer = string.Format("Through {0}x{0} grid there are exactly {1} routes.", gridSize, answer);
+
+            answer = string.Format("Through {0}x{0} grid there are exactly {1} routes.", gridSize, manipulator.CalculatePaths());
         }
 
         private void Recalculate(List<Lagrange> lagranges)

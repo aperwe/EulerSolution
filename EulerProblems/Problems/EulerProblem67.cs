@@ -9,10 +9,8 @@ namespace EulerProblems.Problems
 {
     public class EulerProblem67 : EulerProblem18
     {
-        public override void Solve()
+        protected override void Solve(out string answer)
         {
-            DateTime start = DateTime.Now;
-
             string triangleDataFileName = "ProblemData\\p067_triangle.txt";
             var fileStream = File.OpenText(triangleDataFileName);
 
@@ -27,8 +25,7 @@ namespace EulerProblems.Problems
 
             var maximum = FindMaximum(triangleData);
 
-            var elapsedTime = DateTime.Now - start;
-            Answer = string.Format("Elapsed computation time: {0}. Maximum total from top to bottom of the triangle is {1}.", elapsedTime, maximum);
+            answer = string.Format("Maximum total from top to bottom of the triangle is {0}.", maximum);
         }
     }
 }
