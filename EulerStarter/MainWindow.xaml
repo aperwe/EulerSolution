@@ -1,11 +1,13 @@
-﻿<Window x:Class="EulerStarter.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="EulerStarter.MainWindow"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <WrapPanel Grid.Row="0">
             <WrapPanel.Resources>
@@ -51,5 +53,17 @@
             <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
 
         </GroupBox>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right">
+            <Button Content="Exit" Margin="2" Padding="4,1" Click="ButtonExit_Click">
+                <Button.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#FF877777" Offset="1"/>
+                        <GradientStop Color="White"/>
+                        <GradientStop Color="#FF888A86" Offset="0.87"/>
+                    </RadialGradientBrush>
+                </Button.Background>
+            </Button>
+
+        </StackPanel>
     </Grid>
 </Window>
