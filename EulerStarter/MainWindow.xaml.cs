@@ -182,6 +182,13 @@ namespace EulerStarter
             problem.StartSolving();
         }
 
+        private void Problem25Button_Click(object sender, RoutedEventArgs e)
+        {
+            AbstractEulerProblem problem = new EulerProblem25();
+            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
+            problem.StartSolving();
+        }
+
         private void Problem67Button_Click(object sender, RoutedEventArgs e)
         {
             AbstractEulerProblem problem = new EulerProblem67();
@@ -200,5 +207,6 @@ namespace EulerStarter
         {
             Application.Current.Shutdown();
         }
+
     }
 }

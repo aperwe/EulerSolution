@@ -139,7 +139,7 @@ namespace QBits.Intuition.Mathematics
         // maximum length of the BigInteger in uint (4 bytes)
         // change this to suit the required level of precision.
 
-        private const int maxLength = 70;
+        private const int maxLength = 120;
 
         // primes smaller than 2000 to test the generated prime number
 
