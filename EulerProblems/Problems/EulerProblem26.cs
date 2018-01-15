@@ -31,7 +31,7 @@ namespace EulerProblems.Problems
     {
         protected override void Solve(out string answer)
         {
-            var maxDenominator = 1000;
+            var maxDenominator = 1_000;
             var fractionCollection = new List<FractionSolver>();
             //Create 1000 fractions and store them in collection.
             fractionCollection.AddRange(
@@ -45,6 +45,7 @@ namespace EulerProblems.Problems
             //elementCollection.ForEach(fraction => fraction.Solve(nominator: 1));
             var sortedFractions = fractionCollection.OrderByDescending(fraction => fraction.PatternLength);
             var first = sortedFractions.First();
+            var three = sortedFractions.Where(f => f.Denominator == 3).First();
             answer = string.Format("The value of 1 < d < 1000 containing the longest recurring cycle in its decimal fraction point is: 1/{0}. Cycle is: {1}. Cycle length: {2}. Fraction is: {3}", first.Denominator, first.Pattern, first.PatternLength, first.Fraction);
         }
         protected void SolveSingleThreaded(out string answer)
@@ -79,7 +80,7 @@ namespace EulerProblems.Problems
     {
         private int nominator;
         private int denominator;
-        StringBuilder stringBuilder;
+        StringBuilder decimalRepresentation;
         int patternLength;
         string pattern;
 
@@ -88,7 +89,7 @@ namespace EulerProblems.Problems
         /// </summary>
         public override string ToString()
         {
-            return string.Format("1/{0} => {1} ({2})[{3}]", denominator, stringBuilder.ToString(), pattern, patternLength);
+            return string.Format("1/{0} => {1} ({2})[{3}]", denominator, decimalRepresentation.ToString(), pattern, patternLength);
         }
 
         public FractionSolver(int denominator)
@@ -98,7 +99,7 @@ namespace EulerProblems.Problems
         internal int PatternLength { get { return patternLength; } }
         internal string Pattern { get { return pattern; } }
         internal int Denominator { get { return denominator; } }
-        internal string Fraction { get { return stringBuilder.ToString(); } }
+        internal string Fraction { get { return decimalRepresentation.ToString(); } }
 
         /// <summary>
         /// TODO: Need to ensure pattern is of required minimal length (or longer) (not always 1)
@@ -107,32 +108,32 @@ namespace EulerProblems.Problems
         internal void Solve(int nominator)
         {
             this.nominator = nominator;
-            int drem = nominator; //division remainder
-            const int maxIterations = 1310; //Long enough to be sure
-            stringBuilder = new StringBuilder();
+            int divisionRemainder = nominator; //division remainder
+            const int maxIterations = 10_000; //Long enough to be sure
+            decimalRepresentation = new StringBuilder();
             bool endComputationFlag = false; //Flag that - when set to true - indicates to exit the computation loop
-            var temp = drem / denominator;
+            var division = divisionRemainder / denominator;
 
-            stringBuilder.Append(temp);
-            if (temp == 0) stringBuilder.Append("."); //Decimal place if first iteration
+            decimalRepresentation.Append(division);
+            if (division == 0) decimalRepresentation.Append("."); //Decimal place if first iteration
 
             int iterations = 0;
             while (!endComputationFlag)
             {
-                var diff = temp * denominator;
-                var diff2 = drem - diff;
-                var newRemainder = diff2 * 10; //Move 1 decimal place
-                drem = newRemainder;
-                if (drem == 0) //End computation if there is nothing to end
+                var diff = division * denominator;
+                var carryOn = divisionRemainder - diff;
+                var newRemainder = carryOn * 10; //Move 1 decimal place
+                divisionRemainder = newRemainder;
+                if (divisionRemainder == 0) //End computation if there is nothing to end
                     endComputationFlag = true;
 
-                temp = drem / denominator;
-                stringBuilder.Append(temp);
-                DetectPattern(stringBuilder.ToString().Reverse(), minPatternLength: 1);
+                division = divisionRemainder / denominator;
+                decimalRepresentation.Append(division);
                 iterations++;
                 if (iterations > maxIterations)
                     endComputationFlag = true;
             }
+            DetectPattern(decimalRepresentation.ToString().Reverse(), minPatternLength: 7);
         }
 
         internal void TestPattern(string pattern)
@@ -142,6 +143,11 @@ namespace EulerProblems.Problems
             
         }
 
+        /// <summary>
+        /// Searches for pattern and returns true if one is detected.
+        /// </summary>
+        /// <param name="reversedString"></param>
+        /// <param name="minPatternLength"></param>
         private bool DetectPattern(IEnumerable<char> reversedString, int minPatternLength)
         {
             bool patternDetected = false; //Will set to true only when a pattern has been detected.
@@ -157,7 +163,7 @@ namespace EulerProblems.Problems
                 repeatablePatternCandidate.Add(currentChar);
                 originalString.RemoveAt(0);
                 int patternLength = GetRecurringPatternLength(repeatablePatternCandidate, originalString);
-                if (patternLength>= minPatternLength)
+                if (patternLength >= minPatternLength)
                 {
                     //Detected pattern of minimum length
                     pattern = new string(repeatablePatternCandidate.ToArray().Reverse().ToArray());
@@ -178,8 +184,8 @@ namespace EulerProblems.Problems
         /// <returns>If candidate is a repeated pattern, length of the pattern is returned. Otherwise 0.</returns>
         private int GetRecurringPatternLength(List<char> repeatablePatternCandidate, List<char> originalString)
         {
-            string debugString = new string(originalString.ToArray());
-            string debugString2 = new string(repeatablePatternCandidate.ToArray());
+            //string debugString = new string(originalString.ToArray());
+            //string debugString2 = new string(repeatablePatternCandidate.ToArray());
 
             int detectedPatternLength = 0;
             foreach (int index in Enumerable.Range(0, Math.Min(repeatablePatternCandidate.Count, originalString.Count)))
