@@ -207,7 +207,7 @@ namespace EulerStarter
 
         private void UpdateAnswerUI(object sender, AnswerAgr e)
         {
-            textBlock.Text = e.Answer;
+            textBoxAnswer.Text = e.Answer;
         }
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)

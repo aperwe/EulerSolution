@@ -52,7 +52,7 @@
             <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 67" Click="Problem67Button_Click" />
         </WrapPanel>
         <GroupBox Grid.Row="1" Header="Answer box">
-            <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+            <TextBox x:Name="textBoxAnswer" TextWrapping="Wrap" Text="Solution answer will go here." IsReadOnly="True"/>
 
         </GroupBox>
         <StackPanel Grid.Row="2" HorizontalAlignment="Right">
