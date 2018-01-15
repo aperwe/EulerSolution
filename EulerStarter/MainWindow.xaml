@@ -48,6 +48,7 @@
             <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 24" Click="Problem24Button_Click" />
             <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 25" Click="Problem25Button_Click" />
             <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 26" Click="Problem26Button_Click" />
+            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 27" Click="Problem27Button_Click" />
 
             <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 67" Click="Problem67Button_Click" />
         </WrapPanel>
