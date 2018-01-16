@@ -28,6 +28,7 @@ namespace EulerProblems.Problems
 
     /// What is the value of the first triangle number to have over five hundred divisors?
     /// </summary>
+    [ProblemSolverClass("Problem 12", DisplayName = "Problem 12")]
     public class EulerProblem12 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

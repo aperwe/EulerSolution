@@ -14,6 +14,7 @@ namespace EulerProblems.Problems
     /// 
     /// Find the sum of the digits in the number 100!
     /// </summary>
+    [ProblemSolverClass("Problem 20", DisplayName = "Problem 20")]
     public class EulerProblem20 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

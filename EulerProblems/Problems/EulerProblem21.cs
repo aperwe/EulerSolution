@@ -14,6 +14,7 @@ namespace EulerProblems.Problems
     /// 
     /// Evaluate the sum of all the amicable numbers under 10000.
     /// </summary>
+    [ProblemSolverClass("Problem 21", DisplayName = "Problem 21")]
     public class EulerProblem21 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)
