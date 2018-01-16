@@ -108,6 +108,7 @@ namespace EulerProblems.Problems
     /// 20849603980134001723930671666823555245252804609722
     /// 53503534226472524250874054075591789781264330331690
     /// </summary>
+    [ProblemSolverClass("Problem 13", DisplayName = "Problem 13")]
     public class EulerProblem13 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -14,6 +14,7 @@ namespace EulerProblems.Problems
     /// For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters.
     /// The use of "and" when writing out numbers is in compliance with British usage.
     /// </summary>
+    [ProblemSolverClass("Problem 17", DisplayName = "Problem 17")]
     public class EulerProblem17 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

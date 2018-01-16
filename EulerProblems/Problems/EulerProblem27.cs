@@ -24,6 +24,7 @@ namespace EulerProblems.Problems
     /// 
     /// Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum number of primes for consecutive values of n, starting with n = 0.
     /// </summary>
+    [ProblemSolverClass("Problem 27", DisplayName = "Problem 27")]
     public class EulerProblem27 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

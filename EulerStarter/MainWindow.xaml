@@ -9,7 +9,7 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <WrapPanel Grid.Row="0">
+        <WrapPanel Grid.Row="0" x:Name="buttonsPanel">
             <WrapPanel.Resources>
                 <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}" x:Key="problemButton">
                     <Setter Property="Margin" Value="2 2"/>
@@ -24,33 +24,7 @@
                     </Setter>
                 </Style>
             </WrapPanel.Resources>
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 1" Click="Problem1Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 2" Click="Problem2Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 3" Click="Problem3Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 4" Click="Problem4Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 6" Click="Problem6Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 7" Click="Problem7Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 8" Click="Problem8Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 10" Click="Problem10Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 11" Click="Problem11Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 12" Click="Problem12Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 13" Click="Problem13Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 14" Click="Problem14Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 15" Click="Problem15Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 16" Click="Problem16Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 17" Click="Problem17Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 18" Click="Problem18Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 19" Click="Problem19Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 20" Click="Problem20Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 21" Click="Problem21Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 22" Click="Problem22Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 23" Click="Problem23Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 24" Click="Problem24Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 25" Click="Problem25Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 26" Click="Problem26Button_Click" />
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 27" Click="Problem27Button_Click" />
-
-            <Button Style="{StaticResource ResourceKey=problemButton}" Content="Problem 67" Click="Problem67Button_Click" />
+            <!--Buttons will be created dynamically and will go into this panel.-->
         </WrapPanel>
         <GroupBox Grid.Row="1" Header="Answer box">
             <TextBox x:Name="textBoxAnswer" TextWrapping="Wrap" Text="Solution answer will go here." IsReadOnly="True"/>

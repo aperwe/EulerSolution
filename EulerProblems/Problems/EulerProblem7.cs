@@ -11,6 +11,7 @@ namespace EulerProblems.Problems
     /// By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
     /// What is the 10 001st prime number?
     /// </summary>
+    [ProblemSolverClass("Problem 7", DisplayName = "Problem 7")]
     public class EulerProblem7 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

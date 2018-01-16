@@ -24,193 +24,30 @@ namespace EulerStarter
         public MainWindow()
         {
             InitializeComponent();
+            var classLoader = new ProblemSolverClassLoader();
+            var solvers = classLoader.LoadProblemSolvers();
+            CreateButtonsForSolvers(solvers);
         }
 
-        #region Problem solver callers
-
-        private void Problem1Button_Click(object sender, RoutedEventArgs e)
+        private void CreateButtonsForSolvers(IEnumerable<SolverInfo> solvers)
         {
-            AbstractEulerProblem problem = new EulerProblem1();
+            foreach (var si in solvers)
+            {
+                Button button = new Button { Content = si.DisplayName };
+                button.Style = buttonsPanel.Resources["problemButton"] as Style;
+                button.Click += GenericClickHandler;
+                button.Tag = si.TypeInfo;
+                buttonsPanel.Children.Add(button);
+            }
+        }
+
+        private void GenericClickHandler(object sender, RoutedEventArgs e)
+        {
+            var problemType = (sender as Button).Tag as Type;
+            var problem = Activator.CreateInstance(problemType) as AbstractEulerProblem;
             problem.AnswerAvailableEventHandler += UpdateAnswerUI;
             problem.StartSolving();
         }
-
-        private void Problem2Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem2();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem3Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem3();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem4Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem4();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem6Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem6();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem7Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem7();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem8Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem8();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem10Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem10();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem11Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem11();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem12Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem12();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem13Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem13();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem14Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem14();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem15Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem15();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem16Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem16();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem17Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem17();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem18Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem18();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem19Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem19();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem20Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem20();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem21Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem21();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem22Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem22();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem23Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem23();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem24Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem24();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem25Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem25();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem26Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem26();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem27Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem27();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        private void Problem67Button_Click(object sender, RoutedEventArgs e)
-        {
-            AbstractEulerProblem problem = new EulerProblem67();
-            problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
-        }
-
-        #endregion
 
         private void UpdateAnswerUI(object sender, AnswerAgr e)
         {
