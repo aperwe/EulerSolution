@@ -4,6 +4,9 @@ using QBits.Intuition.DesignPatterns.Factory;
 
 namespace QBits.Intuition.Crosswords.Elements
 {
+    /// <summary>
+    /// A factory class that can produce various crossword element types.
+    /// </summary>
     public class ElementsFactory : UniversalFactory<string, BaseCrosswordElement>
     {
         public new delegate BaseCrosswordElement ctor(Crossword crossword, int column, int row);

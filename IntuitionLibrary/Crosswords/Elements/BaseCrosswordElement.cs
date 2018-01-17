@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace QBits.Intuition.Crosswords.Elements
 {
+    /// <summary>
+    /// Abstract type definition for all implementors of crossword elements.
+    /// </summary>
     public abstract class BaseCrosswordElement : IFactorableByString, XmlSerializable
     {
         #region Factory model part

@@ -1,148 +1,124 @@
 ﻿using System;
+using System.Text;
 
 namespace QBits.Intuition.Mathematics
 {
-    //************************************************************************************
-    // BigInteger Class Version 1.03
-    //
-    // Copyright (c) 2002 Chew Keong TAN
-    // All rights reserved.
-    //
-    // Permission is hereby granted, free of charge, to any person obtaining a
-    // copy of this software and associated documentation files (the
-    // "Software"), to deal in the Software without restriction, including
-    // without limitation the rights to use, copy, modify, merge, publish,
-    // distribute, and/or sell copies of the Software, and to permit persons
-    // to whom the Software is furnished to do so, provided that the above
-    // copyright notice(s) and this permission notice appear in all copies of
-    // the Software and that both the above copyright notice(s) and this
-    // permission notice appear in supporting documentation.
-    //
-    // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-    // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
-    // OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-    // HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
-    // INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
-    // FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
-    // NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
-    // WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-    //
-    //
-    // Disclaimer
-    // ----------
-    // Although reasonable care has been taken to ensure the correctness of this
-    // implementation, this code should never be used in any application without
-    // proper verification and testing.  I disclaim all liability and responsibility
-    // to any person or entity with respect to any loss or damage caused, or alleged
-    // to be caused, directly or indirectly, by the use of this BigInteger class.
-    //
-    // Comments, bugs and suggestions to
-    // (http://www.codeproject.com/csharp/biginteger.asp)
-    //
-    //
-    // Overloaded Operators +, -, *, /, %, >>, <<, ==, !=, >, <, >=, <=, &, |, ^, ++, --, ~
-    //
-    // Features
-    // --------
-    // 1) Arithmetic operations involving large signed integers (2's complement).
-    // 2) Primality test using Fermat little theorm, Rabin Miller's method,
-    //    Solovay Strassen's method and Lucas strong pseudoprime.
-    // 3) Modulo exponential with Barrett's reduction.
-    // 4) Inverse modulo.
-    // 5) Pseudo prime generation.
-    // 6) Co-prime generation.
-    //
-    //
-    // Known Problem
-    // -------------
-    // This pseudoprime passes my implementation of
-    // primality test but failed in JDK's isProbablePrime test.
-    //
-    //       byte[] pseudoPrime1 = { (byte)0x00,
-    //             (byte)0x85, (byte)0x84, (byte)0x64, (byte)0xFD, (byte)0x70, (byte)0x6A,
-    //             (byte)0x9F, (byte)0xF0, (byte)0x94, (byte)0x0C, (byte)0x3E, (byte)0x2C,
-    //             (byte)0x74, (byte)0x34, (byte)0x05, (byte)0xC9, (byte)0x55, (byte)0xB3,
-    //             (byte)0x85, (byte)0x32, (byte)0x98, (byte)0x71, (byte)0xF9, (byte)0x41,
-    //             (byte)0x21, (byte)0x5F, (byte)0x02, (byte)0x9E, (byte)0xEA, (byte)0x56,
-    //             (byte)0x8D, (byte)0x8C, (byte)0x44, (byte)0xCC, (byte)0xEE, (byte)0xEE,
-    //             (byte)0x3D, (byte)0x2C, (byte)0x9D, (byte)0x2C, (byte)0x12, (byte)0x41,
-    //             (byte)0x1E, (byte)0xF1, (byte)0xC5, (byte)0x32, (byte)0xC3, (byte)0xAA,
-    //             (byte)0x31, (byte)0x4A, (byte)0x52, (byte)0xD8, (byte)0xE8, (byte)0xAF,
-    //             (byte)0x42, (byte)0xF4, (byte)0x72, (byte)0xA1, (byte)0x2A, (byte)0x0D,
-    //             (byte)0x97, (byte)0xB1, (byte)0x31, (byte)0xB3,
-    //       };
-    //
-    //
-    // Change Log
-    // ----------
-    // 1) September 23, 2002 (Version 1.03)
-    //    - Fixed operator- to give correct data length.
-    //    - Added Lucas sequence generation.
-    //    - Added Strong Lucas Primality test.
-    //    - Added integer square root method.
-    //    - Added setBit/unsetBit methods.
-    //    - New isProbablePrime() method which do not require the
-    //      confident parameter.
-    //
-    // 2) August 29, 2002 (Version 1.02)
-    //    - Fixed bug in the exponentiation of negative numbers.
-    //    - Faster modular exponentiation using Barrett reduction.
-    //    - Added getBytes() method.
-    //    - Fixed bug in ToHexString method.
-    //    - Added overloading of ^ operator.
-    //    - Faster computation of Jacobi symbol.
-    //
-    // 3) August 19, 2002 (Version 1.01)
-    //    - Big integer is stored and manipulated as unsigned integers (4 bytes) instead of
-    //      individual bytes this gives significant performance improvement.
-    //    - Updated Fermat's Little Theorem test to use a^(p-1) mod p = 1
-    //    - Added isProbablePrime method.
-    //    - Updated documentation.
-    //
-    // 4) August 9, 2002 (Version 1.0)
-    //    - Initial Release.
-    //
-    //
-    // References
-    // [1] D. E. Knuth, "Seminumerical Algorithms", The Art of Computer Programming Vol. 2,
-    //     3rd Edition, Addison-Wesley, 1998.
-    //
-    // [2] K. H. Rosen, "Elementary Number Theory and Its Applications", 3rd Ed,
-    //     Addison-Wesley, 1993.
-    //
-    // [3] B. Schneier, "Applied Cryptography", 2nd Ed, John Wiley & Sons, 1996.
-    //
-    // [4] A. Menezes, P. van Oorschot, and S. Vanstone, "Handbook of Applied Cryptography",
-    //     CRC Press, 1996, www.cacr.math.uwaterloo.ca/hac
-    //
-    // [5] A. Bosselaers, R. Govaerts, and J. Vandewalle, "Comparison of Three Modular
-    //     Reduction Functions," Proc. CRYPTO'93, pp.175-186.
-    //
-    // [6] R. Baillie and S. S. Wagstaff Jr, "Lucas Pseudoprimes", Mathematics of Computation,
-    //     Vol. 35, No. 152, Oct 1980, pp. 1391-1417.
-    //
-    // [7] H. C. Williams, "Édouard Lucas and Primality Testing", Canadian Mathematical
-    //     Society Series of Monographs and Advance Texts, vol. 22, John Wiley & Sons, New York,
-    //     NY, 1998.
-    //
-    // [8] P. Ribenboim, "The new book of prime number records", 3rd edition, Springer-Verlag,
-    //     New York, NY, 1995.
-    //
-    // [9] M. Joye and J.-J. Quisquater, "Efficient computation of full Lucas sequences",
-    //     Electronics Letters, 32(6), 1996, pp 537-538.
-    //
-    //************************************************************************************
-
+    /// <summary>
+    /// BigInteger Class Version 1.03
+    ///
+    /// Copyright (c) 2002 Chew Keong TAN
+    /// All rights reserved.
+    ///
+    /// Permission is hereby granted, free of charge, to any person obtaining a
+    /// copy of this software and associated documentation files (the
+    /// "Software"), to deal in the Software without restriction, including
+    /// without limitation the rights to use, copy, modify, merge, publish,
+    /// distribute, and/or sell copies of the Software, and to permit persons
+    /// to whom the Software is furnished to do so, provided that the above
+    /// copyright notice(s) and this permission notice appear in all copies of
+    /// the Software and that both the above copyright notice(s) and this
+    /// permission notice appear in supporting documentation.
+    ///
+    /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    /// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    /// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+    /// OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    /// HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
+    /// INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
+    /// FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+    /// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+    /// WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+    ///
+    /// Disclaimer
+    /// ----------
+    /// Although reasonable care has been taken to ensure the correctness of this
+    /// implementation, this code should never be used in any application without
+    /// proper verification and testing.  I disclaim all liability and responsibility
+    /// to any person or entity with respect to any loss or damage caused, or alleged
+    /// to be caused, directly or indirectly, by the use of this BigInteger class.
+    ///
+    /// Comments, bugs and suggestions to (http://www.codeproject.com/csharp/biginteger.asp)
+    ///
+    /// Overloaded Operators +, -, *, /, %, >>, &lt;&lt;, ==, !=, >, &lt;, >=, &lt;=, &, |, ^, ++, --, ~
+    ///
+    /// Features
+    /// 1) Arithmetic operations involving large signed integers (2's complement).
+    /// 2) Primality test using Fermat little theorm, Rabin Miller's method, Solovay Strassen's method and Lucas strong pseudoprime.
+    /// 3) Modulo exponential with Barrett's reduction.
+    /// 4) Inverse modulo.
+    /// 5) Pseudo prime generation.
+    /// 6) Co-prime generation.
+    ///
+    /// Known Problem
+    /// -------------
+    /// This pseudoprime passes my implementation of
+    /// primality test but failed in JDK's isProbablePrime test.
+    ///
+    ///       byte[] pseudoPrime1 = { (byte)0x00,
+    ///             (byte)0x85, (byte)0x84, (byte)0x64, (byte)0xFD, (byte)0x70, (byte)0x6A,
+    ///             (byte)0x9F, (byte)0xF0, (byte)0x94, (byte)0x0C, (byte)0x3E, (byte)0x2C,
+    ///             (byte)0x74, (byte)0x34, (byte)0x05, (byte)0xC9, (byte)0x55, (byte)0xB3,
+    ///             (byte)0x85, (byte)0x32, (byte)0x98, (byte)0x71, (byte)0xF9, (byte)0x41,
+    ///             (byte)0x21, (byte)0x5F, (byte)0x02, (byte)0x9E, (byte)0xEA, (byte)0x56,
+    ///             (byte)0x8D, (byte)0x8C, (byte)0x44, (byte)0xCC, (byte)0xEE, (byte)0xEE,
+    ///             (byte)0x3D, (byte)0x2C, (byte)0x9D, (byte)0x2C, (byte)0x12, (byte)0x41,
+    ///             (byte)0x1E, (byte)0xF1, (byte)0xC5, (byte)0x32, (byte)0xC3, (byte)0xAA,
+    ///             (byte)0x31, (byte)0x4A, (byte)0x52, (byte)0xD8, (byte)0xE8, (byte)0xAF,
+    ///             (byte)0x42, (byte)0xF4, (byte)0x72, (byte)0xA1, (byte)0x2A, (byte)0x0D,
+    ///             (byte)0x97, (byte)0xB1, (byte)0x31, (byte)0xB3,
+    ///       };
+    ///
+    /// Change Log
+    /// ----------
+    /// 1) September 23, 2002 (Version 1.03)
+    ///    - Fixed operator- to give correct data length.
+    ///    - Added Lucas sequence generation.
+    ///    - Added Strong Lucas Primality test.
+    ///    - Added integer square root method.
+    ///    - Added setBit/unsetBit methods.
+    ///    - New isProbablePrime() method which do not require the
+    ///      confident parameter.
+    ///
+    /// 2) August 29, 2002 (Version 1.02)
+    ///    - Fixed bug in the exponentiation of negative numbers.
+    ///    - Faster modular exponentiation using Barrett reduction.
+    ///    - Added getBytes() method.
+    ///    - Fixed bug in ToHexString method.
+    ///    - Added overloading of ^ operator.
+    ///    - Faster computation of Jacobi symbol.
+    ///
+    /// 3) August 19, 2002 (Version 1.01)
+    ///    - Big integer is stored and manipulated as unsigned integers (4 bytes) instead of
+    ///      individual bytes this gives significant performance improvement.
+    ///    - Updated Fermat's Little Theorem test to use a^(p-1) mod p = 1
+    ///    - Added isProbablePrime method.
+    ///    - Updated documentation.
+    ///
+    /// 4) August 9, 2002 (Version 1.0)
+    ///    - Initial Release.
+    ///
+    /// References
+    /// [1] D. E. Knuth, "Seminumerical Algorithms", The Art of Computer Programming Vol. 2, 3rd Edition, Addison-Wesley, 1998.
+    /// [2] K. H. Rosen, "Elementary Number Theory and Its Applications", 3rd Ed, Addison-Wesley, 1993.
+    /// [3] B. Schneier, "Applied Cryptography", 2nd Ed, John Wiley & Sons, 1996.
+    /// [4] A. Menezes, P. van Oorschot, and S. Vanstone, "Handbook of Applied Cryptography", CRC Press, 1996, www.cacr.math.uwaterloo.ca/hac
+    /// [5] A. Bosselaers, R. Govaerts, and J. Vandewalle, "Comparison of Three Modular Reduction Functions," Proc. CRYPTO'93, pp.175-186.
+    /// [6] R. Baillie and S. S. Wagstaff Jr, "Lucas Pseudoprimes", Mathematics of Computation, Vol. 35, No. 152, Oct 1980, pp. 1391-1417.
+    /// [7] H. C. Williams, "Édouard Lucas and Primality Testing", Canadian Mathematical
+    ///     Society Series of Monographs and Advance Texts, vol. 22, John Wiley & Sons, New York, NY, 1998.
+    /// [8] P. Ribenboim, "The new book of prime number records", 3rd edition, Springer-Verlag, New York, NY, 1995.
+    /// [9] M. Joye and J.-J. Quisquater, "Efficient computation of full Lucas sequences", Electronics Letters, 32(6), 1996, pp 537-538.
+    /// </summary>
     public class BigInteger
     {
-        // maximum length of the BigInteger in uint (4 bytes)
-        // change this to suit the required level of precision.
-
+        /// <summary>
+        /// Maximum length of the BigInteger in uint (4 bytes) change this to suit the required level of precision.
+        /// Note that the larger the size, the more memory footprint and the slower the performance.
+        /// </summary>
         private const int maxLength = 120;
-
-        // primes smaller than 2000 to test the generated prime number
-
+        /// <summary>
+        /// primes smaller than 2000 to test the generated prime number
+        /// </summary>
         public static readonly int[] primesBelow2000 = {
         2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
         101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199,
@@ -166,11 +142,12 @@ namespace QBits.Intuition.Mathematics
         1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999 };
 
         private uint[] data = null;             // stores bytes from the Big Integer
-        public int dataLength;                 // number of actual chars used
-
-
         /// <summary>
-        /// Constructor (Default value for BigInteger is 0
+        /// Number of actual chars used
+        /// </summary>
+        public int dataLength;
+        /// <summary>
+        /// Constructor (Default value for BigInteger is 0)
         /// </summary>
         public BigInteger()
         {
@@ -178,19 +155,15 @@ namespace QBits.Intuition.Mathematics
             dataLength = 1;
         }
 
-
         /// <summary>
         /// Constructor (Default value provided by long)
         /// </summary>
-        /// <param name="value"></param>
         public BigInteger(long value)
         {
             data = new uint[maxLength];
             long tempVal = value;
 
-            // copy bytes from long to BigInteger without any assumption of
-            // the length of the long datatype
-
+            // copy bytes from long to BigInteger without any assumption of the length of the long datatype
             dataLength = 0;
             while (value != 0 && dataLength < maxLength)
             {
@@ -210,22 +183,16 @@ namespace QBits.Intuition.Mathematics
                     throw (new ArithmeticException("Negative underflow in constructor."));
             }
 
-            if (dataLength == 0)
-                dataLength = 1;
+            if (dataLength == 0) dataLength = 1; //Min length must be 1
         }
-
-
-        //***********************************************************************
-        // Constructor (Default value provided by ulong)
-        //***********************************************************************
-
+        /// <summary>
+        /// Constructor (Default value provided by ulong)
+        /// </summary>
         public BigInteger(ulong value)
         {
             data = new uint[maxLength];
 
-            // copy bytes from ulong to BigInteger without any assumption of
-            // the length of the ulong datatype
-
+            // copy bytes from ulong to BigInteger without any assumption of the length of the ulong datatype
             dataLength = 0;
             while (value != 0 && dataLength < maxLength)
             {
@@ -237,52 +204,38 @@ namespace QBits.Intuition.Mathematics
             if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
                 throw (new ArithmeticException("Positive overflow in constructor."));
 
-            if (dataLength == 0)
-                dataLength = 1;
+            if (dataLength == 0) dataLength = 1; //Min length must be 1
         }
-
-
-
-        //***********************************************************************
-        // Constructor (Default value provided by BigInteger)
-        //***********************************************************************
-
+        /// <summary>
+        /// Constructor (Default value provided by BigInteger)
+        /// </summary>
         public BigInteger(BigInteger bi)
         {
             data = new uint[maxLength];
-
             dataLength = bi.dataLength;
 
             for (int i = 0; i < dataLength; i++)
                 data[i] = bi.data[i];
         }
-
-
-        //***********************************************************************
-        // Constructor (Default value provided by a string of digits of the
-        //              specified base)
-        //
-        // Example (base 10)
-        // -----------------
-        // To initialize "a" with the default value of 1234 in base 10
-        //      BigInteger a = new BigInteger("1234", 10)
-        //
-        // To initialize "a" with the default value of -1234
-        //      BigInteger a = new BigInteger("-1234", 10)
-        //
-        // Example (base 16)
-        // -----------------
-        // To initialize "a" with the default value of 0x1D4F in base 16
-        //      BigInteger a = new BigInteger("1D4F", 16)
-        //
-        // To initialize "a" with the default value of -0x1D4F
-        //      BigInteger a = new BigInteger("-1D4F", 16)
-        //
-        // Note that string values are specified in the <sign><magnitude>
-        // format.
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Constructor (Default value provided by a string of digits of the specified base)
+        ///
+        /// Example (base 10):
+        /// To initialize "a" with the default value of 1234 in base 10
+        ///      BigInteger a = new BigInteger("1234", 10)
+        ///
+        /// To initialize "a" with the default value of -1234
+        ///      BigInteger a = new BigInteger("-1234", 10)
+        ///
+        /// Example (base 16):
+        /// To initialize "a" with the default value of 0x1D4F in base 16
+        ///      BigInteger a = new BigInteger("1D4F", 16)
+        ///
+        /// To initialize "a" with the default value of -0x1D4F
+        ///      BigInteger a = new BigInteger("-1D4F", 16)
+        ///
+        /// Note that string values are specified in the (sign)(magnitude) format.
+        /// </summary>
         public BigInteger(string value, int radix)
         {
             BigInteger multiplier = new BigInteger(1);
@@ -336,25 +289,19 @@ namespace QBits.Intuition.Mathematics
 
             dataLength = result.dataLength;
         }
-
-
-        //***********************************************************************
-        // Constructor (Default value provided by an array of bytes)
-        //
-        // The lowest index of the input byte array (i.e [0]) should contain the
-        // most significant byte of the number, and the highest index should
-        // contain the least significant byte.
-        //
-        // E.g.
-        // To initialize "a" with the default value of 0x1D4F in base 16
-        //      byte[] temp = { 0x1D, 0x4F };
-        //      BigInteger a = new BigInteger(temp)
-        //
-        // Note that this method of initialization does not allow the
-        // sign to be specified.
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Constructor (Default value provided by an array of bytes)
+        ///
+        /// The lowest index of the input byte array (i.e [0]) should contain the
+        /// most significant byte of the number, and the highest index should
+        /// contain the least significant byte.
+        ///
+        /// E.g. To initialize "a" with the default value of 0x1D4F in base 16
+        ///      byte[] temp = { 0x1D, 0x4F };
+        ///      BigInteger a = new BigInteger(temp)
+        ///
+        /// Note that this method of initialization does not allow the sign to be specified.
+        /// </summary>
         public BigInteger(byte[] inData)
         {
             dataLength = inData.Length >> 2;
@@ -385,16 +332,10 @@ namespace QBits.Intuition.Mathematics
 
             while (dataLength > 1 && data[dataLength - 1] == 0)
                 dataLength--;
-
-            //Console.WriteLine("Len = " + dataLength);
         }
-
-
-        //***********************************************************************
-        // Constructor (Default value provided by an array of bytes of the
-        // specified length.)
-        //***********************************************************************
-
+        /// <summary>
+        /// Constructor (Default value provided by an array of bytes of the specified length.)
+        /// </summary>
         public BigInteger(byte[] inData, int inLen)
         {
             dataLength = inLen >> 2;
@@ -405,7 +346,6 @@ namespace QBits.Intuition.Mathematics
 
             if (dataLength > maxLength || inLen > inData.Length)
                 throw (new ArithmeticException("Byte overflow in constructor."));
-
 
             data = new uint[maxLength];
 
@@ -422,21 +362,15 @@ namespace QBits.Intuition.Mathematics
             else if (leftOver == 3)
                 data[dataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
 
-
             if (dataLength == 0)
                 dataLength = 1;
 
             while (dataLength > 1 && data[dataLength - 1] == 0)
                 dataLength--;
-
-            //Console.WriteLine("Len = " + dataLength);
         }
-
-
-        //***********************************************************************
-        // Constructor (Default value provided by an array of unsigned integers)
-        //*********************************************************************
-
+        /// <summary>
+        /// Constructor (Default value provided by an array of unsigned integers)
+        /// </summary>
         public BigInteger(uint[] inData)
         {
             dataLength = inData.Length;
@@ -451,46 +385,44 @@ namespace QBits.Intuition.Mathematics
 
             while (dataLength > 1 && data[dataLength - 1] == 0)
                 dataLength--;
-
-            //Console.WriteLine("Len = " + dataLength);
         }
-
-
-        //***********************************************************************
-        // Overloading of the typecast operator.
-        // For BigInteger bi = 10;
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of the typecast operator. For BigInteger bi = 10;
+        /// </summary>
         public static implicit operator BigInteger(long value)
         {
             return (new BigInteger(value));
         }
-
+        /// <summary>
+        /// Overloading of the typecast operator. For BigInteger bi = 10;
+        /// </summary>
         public static implicit operator BigInteger(ulong value)
         {
             return (new BigInteger(value));
         }
-
+        /// <summary>
+        /// Overloading of the typecast operator. For BigInteger bi = 10;
+        /// </summary>
         public static implicit operator BigInteger(int value)
         {
             return (new BigInteger((long)value));
         }
-
+        /// <summary>
+        /// Overloading of the typecast operator. For BigInteger bi = 10;
+        /// </summary>
         public static implicit operator BigInteger(uint value)
         {
             return (new BigInteger((ulong)value));
         }
-
-
-        //***********************************************************************
-        // Overloading of addition operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of addition operator
+        /// </summary>
         public static BigInteger operator +(BigInteger bi1, BigInteger bi2)
         {
-            BigInteger result = new BigInteger();
-
-            result.dataLength = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
+            BigInteger result = new BigInteger
+            {
+                dataLength = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength
+            };
 
             long carry = 0;
             for (int i = 0; i < result.dataLength; i++)
@@ -509,7 +441,6 @@ namespace QBits.Intuition.Mathematics
             while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
                 result.dataLength--;
 
-
             // overflow check
             int lastPos = maxLength - 1;
             if ((bi1.data[lastPos] & 0x80000000) == (bi2.data[lastPos] & 0x80000000) &&
@@ -517,15 +448,11 @@ namespace QBits.Intuition.Mathematics
             {
                 throw (new ArithmeticException());
             }
-
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of the unary ++ operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of the unary ++ operator
+        /// </summary>
         public static BigInteger operator ++(BigInteger bi1)
         {
             BigInteger result = new BigInteger(bi1);
@@ -555,9 +482,7 @@ namespace QBits.Intuition.Mathematics
             // overflow check
             int lastPos = maxLength - 1;
 
-            // overflow if initial value was +ve but ++ caused a sign
-            // change to negative.
-
+            // overflow if initial value was +ve but ++ caused a sign change to negative.
             if ((bi1.data[lastPos] & 0x80000000) == 0 &&
                (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
             {
@@ -565,17 +490,15 @@ namespace QBits.Intuition.Mathematics
             }
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of subtraction operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of subtraction operator
+        /// </summary>
         public static BigInteger operator -(BigInteger bi1, BigInteger bi2)
         {
-            BigInteger result = new BigInteger();
-
-            result.dataLength = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
+            BigInteger result = new BigInteger
+            {
+                dataLength = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength
+            };
 
             long carryIn = 0;
             for (int i = 0; i < result.dataLength; i++)
@@ -604,22 +527,17 @@ namespace QBits.Intuition.Mathematics
                 result.dataLength--;
 
             // overflow check
-
             int lastPos = maxLength - 1;
             if ((bi1.data[lastPos] & 0x80000000) != (bi2.data[lastPos] & 0x80000000) &&
                (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
             {
                 throw (new ArithmeticException());
             }
-
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of the unary -- operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of the unary -- operator
+        /// </summary>
         public static BigInteger operator --(BigInteger bi1)
         {
             BigInteger result = new BigInteger(bi1);
@@ -650,23 +568,18 @@ namespace QBits.Intuition.Mathematics
             // overflow check
             int lastPos = maxLength - 1;
 
-            // overflow if initial value was -ve but -- caused a sign
-            // change to positive.
+            // overflow if initial value was -ve but -- caused a sign change to positive.
 
             if ((bi1.data[lastPos] & 0x80000000) != 0 &&
                (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
             {
                 throw (new ArithmeticException("Underflow in --."));
             }
-
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of multiplication operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of multiplication operator
+        /// </summary>
         public static BigInteger operator *(BigInteger bi1, BigInteger bi2)
         {
             int lastPos = maxLength - 1;
@@ -715,7 +628,6 @@ namespace QBits.Intuition.Mathematics
                 throw (new ArithmeticException("Multiplication overflow."));
             }
 
-
             result.dataLength = bi1.dataLength + bi2.dataLength;
             if (result.dataLength > maxLength)
                 result.dataLength = maxLength;
@@ -728,8 +640,7 @@ namespace QBits.Intuition.Mathematics
             {
                 if (bi1Neg != bi2Neg && result.data[lastPos] == 0x80000000)    // different sign
                 {
-                    // handle the special case where multiplication produces
-                    // a max negative number in 2's complement.
+                    // handle the special case where multiplication produces a max negative number in 2's complement.
 
                     if (result.dataLength == 1)
                         return result;
@@ -756,25 +667,20 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-
-        //***********************************************************************
-        // Overloading of unary << operators
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of unary &lt;&lt; operators
+        /// </summary>
         public static BigInteger operator <<(BigInteger bi1, int shiftVal)
         {
             BigInteger result = new BigInteger(bi1);
-            result.dataLength = shiftLeft(result.data, shiftVal);
+            result.dataLength = ShiftLeft(result.data, shiftVal);
 
             return result;
         }
-
-
-        // least significant bits at lower part of buffer
-
-        private static int shiftLeft(uint[] buffer, int shiftVal)
+        /// <summary>
+        /// least significant bits at lower part of buffer
+        /// </summary>
+        private static int ShiftLeft(uint[] buffer, int shiftVal)
         {
             int shiftAmount = 32;
             int bufLen = buffer.Length;
@@ -786,8 +692,6 @@ namespace QBits.Intuition.Mathematics
             {
                 if (count < shiftAmount)
                     shiftAmount = count;
-
-                //Console.WriteLine("shiftAmount = {0}", shiftAmount);
 
                 ulong carry = 0;
                 for (int i = 0; i < bufLen; i++)
@@ -811,17 +715,13 @@ namespace QBits.Intuition.Mathematics
             }
             return bufLen;
         }
-
-
-        //***********************************************************************
-        // Overloading of unary >> operators
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of unary >> operators
+        /// </summary>
         public static BigInteger operator >>(BigInteger bi1, int shiftVal)
         {
             BigInteger result = new BigInteger(bi1);
-            result.dataLength = shiftRight(result.data, shiftVal);
-
+            result.dataLength = ShiftRight(result.data, shiftVal);
 
             if ((bi1.data[maxLength - 1] & 0x80000000) != 0) // negative
             {
@@ -839,12 +739,12 @@ namespace QBits.Intuition.Mathematics
                 }
                 result.dataLength = maxLength;
             }
-
             return result;
         }
-
-
-        private static int shiftRight(uint[] buffer, int shiftVal)
+        /// <summary>
+        /// least significant bits at lower part of buffer
+        /// </summary>
+        private static int ShiftRight(uint[] buffer, int shiftVal)
         {
             int shiftAmount = 32;
             int invShift = 0;
@@ -853,17 +753,13 @@ namespace QBits.Intuition.Mathematics
             while (bufLen > 1 && buffer[bufLen - 1] == 0)
                 bufLen--;
 
-            //Console.WriteLine("bufLen = " + bufLen + " buffer.Length = " + buffer.Length);
-
-            for (int count = shiftVal; count > 0; )
+            for (int count = shiftVal; count > 0;)
             {
                 if (count < shiftAmount)
                 {
                     shiftAmount = count;
                     invShift = 32 - shiftAmount;
                 }
-
-                //Console.WriteLine("shiftAmount = {0}", shiftAmount);
 
                 ulong carry = 0;
                 for (int i = bufLen - 1; i >= 0; i--)
@@ -883,12 +779,9 @@ namespace QBits.Intuition.Mathematics
 
             return bufLen;
         }
-
-
-        //***********************************************************************
-        // Overloading of the NOT operator (1's complement)
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of the NOT operator (1's complement)
+        /// </summary>
         public static BigInteger operator ~(BigInteger bi1)
         {
             BigInteger result = new BigInteger(bi1);
@@ -903,68 +796,35 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of the NEGATE operator (2's complement)
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of the NEGATE operator (2's complement)
+        /// </summary>
         public static BigInteger operator -(BigInteger bi1)
         {
-            // handle neg of zero separately since it'll cause an overflow
-            // if we proceed.
-
+            // handle neg of zero separately since it'll cause an overflow if we proceed.
             if (bi1.dataLength == 1 && bi1.data[0] == 0)
                 return (new BigInteger());
 
-            BigInteger result = new BigInteger(bi1);
-
-            // 1's complement
-            for (int i = 0; i < maxLength; i++)
-                result.data[i] = (uint)(~(bi1.data[i]));
-
-            // add one to result of 1's complement
-            long val, carry = 1;
-            int index = 0;
-
-            while (carry != 0 && index < maxLength)
-            {
-                val = (long)(result.data[index]);
-                val++;
-
-                result.data[index] = (uint)(val & 0xFFFFFFFF);
-                carry = val >> 32;
-
-                index++;
-            }
-
-            if ((bi1.data[maxLength - 1] & 0x80000000) == (result.data[maxLength - 1] & 0x80000000))
-                throw (new ArithmeticException("Overflow in negation.\n"));
-
-            result.dataLength = maxLength;
-
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
-            return result;
+            //2's complement = 1's complement + 1
+            return (~bi1) + 1;
         }
-
-
-        //***********************************************************************
-        // Overloading of equality operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of equality operator
+        /// </summary>
         public static bool operator ==(BigInteger bi1, BigInteger bi2)
         {
             return bi1.Equals(bi2);
         }
-
-
+        /// <summary>
+        /// Overloading inequality operator
+        /// </summary>
         public static bool operator !=(BigInteger bi1, BigInteger bi2)
         {
             return !(bi1.Equals(bi2));
         }
-
-
+        /// <summary>
+        /// Overriding equality method
+        /// </summary>
         public override bool Equals(object o)
         {
             BigInteger bi = (BigInteger)o;
@@ -979,18 +839,16 @@ namespace QBits.Intuition.Mathematics
             }
             return true;
         }
-
-
+        /// <summary>
+        /// Hashcode overload.
+        /// </summary>
         public override int GetHashCode()
         {
             return this.ToString().GetHashCode();
         }
-
-
-        //***********************************************************************
-        // Overloading of inequality operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading greater-than operator
+        /// </summary>
         public static bool operator >(BigInteger bi1, BigInteger bi2)
         {
             int pos = maxLength - 1;
@@ -1015,8 +873,9 @@ namespace QBits.Intuition.Mathematics
             }
             return false;
         }
-
-
+        /// <summary>
+        /// Overriding less-than operator
+        /// </summary>
         public static bool operator <(BigInteger bi1, BigInteger bi2)
         {
             int pos = maxLength - 1;
@@ -1041,29 +900,29 @@ namespace QBits.Intuition.Mathematics
             }
             return false;
         }
-
-
+        /// <summary>
+        /// Overloading greater-than-or-equal-to operator
+        /// </summary>
         public static bool operator >=(BigInteger bi1, BigInteger bi2)
         {
             return (bi1 == bi2 || bi1 > bi2);
         }
-
-
+        /// <summary>
+        /// Overloading less-than-or-equal-to operator
+        /// </summary>
         public static bool operator <=(BigInteger bi1, BigInteger bi2)
         {
             return (bi1 == bi2 || bi1 < bi2);
         }
-
-
-        //***********************************************************************
-        // Private function that supports the division of two numbers with
-        // a divisor that has more than 1 digit.
-        //
-        // Algorithm taken from [1]
-        //***********************************************************************
-
-        private static void multiByteDivide(BigInteger bi1, BigInteger bi2,
-                                            BigInteger outQuotient, BigInteger outRemainder)
+        /// <summary>
+        /// Private function that supports the division of two numbers with a divisor that has more than 1 digit.
+        /// Algorithm taken from [1]
+        /// </summary>
+        /// <param name="bi1"></param>
+        /// <param name="bi2"></param>
+        /// <param name="outQuotient"></param>
+        /// <param name="outRemainder"></param>
+        private static void MultiByteDivide(BigInteger bi1, BigInteger bi2, BigInteger outQuotient, BigInteger outRemainder)
         {
             uint[] result = new uint[maxLength];
 
@@ -1079,21 +938,10 @@ namespace QBits.Intuition.Mathematics
                 shift++; mask >>= 1;
             }
 
-            //Console.WriteLine("shift = {0}", shift);
-            //Console.WriteLine("Before bi1 Len = {0}, bi2 Len = {1}", bi1.dataLength, bi2.dataLength);
-
             for (int i = 0; i < bi1.dataLength; i++)
                 remainder[i] = bi1.data[i];
-            shiftLeft(remainder, shift);
+            ShiftLeft(remainder, shift);
             bi2 = bi2 << shift;
-
-            /*
-            Console.WriteLine("bi1 Len = {0}, bi2 Len = {1}", bi1.dataLength, bi2.dataLength);
-            Console.WriteLine("dividend = " + bi1 + "\ndivisor = " + bi2);
-            for(int q = remainderLen - 1; q >= 0; q--)
-                    Console.Write("{0:x2}", remainder[q]);
-            Console.WriteLine();
-            */
 
             int j = remainderLen - bi2.dataLength;
             int pos = remainderLen - 1;
@@ -1107,12 +955,9 @@ namespace QBits.Intuition.Mathematics
             while (j > 0)
             {
                 ulong dividend = ((ulong)remainder[pos] << 32) + (ulong)remainder[pos - 1];
-                //Console.WriteLine("dividend = {0}", dividend);
 
                 ulong q_hat = dividend / firstDivisorByte;
                 ulong r_hat = dividend % firstDivisorByte;
-
-                //Console.WriteLine("q_hat = {0:X}, r_hat = {1:X}", q_hat, r_hat);
 
                 bool done = false;
                 while (!done)
@@ -1136,28 +981,15 @@ namespace QBits.Intuition.Mathematics
                 BigInteger kk = new BigInteger(dividendPart);
                 BigInteger ss = bi2 * (long)q_hat;
 
-                //Console.WriteLine("ss before = " + ss);
                 while (ss > kk)
                 {
                     q_hat--;
                     ss -= bi2;
-                    //Console.WriteLine(ss);
                 }
                 BigInteger yy = kk - ss;
 
-                //Console.WriteLine("ss = " + ss);
-                //Console.WriteLine("kk = " + kk);
-                //Console.WriteLine("yy = " + yy);
-
                 for (int h = 0; h < divisorLen; h++)
                     remainder[pos - h] = yy.data[bi2.dataLength - h];
-
-                /*
-                Console.WriteLine("dividend = ");
-                for(int q = remainderLen - 1; q >= 0; q--)
-                        Console.Write("{0:x2}", remainder[q]);
-                Console.WriteLine("\n************ q_hat = {0:X}\n", q_hat);
-                */
 
                 result[resultPos++] = (uint)q_hat;
 
@@ -1178,27 +1010,27 @@ namespace QBits.Intuition.Mathematics
             if (outQuotient.dataLength == 0)
                 outQuotient.dataLength = 1;
 
-            outRemainder.dataLength = shiftRight(remainder, shift);
+            outRemainder.dataLength = ShiftRight(remainder, shift);
 
             for (y = 0; y < outRemainder.dataLength; y++)
                 outRemainder.data[y] = remainder[y];
             for (; y < maxLength; y++)
                 outRemainder.data[y] = 0;
         }
-
-
-        //***********************************************************************
-        // Private function that supports the division of two numbers with
-        // a divisor that has only 1 digit.
-        //***********************************************************************
-
-        private static void singleByteDivide(BigInteger bi1, BigInteger bi2,
+        /// <summary>
+        /// Private function that supports the division of two numbers with a divisor that has only 1 digit.
+        /// </summary>
+        /// <param name="bi1"></param>
+        /// <param name="bi2"></param>
+        /// <param name="outQuotient"></param>
+        /// <param name="outRemainder"></param>
+        private static void SingleByteDivide(BigInteger bi1, BigInteger bi2,
                                              BigInteger outQuotient, BigInteger outRemainder)
         {
             uint[] result = new uint[maxLength];
             int resultPos = 0;
 
-            // copy dividend to reminder
+            // copy dividend to remainder
             for (int i = 0; i < maxLength; i++)
                 outRemainder.data[i] = bi1.data[i];
             outRemainder.dataLength = bi1.dataLength;
@@ -1209,9 +1041,6 @@ namespace QBits.Intuition.Mathematics
             ulong divisor = (ulong)bi2.data[0];
             int pos = outRemainder.dataLength - 1;
             ulong dividend = (ulong)outRemainder.data[pos];
-
-            //Console.WriteLine("divisor = " + divisor + " dividend = " + dividend);
-            //Console.WriteLine("divisor = " + bi2 + "\ndividend = " + bi1);
 
             if (dividend >= divisor)
             {
@@ -1224,15 +1053,12 @@ namespace QBits.Intuition.Mathematics
 
             while (pos >= 0)
             {
-                //Console.WriteLine(pos);
-
                 dividend = ((ulong)outRemainder.data[pos + 1] << 32) + (ulong)outRemainder.data[pos];
                 ulong quotient = dividend / divisor;
                 result[resultPos++] = (uint)quotient;
 
                 outRemainder.data[pos + 1] = 0;
                 outRemainder.data[pos--] = (uint)(dividend % divisor);
-                //Console.WriteLine(">>>> " + bi1);
             }
 
             outQuotient.dataLength = resultPos;
@@ -1251,12 +1077,9 @@ namespace QBits.Intuition.Mathematics
             while (outRemainder.dataLength > 1 && outRemainder.data[outRemainder.dataLength - 1] == 0)
                 outRemainder.dataLength--;
         }
-
-
-        //***********************************************************************
-        // Overloading of division operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of division operator
+        /// </summary>
         public static BigInteger operator /(BigInteger bi1, BigInteger bi2)
         {
             BigInteger quotient = new BigInteger();
@@ -1280,13 +1103,12 @@ namespace QBits.Intuition.Mathematics
             {
                 return quotient;
             }
-
             else
             {
                 if (bi2.dataLength == 1)
-                    singleByteDivide(bi1, bi2, quotient, remainder);
+                    SingleByteDivide(bi1, bi2, quotient, remainder);
                 else
-                    multiByteDivide(bi1, bi2, quotient, remainder);
+                    MultiByteDivide(bi1, bi2, quotient, remainder);
 
                 if (dividendNeg != divisorNeg)
                     return -quotient;
@@ -1294,12 +1116,9 @@ namespace QBits.Intuition.Mathematics
                 return quotient;
             }
         }
-
-
-        //***********************************************************************
-        // Overloading of modulus operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of modulus operator
+        /// </summary>
         public static BigInteger operator %(BigInteger bi1, BigInteger bi2)
         {
             BigInteger quotient = new BigInteger();
@@ -1324,9 +1143,9 @@ namespace QBits.Intuition.Mathematics
             else
             {
                 if (bi2.dataLength == 1)
-                    singleByteDivide(bi1, bi2, quotient, remainder);
+                    SingleByteDivide(bi1, bi2, quotient, remainder);
                 else
-                    multiByteDivide(bi1, bi2, quotient, remainder);
+                    MultiByteDivide(bi1, bi2, quotient, remainder);
 
                 if (dividendNeg)
                     return -remainder;
@@ -1334,12 +1153,9 @@ namespace QBits.Intuition.Mathematics
                 return remainder;
             }
         }
-
-
-        //***********************************************************************
-        // Overloading of bitwise AND operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of bitwise AND operator
+        /// </summary>
         public static BigInteger operator &(BigInteger bi1, BigInteger bi2)
         {
             BigInteger result = new BigInteger();
@@ -1359,12 +1175,9 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of bitwise OR operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of bitwise OR operator
+        /// </summary>
         public static BigInteger operator |(BigInteger bi1, BigInteger bi2)
         {
             BigInteger result = new BigInteger();
@@ -1384,12 +1197,9 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-        //***********************************************************************
-        // Overloading of bitwise XOR operator
-        //***********************************************************************
-
+        /// <summary>
+        /// Overloading of bitwise XOR operator
+        /// </summary>
         public static BigInteger operator ^(BigInteger bi1, BigInteger bi2)
         {
             BigInteger result = new BigInteger();
@@ -1409,75 +1219,56 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-        //***********************************************************************
-        // Returns max(this, bi)
-        //***********************************************************************
-
-        public BigInteger max(BigInteger bi)
+        /// <summary>
+        /// Returns max(this, bi)
+        /// </summary>
+        /// <param name="bi">Number to compare with</param>
+        public BigInteger Max(BigInteger bi)
         {
             if (this > bi)
                 return (new BigInteger(this));
             else
                 return (new BigInteger(bi));
         }
-
-
-        //***********************************************************************
-        // Returns min(this, bi)
-        //***********************************************************************
-
-        public BigInteger min(BigInteger bi)
+        /// <summary>
+        /// Returns min(this, bi)
+        /// </summary>
+        /// <param name="bi">Number to compare with</param>
+        public BigInteger Min(BigInteger bi)
         {
             if (this < bi)
                 return (new BigInteger(this));
             else
                 return (new BigInteger(bi));
-
         }
-
-
-        //***********************************************************************
-        // Returns the absolute value
-        //***********************************************************************
-
-        public BigInteger abs()
+        /// <summary>
+        /// Returns the absolute value
+        /// </summary>
+        public BigInteger Abs()
         {
             if ((this.data[maxLength - 1] & 0x80000000) != 0)
                 return (-this);
             else
                 return (new BigInteger(this));
         }
-
-
-        //***********************************************************************
-        // Returns a string representing the BigInteger in base 10.
-        //***********************************************************************
-
+        /// <summary>
+        /// Returns a string representing the BigInteger in base 10.
+        /// </summary>
         public override string ToString()
         {
             return ToString(10);
         }
-
-
-        //***********************************************************************
-        // Returns a string representing the BigInteger in sign-and-magnitude
-        // format in the specified radix.
-        //
-        // Example
-        // -------
-        // If the value of BigInteger is -255 in base 10, then
-        // ToString(16) returns "-FF"
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Returns a string representing the BigInteger in sign-and-magnitude format in the specified radix.
+        /// Example: If the value of BigInteger is -255 in base 10, then ToString(16) returns "-FF"
+        /// </summary>
         public string ToString(int radix)
         {
             if (radix < 2 || radix > 36)
                 throw (new ArgumentException("Radix must be >= 2 and <= 36"));
 
             string charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string result = "";
+            StringBuilder result = new StringBuilder();
 
             BigInteger a = this;
 
@@ -1497,52 +1288,41 @@ namespace QBits.Intuition.Mathematics
             BigInteger biRadix = new BigInteger(radix);
 
             if (a.dataLength == 1 && a.data[0] == 0)
-                result = "0";
+                result.Append("0");
             else
             {
                 while (a.dataLength > 1 || (a.dataLength == 1 && a.data[0] != 0))
                 {
-                    singleByteDivide(a, biRadix, quotient, remainder);
+                    SingleByteDivide(a, biRadix, quotient, remainder);
 
                     if (remainder.data[0] < 10)
-                        result = remainder.data[0] + result;
+                        result.Insert(0, remainder.data[0]);
                     else
-                        result = charSet[(int)remainder.data[0] - 10] + result;
+                        result.Insert(0, charSet[(int)remainder.data[0] - 10]);
 
                     a = quotient;
                 }
-                if (negative)
-                    result = "-" + result;
+                if (negative) result.Insert(0, "-");
             }
-
-            return result;
+            return result.ToString();
         }
-
-
-        //***********************************************************************
-        // Returns a hex string showing the contains of the BigInteger
-        //
-        // Examples
-        // -------
-        // 1) If the value of BigInteger is 255 in base 10, then
-        //    ToHexString() returns "FF"
-        //
-        // 2) If the value of BigInteger is -255 in base 10, then
-        //    ToHexString() returns ".....FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01",
-        //    which is the 2's complement representation of -255.
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Returns a hex string showing the contains of the BigInteger
+        ///
+        /// Examples
+        /// 1) If the value of BigInteger is 255 in base 10, then ToHexString() returns "FF"
+        /// 2) If the value of BigInteger is -255 in base 10, then ToHexString() returns ".....FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01",
+        ///    which is the 2's complement representation of -255.
+        /// </summary>
         public string ToHexString()
         {
-            string result = data[dataLength - 1].ToString("X");
+            StringBuilder result = new StringBuilder(data[dataLength - 1].ToString("X"));
 
             for (int i = dataLength - 2; i >= 0; i--)
             {
-                result += data[i].ToString("X8");
+                result.Append(data[i].ToString("X8"));
             }
-
-            return result;
+            return result.ToString();
         }
 
 
@@ -2610,9 +2390,9 @@ namespace QBits.Intuition.Mathematics
                 }
 
                 if (b.dataLength == 1)
-                    singleByteDivide(a, b, quotient, remainder);
+                    SingleByteDivide(a, b, quotient, remainder);
                 else
-                    multiByteDivide(a, b, quotient, remainder);
+                    MultiByteDivide(a, b, quotient, remainder);
 
                 /*
                 Console.WriteLine(quotient.dataLength);

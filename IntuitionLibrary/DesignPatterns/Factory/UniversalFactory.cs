@@ -14,7 +14,14 @@ namespace QBits.Intuition.DesignPatterns.Factory
     /// <typeparam name="classBase"></typeparam>
     public class UniversalFactory<classKey, classBase>
     {
+        /// <summary>
+        /// Signature of a method that can create instances of a specified object.
+        /// </summary>
+        /// <returns></returns>
         public delegate classBase ctor();
+        /// <summary>
+        /// Singleton instance of <see cref="UniversalFactory{classKey, classBase}"/>
+        /// </summary>
         public static UniversalFactory<classKey, classBase> SAP
         {
             get

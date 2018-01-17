@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using EulerProblems;
 using EulerProblems.Problems;
+using QBits.Intuition.Mathematics;
 
 namespace EulerStarter
 {
@@ -27,6 +28,12 @@ namespace EulerStarter
             var classLoader = new ProblemSolverClassLoader();
             var solvers = classLoader.LoadProblemSolvers();
             CreateButtonsForSolvers(solvers);
+            //Test BigInteger
+            BigInteger bi = 77795551;
+            var p = bi.ToString();
+            var h = bi.ToHexString();
+            var test = ~bi;
+            var test2 = -bi;
         }
 
         private void CreateButtonsForSolvers(IEnumerable<SolverInfo> solvers)
