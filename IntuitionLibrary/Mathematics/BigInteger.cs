@@ -1282,7 +1282,7 @@ namespace QBits.Intuition.Mathematics
             constant.dataLength = i + 1;
 
             constant = constant / n;
-            int totalBits = exp.bitCount();
+            int totalBits = exp.BitCount();
             int count = 0;
 
             // perform squaring and multiply exponentiation
@@ -1447,11 +1447,12 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public uint Sign => (data[maxIndex] & signMask);
 
-        //***********************************************************************
-        // Populates "this" with the specified amount of random bits
-        //***********************************************************************
-
-        public void genRandomBits(int bits, Random rand)
+        /// <summary>
+        /// Populates "this" with the specified amount of random bits
+        /// </summary>
+        /// <param name="bits"></param>
+        /// <param name="rand"></param>
+        public void GenRandomBits(int bits, Random rand)
         {
             int dwords = bits >> 5;
             int remBits = bits & 0x1F;
@@ -1484,22 +1485,17 @@ namespace QBits.Intuition.Mathematics
             if (dataLength == 0)
                 dataLength = 1;
         }
-
-
-        //***********************************************************************
-        // Returns the position of the most significant bit in the BigInteger.
-        //
-        // Eg.  The result is 0, if the value of BigInteger is 0...0000 0000
-        //      The result is 1, if the value of BigInteger is 0...0000 0001
-        //      The result is 2, if the value of BigInteger is 0...0000 0010
-        //      The result is 2, if the value of BigInteger is 0...0000 0011
-        //
-        //***********************************************************************
-
-        public int bitCount()
+        /// <summary>
+        /// Returns the position of the most significant bit in the BigInteger.
+        ///
+        /// Eg.  The result is 0, if the value of BigInteger is 0...0000 0000
+        ///      The result is 1, if the value of BigInteger is 0...0000 0001
+        ///      The result is 2, if the value of BigInteger is 0...0000 0010
+        ///      The result is 2, if the value of BigInteger is 0...0000 0011
+        /// </summary>
+        public int BitCount()
         {
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            FixDataLength();
 
             uint value = data[dataLength - 1];
             uint mask = 0x80000000;
@@ -1514,33 +1510,27 @@ namespace QBits.Intuition.Mathematics
 
             return bits;
         }
-
-
-        //***********************************************************************
-        // Probabilistic prime test based on Fermat's little theorem
-        //
-        // for any a < p (p does not divide a) if
-        //      a^(p-1) mod p != 1 then p is not prime.
-        //
-        // Otherwise, p is probably prime (pseudoprime to the chosen base).
-        //
-        // Returns
-        // -------
-        // True if "this" is a pseudoprime to randomly chosen
-        // bases.  The number of chosen bases is given by the "confidence"
-        // parameter.
-        //
-        // False if "this" is definitely NOT prime.
-        //
-        // Note - this method is fast but fails for Carmichael numbers except
-        // when the randomly chosen base is a factor of the number.
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Probabilistic prime test based on Fermat's little theorem
+        ///
+        /// for any a &lt; p (p does not divide a) if
+        ///      a^(p-1) mod p != 1 then p is not prime.
+        ///
+        /// Otherwise, p is probably prime (pseudoprime to the chosen base).
+        ///
+        /// Note - this method is fast but fails for Carmichael numbers except
+        /// when the randomly chosen base is a factor of the number.
+        ///
+        /// Note - this method is fast but fails for Carmichael numbers except
+        /// when the randomly chosen base is a factor of the number.
+        /// </summary>
+        /// <param name="confidence"></param>
+        /// <returns>True if "this" is a pseudoprime to randomly chosen bases. The number of chosen bases is given by the <paramref name="confidence"/>.
+        /// False if "this" is definitely NOT prime.</returns>
         public bool FermatLittleTest(int confidence)
         {
             BigInteger thisVal;
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)        // negative
+            if (this.IsNegative)
                 thisVal = -this;
             else
                 thisVal = this;
@@ -1557,7 +1547,7 @@ namespace QBits.Intuition.Mathematics
             if ((thisVal.data[0] & 0x1) == 0)     // even numbers
                 return false;
 
-            int bits = thisVal.bitCount();
+            int bits = thisVal.BitCount();
             BigInteger a = new BigInteger();
             BigInteger p_sub1 = thisVal - (new BigInteger(1));
             Random rand = new Random();
@@ -1574,7 +1564,7 @@ namespace QBits.Intuition.Mathematics
                     while (testBits < 2)
                         testBits = (int)(rand.NextDouble() * bits);
 
-                    a.genRandomBits(testBits, rand);
+                    a.GenRandomBits(testBits, rand);
 
                     int byteLen = a.dataLength;
 
@@ -1606,31 +1596,21 @@ namespace QBits.Intuition.Mathematics
         }
 
 
-        //***********************************************************************
-        // Probabilistic prime test based on Rabin-Miller's
-        //
-        // for any p > 0 with p - 1 = 2^s * t
-        //
-        // p is probably prime (strong pseudoprime) if for any a < p,
-        // 1) a^t mod p = 1 or
-        // 2) a^((2^j)*t) mod p = p-1 for some 0 <= j <= s-1
-        //
-        // Otherwise, p is composite.
-        //
-        // Returns
-        // -------
-        // True if "this" is a strong pseudoprime to randomly chosen
-        // bases.  The number of chosen bases is given by the "confidence"
-        // parameter.
-        //
-        // False if "this" is definitely NOT prime.
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Probabilistic prime test based on Rabin-Miller's
+        /// for any p > 0 with p - 1 = 2^s * t
+        /// p is probably prime (strong pseudoprime) if for any a &lt; p,
+        /// 1) a^t mod p = 1 or
+        /// 2) a^((2^j)*t) mod p = p-1 for some 0 &lt;= j &lt;= s-1
+        ///
+        /// Otherwise, p is composite.
+        /// </summary>
+        /// <param name="confidence"></param>
+        /// <returns>True if "this" is a strong pseudoprime to randomly chosen bases. The number of chosen bases is given by the "confidence" parameter. False if "this" is definitely NOT prime.</returns>
         public bool RabinMillerTest(int confidence)
         {
             BigInteger thisVal;
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)        // negative
+            if (this.IsNegative)
                 thisVal = -this;
             else
                 thisVal = this;
@@ -1646,7 +1626,6 @@ namespace QBits.Intuition.Mathematics
 
             if ((thisVal.data[0] & 0x1) == 0)     // even numbers
                 return false;
-
 
             // calculate values of s and t
             BigInteger p_sub1 = thisVal - (new BigInteger(1));
@@ -1670,7 +1649,7 @@ namespace QBits.Intuition.Mathematics
 
             BigInteger t = p_sub1 >> s;
 
-            int bits = thisVal.bitCount();
+            int bits = thisVal.BitCount();
             BigInteger a = new BigInteger();
             Random rand = new Random();
 
@@ -1686,7 +1665,7 @@ namespace QBits.Intuition.Mathematics
                     while (testBits < 2)
                         testBits = (int)(rand.NextDouble() * bits);
 
-                    a.genRandomBits(testBits, rand);
+                    a.GenRandomBits(testBits, rand);
 
                     int byteLen = a.dataLength;
 
@@ -1701,13 +1680,6 @@ namespace QBits.Intuition.Mathematics
                     return false;
 
                 BigInteger b = a.ModPow(t, thisVal);
-
-                /*
-                Console.WriteLine("a = " + a.ToString(10));
-                Console.WriteLine("b = " + b.ToString(10));
-                Console.WriteLine("t = " + t.ToString(10));
-                Console.WriteLine("s = " + s);
-                */
 
                 bool result = false;
 
@@ -1773,7 +1745,7 @@ namespace QBits.Intuition.Mathematics
                 return false;
 
 
-            int bits = thisVal.bitCount();
+            int bits = thisVal.BitCount();
             BigInteger a = new BigInteger();
             BigInteger p_sub1 = thisVal - 1;
             BigInteger p_sub1_shift = p_sub1 >> 1;
@@ -1792,7 +1764,7 @@ namespace QBits.Intuition.Mathematics
                     while (testBits < 2)
                         testBits = (int)(rand.NextDouble() * bits);
 
-                    a.genRandomBits(testBits, rand);
+                    a.GenRandomBits(testBits, rand);
 
                     int byteLen = a.dataLength;
 
@@ -2125,7 +2097,7 @@ namespace QBits.Intuition.Mathematics
 
             BigInteger t = p_sub1 >> s;
 
-            int bits = thisVal.bitCount();
+            int bits = thisVal.BitCount();
             BigInteger a = 2;
 
             // b = a^t mod p
@@ -2256,7 +2228,7 @@ namespace QBits.Intuition.Mathematics
 
             while (!done)
             {
-                result.genRandomBits(bits, rand);
+                result.GenRandomBits(bits, rand);
                 result.data[0] |= 0x01;		// make it odd
 
                 // prime test
@@ -2278,7 +2250,7 @@ namespace QBits.Intuition.Mathematics
 
             while (!done)
             {
-                result.genRandomBits(bits, rand);
+                result.GenRandomBits(bits, rand);
                 //Console.WriteLine(result.ToString(16));
 
                 // gcd test
@@ -2360,7 +2332,7 @@ namespace QBits.Intuition.Mathematics
 
         public byte[] getBytes()
         {
-            int numBits = bitCount();
+            int numBits = BitCount();
 
             int numBytes = numBits >> 3;
             if ((numBits & 0x7) != 0)
@@ -2451,7 +2423,7 @@ namespace QBits.Intuition.Mathematics
 
         public BigInteger sqrt()
         {
-            uint numBits = (uint)this.bitCount();
+            uint numBits = (uint)this.BitCount();
 
             if ((numBits & 0x1) != 0)        // odd number of bits
                 numBits = (numBits >> 1) + 1;
@@ -2587,7 +2559,7 @@ namespace QBits.Intuition.Mathematics
             if ((k.data[0] & 0x00000001) == 0)
                 throw (new ArgumentException("Argument k must be odd."));
 
-            int numbits = k.bitCount();
+            int numbits = k.BitCount();
             uint mask = (uint)0x1 << ((numbits & 0x1F) - 1);
 
             // v = v0, v1 = v1, u1 = u1, Q_k = Q^0
@@ -2946,7 +2918,7 @@ namespace QBits.Intuition.Mathematics
                 Console.Write("Round = " + count);
 
                 BigInteger a = new BigInteger();
-                a.genRandomBits(t1, rand);
+                a.GenRandomBits(t1, rand);
 
                 BigInteger b = a.sqrt();
                 BigInteger c = (b + 1) * (b + 1);
