@@ -112,40 +112,43 @@ namespace QBits.Intuition.Mathematics
     public class BigInteger
     {
         /// <summary>
-        /// Maximum length of the BigInteger in uint (4 bytes) change this to suit the required level of precision.
+        /// Maximum length of the BigInteger in uint (4 bytes). Change this to suit the required level of precision.
         /// Note that the larger the size, the more memory footprint and the slower the performance.
         /// </summary>
         private const int maxLength = 120;
         /// <summary>
+        /// Index to last uint in the BigInteger array.
+        /// </summary>
+        private const int maxIndex = maxLength - 1;
+        /// <summary>
+        /// Mask used to check for sign of BigInteger.
+        /// </summary>
+        private const uint signMask = 0x80000000;
+        /// <summary>
         /// primes smaller than 2000 to test the generated prime number
         /// </summary>
-        public static readonly int[] primesBelow2000 = {
-        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
-        101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199,
-        211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293,
-        307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397,
-        401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499,
-        503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599,
-        601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691,
-        701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797,
-        809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887,
-        907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997,
-        1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069, 1087, 1091, 1093, 1097,
-        1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181, 1187, 1193,
-        1201, 1213, 1217, 1223, 1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283, 1289, 1291, 1297,
-        1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373, 1381, 1399,
-        1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451, 1453, 1459, 1471, 1481, 1483, 1487, 1489, 1493, 1499,
-        1511, 1523, 1531, 1543, 1549, 1553, 1559, 1567, 1571, 1579, 1583, 1597,
-        1601, 1607, 1609, 1613, 1619, 1621, 1627, 1637, 1657, 1663, 1667, 1669, 1693, 1697, 1699,
-        1709, 1721, 1723, 1733, 1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789,
-        1801, 1811, 1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877, 1879, 1889,
-        1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999 };
+        public static readonly int[] primesBelow2000 = {        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
+            47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157,
+            163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271,
+            277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401,
+            409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541,
+            547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661,
+            673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821,
+            823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967,
+            971, 977, 983, 991, 997, 1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069, 1087,
+            1091, 1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213,
+            1217, 1223, 1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283, 1289, 1291, 1297, 1301, 1303, 1307, 1319, 1321,
+            1327, 1361, 1367, 1373, 1381, 1399, 1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451, 1453, 1459, 1471, 1481,
+            1483, 1487, 1489, 1493, 1499, 1511, 1523, 1531, 1543, 1549, 1553, 1559, 1567, 1571, 1579, 1583, 1597, 1601,
+            1607, 1609, 1613, 1619, 1621, 1627, 1637, 1657, 1663, 1667, 1669, 1693, 1697, 1699, 1709, 1721, 1723, 1733,
+            1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811, 1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877,
+            1879, 1889, 1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999 };
 
         private uint[] data = null;             // stores bytes from the Big Integer
         /// <summary>
         /// Number of actual chars used
         /// </summary>
-        public int dataLength;
+        private int dataLength;
         /// <summary>
         /// Constructor (Default value for BigInteger is 0)
         /// </summary>
@@ -174,15 +177,14 @@ namespace QBits.Intuition.Mathematics
 
             if (tempVal > 0)         // overflow check for +ve value
             {
-                if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
+                if (value != 0 || this.IsNegative)
                     throw (new ArithmeticException("Positive overflow in constructor."));
             }
             else if (tempVal < 0)    // underflow check for -ve value
             {
-                if (value != -1 || (data[dataLength - 1] & 0x80000000) == 0)
+                if (value != -1 || this.IsPositive)
                     throw (new ArithmeticException("Negative underflow in constructor."));
             }
-
             if (dataLength == 0) dataLength = 1; //Min length must be 1
         }
         /// <summary>
@@ -201,7 +203,7 @@ namespace QBits.Intuition.Mathematics
                 dataLength++;
             }
 
-            if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
+            if (value != 0 || this.IsNegative)
                 throw (new ArithmeticException("Positive overflow in constructor."));
 
             if (dataLength == 0) dataLength = 1; //Min length must be 1
@@ -255,7 +257,7 @@ namespace QBits.Intuition.Mathematics
                 else if (posVal >= 'A' && posVal <= 'Z')
                     posVal = (posVal - 'A') + 10;
                 else
-                    posVal = 9999999;       // arbitrary large
+                    posVal = 9999999;       // arbitrarily large
 
 
                 if (posVal >= radix)
@@ -274,12 +276,12 @@ namespace QBits.Intuition.Mathematics
 
             if (value[0] == '-')     // negative values
             {
-                if ((result.data[maxLength - 1] & 0x80000000) == 0)
+                if (result.IsPositive)
                     throw (new ArithmeticException("Negative underflow in constructor."));
             }
             else    // positive values
             {
-                if ((result.data[maxLength - 1] & 0x80000000) != 0)
+                if (result.IsNegative)
                     throw (new ArithmeticException("Positive overflow in constructor."));
             }
 
@@ -329,9 +331,7 @@ namespace QBits.Intuition.Mathematics
             else if (leftOver == 3)
                 data[dataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
 
-
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            FixDataLength();
         }
         /// <summary>
         /// Constructor (Default value provided by an array of bytes of the specified length.)
@@ -364,9 +364,7 @@ namespace QBits.Intuition.Mathematics
 
             if (dataLength == 0)
                 dataLength = 1;
-
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            FixDataLength();
         }
         /// <summary>
         /// Constructor (Default value provided by an array of unsigned integers)
@@ -383,37 +381,24 @@ namespace QBits.Intuition.Mathematics
             for (int i = dataLength - 1, j = 0; i >= 0; i--, j++)
                 data[j] = inData[i];
 
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            FixDataLength();
         }
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(long value)
-        {
-            return (new BigInteger(value));
-        }
+        public static implicit operator BigInteger(long value) => (new BigInteger(value));
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(ulong value)
-        {
-            return (new BigInteger(value));
-        }
+        public static implicit operator BigInteger(ulong value) => (new BigInteger(value));
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(int value)
-        {
-            return (new BigInteger((long)value));
-        }
+        public static implicit operator BigInteger(int value) => (new BigInteger((long)value));
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(uint value)
-        {
-            return (new BigInteger((ulong)value));
-        }
+        public static implicit operator BigInteger(uint value) => (new BigInteger((ulong)value));
         /// <summary>
         /// Overloading of addition operator
         /// </summary>
@@ -438,13 +423,11 @@ namespace QBits.Intuition.Mathematics
                 result.dataLength++;
             }
 
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
+            result.FixDataLength();
 
             // overflow check
-            int lastPos = maxLength - 1;
-            if ((bi1.data[lastPos] & 0x80000000) == (bi2.data[lastPos] & 0x80000000) &&
-               (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+            if (bi1.Sign == bi2.Sign &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException());
             }
@@ -475,16 +458,12 @@ namespace QBits.Intuition.Mathematics
                 result.dataLength = index;
             else
             {
-                while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                    result.dataLength--;
+                result.FixDataLength();
             }
 
-            // overflow check
-            int lastPos = maxLength - 1;
-
             // overflow if initial value was +ve but ++ caused a sign change to negative.
-            if ((bi1.data[lastPos] & 0x80000000) == 0 &&
-               (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+            if (bi1.IsPositive &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException("Overflow in ++."));
             }
@@ -523,13 +502,11 @@ namespace QBits.Intuition.Mathematics
             }
 
             // fixed in v1.03 to give correct datalength for a - (-b)
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
+            result.FixDataLength();
 
             // overflow check
-            int lastPos = maxLength - 1;
-            if ((bi1.data[lastPos] & 0x80000000) != (bi2.data[lastPos] & 0x80000000) &&
-               (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+            if (bi1.Sign != bi2.Sign &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException());
             }
@@ -562,16 +539,11 @@ namespace QBits.Intuition.Mathematics
             if (index > result.dataLength)
                 result.dataLength = index;
 
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
-
-            // overflow check
-            int lastPos = maxLength - 1;
+            result.FixDataLength();
 
             // overflow if initial value was -ve but -- caused a sign change to positive.
-
-            if ((bi1.data[lastPos] & 0x80000000) != 0 &&
-               (result.data[lastPos] & 0x80000000) != (bi1.data[lastPos] & 0x80000000))
+            if (bi1.IsNegative &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException("Underflow in --."));
             }
@@ -588,11 +560,11 @@ namespace QBits.Intuition.Mathematics
             // take the absolute value of the inputs
             try
             {
-                if ((bi1.data[lastPos] & 0x80000000) != 0)     // bi1 negative
+                if (bi1.IsNegative)
                 {
                     bi1Neg = true; bi1 = -bi1;
                 }
-                if ((bi2.data[lastPos] & 0x80000000) != 0)     // bi2 negative
+                if (bi2.IsNegative)
                 {
                     bi2Neg = true; bi2 = -bi2;
                 }
@@ -632,16 +604,14 @@ namespace QBits.Intuition.Mathematics
             if (result.dataLength > maxLength)
                 result.dataLength = maxLength;
 
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
+            result.FixDataLength();
 
             // overflow check (result is -ve)
-            if ((result.data[lastPos] & 0x80000000) != 0)
+            if (result.IsNegative)
             {
                 if (bi1Neg != bi2Neg && result.data[lastPos] == 0x80000000)    // different sign
                 {
                     // handle the special case where multiplication produces a max negative number in 2's complement.
-
                     if (result.dataLength == 1)
                         return result;
                     else
@@ -657,7 +627,6 @@ namespace QBits.Intuition.Mathematics
                             return result;
                     }
                 }
-
                 throw (new ArithmeticException("Multiplication overflow."));
             }
 
@@ -723,9 +692,9 @@ namespace QBits.Intuition.Mathematics
             BigInteger result = new BigInteger(bi1);
             result.dataLength = ShiftRight(result.data, shiftVal);
 
-            if ((bi1.data[maxLength - 1] & 0x80000000) != 0) // negative
+            if (bi1.IsNegative)
             {
-                for (int i = maxLength - 1; i >= result.dataLength; i--)
+                for (int i = maxIndex; i >= result.dataLength; i--)
                     result.data[i] = 0xFFFFFFFF;
 
                 uint mask = 0x80000000;
@@ -774,8 +743,7 @@ namespace QBits.Intuition.Mathematics
                 count -= shiftAmount;
             }
 
-            while (bufLen > 1 && buffer[bufLen - 1] == 0)
-                bufLen--;
+            while (bufLen > 1 && buffer[bufLen - 1] == 0) bufLen--;
 
             return bufLen;
         }
@@ -790,10 +758,7 @@ namespace QBits.Intuition.Mathematics
                 result.data[i] = (uint)(~(bi1.data[i]));
 
             result.dataLength = maxLength;
-
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
-
+            result.FixDataLength();
             return result;
         }
         /// <summary>
@@ -811,17 +776,11 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Overloading of equality operator
         /// </summary>
-        public static bool operator ==(BigInteger bi1, BigInteger bi2)
-        {
-            return bi1.Equals(bi2);
-        }
+        public static bool operator ==(BigInteger bi1, BigInteger bi2) => bi1.Equals(bi2);
         /// <summary>
         /// Overloading inequality operator
         /// </summary>
-        public static bool operator !=(BigInteger bi1, BigInteger bi2)
-        {
-            return !(bi1.Equals(bi2));
-        }
+        public static bool operator !=(BigInteger bi1, BigInteger bi2) => !(bi1.Equals(bi2));
         /// <summary>
         /// Overriding equality method
         /// </summary>
@@ -842,26 +801,17 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Hashcode overload.
         /// </summary>
-        public override int GetHashCode()
-        {
-            return this.ToString().GetHashCode();
-        }
+        public override int GetHashCode() => this.ToString().GetHashCode();
         /// <summary>
         /// Overloading greater-than operator
         /// </summary>
         public static bool operator >(BigInteger bi1, BigInteger bi2)
         {
-            int pos = maxLength - 1;
-
-            // bi1 is negative, bi2 is positive
-            if ((bi1.data[pos] & 0x80000000) != 0 && (bi2.data[pos] & 0x80000000) == 0)
-                return false;
-
-                // bi1 is positive, bi2 is negative
-            else if ((bi1.data[pos] & 0x80000000) == 0 && (bi2.data[pos] & 0x80000000) != 0)
-                return true;
+            if (bi1.IsNegative && bi2.IsPositive) return false;
+            if (bi1.IsPositive && bi2.IsNegative) return true;
 
             // same sign
+            int pos;
             int len = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
             for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
 
@@ -878,17 +828,12 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public static bool operator <(BigInteger bi1, BigInteger bi2)
         {
-            int pos = maxLength - 1;
 
-            // bi1 is negative, bi2 is positive
-            if ((bi1.data[pos] & 0x80000000) != 0 && (bi2.data[pos] & 0x80000000) == 0)
-                return true;
-
-                // bi1 is positive, bi2 is negative
-            else if ((bi1.data[pos] & 0x80000000) == 0 && (bi2.data[pos] & 0x80000000) != 0)
-                return false;
+            if (bi1.IsNegative && bi2.IsPositive) return true;
+            if (bi1.IsPositive && bi2.IsNegative) return false;
 
             // same sign
+            int pos;
             int len = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
             for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
 
@@ -903,17 +848,11 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Overloading greater-than-or-equal-to operator
         /// </summary>
-        public static bool operator >=(BigInteger bi1, BigInteger bi2)
-        {
-            return (bi1 == bi2 || bi1 > bi2);
-        }
+        public static bool operator >=(BigInteger bi1, BigInteger bi2) => (bi1 == bi2 || bi1 > bi2);
         /// <summary>
         /// Overloading less-than-or-equal-to operator
         /// </summary>
-        public static bool operator <=(BigInteger bi1, BigInteger bi2)
-        {
-            return (bi1 == bi2 || bi1 < bi2);
-        }
+        public static bool operator <=(BigInteger bi1, BigInteger bi2) => (bi1 == bi2 || bi1 < bi2);
         /// <summary>
         /// Private function that supports the division of two numbers with a divisor that has more than 1 digit.
         /// Algorithm taken from [1]
@@ -1004,8 +943,7 @@ namespace QBits.Intuition.Mathematics
             for (; y < maxLength; y++)
                 outQuotient.data[y] = 0;
 
-            while (outQuotient.dataLength > 1 && outQuotient.data[outQuotient.dataLength - 1] == 0)
-                outQuotient.dataLength--;
+            outQuotient.FixDataLength();
 
             if (outQuotient.dataLength == 0)
                 outQuotient.dataLength = 1;
@@ -1035,8 +973,7 @@ namespace QBits.Intuition.Mathematics
                 outRemainder.data[i] = bi1.data[i];
             outRemainder.dataLength = bi1.dataLength;
 
-            while (outRemainder.dataLength > 1 && outRemainder.data[outRemainder.dataLength - 1] == 0)
-                outRemainder.dataLength--;
+            outRemainder.FixDataLength();
 
             ulong divisor = (ulong)bi2.data[0];
             int pos = outRemainder.dataLength - 1;
@@ -1068,14 +1005,12 @@ namespace QBits.Intuition.Mathematics
             for (; j < maxLength; j++)
                 outQuotient.data[j] = 0;
 
-            while (outQuotient.dataLength > 1 && outQuotient.data[outQuotient.dataLength - 1] == 0)
-                outQuotient.dataLength--;
+            outQuotient.FixDataLength();
 
             if (outQuotient.dataLength == 0)
                 outQuotient.dataLength = 1;
 
-            while (outRemainder.dataLength > 1 && outRemainder.data[outRemainder.dataLength - 1] == 0)
-                outRemainder.dataLength--;
+            outRemainder.FixDataLength();
         }
         /// <summary>
         /// Overloading of division operator
@@ -1085,15 +1020,14 @@ namespace QBits.Intuition.Mathematics
             BigInteger quotient = new BigInteger();
             BigInteger remainder = new BigInteger();
 
-            int lastPos = maxLength - 1;
             bool divisorNeg = false, dividendNeg = false;
 
-            if ((bi1.data[lastPos] & 0x80000000) != 0)     // bi1 negative
+            if (bi1.IsNegative)
             {
                 bi1 = -bi1;
                 dividendNeg = true;
             }
-            if ((bi2.data[lastPos] & 0x80000000) != 0)     // bi2 negative
+            if (bi2.IsNegative)
             {
                 bi2 = -bi2;
                 divisorNeg = true;
@@ -1124,15 +1058,14 @@ namespace QBits.Intuition.Mathematics
             BigInteger quotient = new BigInteger();
             BigInteger remainder = new BigInteger(bi1);
 
-            int lastPos = maxLength - 1;
             bool dividendNeg = false;
 
-            if ((bi1.data[lastPos] & 0x80000000) != 0)     // bi1 negative
+            if (bi1.IsNegative)
             {
                 bi1 = -bi1;
                 dividendNeg = true;
             }
-            if ((bi2.data[lastPos] & 0x80000000) != 0)     // bi2 negative
+            if (bi2.IsNegative)
                 bi2 = -bi2;
 
             if (bi1 < bi2)
@@ -1169,9 +1102,7 @@ namespace QBits.Intuition.Mathematics
             }
 
             result.dataLength = maxLength;
-
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
+            result.FixDataLength();
 
             return result;
         }
@@ -1191,9 +1122,7 @@ namespace QBits.Intuition.Mathematics
             }
 
             result.dataLength = maxLength;
-
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
+            result.FixDataLength();
 
             return result;
         }
@@ -1213,9 +1142,7 @@ namespace QBits.Intuition.Mathematics
             }
 
             result.dataLength = maxLength;
-
-            while (result.dataLength > 1 && result.data[result.dataLength - 1] == 0)
-                result.dataLength--;
+            result.FixDataLength();
 
             return result;
         }
@@ -1246,7 +1173,7 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public BigInteger Abs()
         {
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)
+            if (this.IsNegative)
                 return (-this);
             else
                 return (new BigInteger(this));
@@ -1273,7 +1200,7 @@ namespace QBits.Intuition.Mathematics
             BigInteger a = this;
 
             bool negative = false;
-            if ((a.data[maxLength - 1] & 0x80000000) != 0)
+            if (a.IsNegative)
             {
                 negative = true;
                 try
@@ -1324,23 +1251,19 @@ namespace QBits.Intuition.Mathematics
             }
             return result.ToString();
         }
-
-
-
-        //***********************************************************************
-        // Modulo Exponentiation
-        //***********************************************************************
-
-        public BigInteger modPow(BigInteger exp, BigInteger n)
+        /// <summary>
+        /// Modulo Exponentiation
+        /// </summary>
+        public BigInteger ModPow(BigInteger exp, BigInteger n)
         {
-            if ((exp.data[maxLength - 1] & 0x80000000) != 0)
+            if (exp.IsNegative)
                 throw (new ArithmeticException("Positive exponents only."));
 
             BigInteger resultNum = 1;
             BigInteger tempNum;
             bool thisNegative = false;
 
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)   // negative this
+            if (this.IsNegative)
             {
                 tempNum = -this % n;
                 thisNegative = true;
@@ -1348,7 +1271,7 @@ namespace QBits.Intuition.Mathematics
             else
                 tempNum = this % n;  // ensures (tempNum * tempNum) < b^(2k)
 
-            if ((n.data[maxLength - 1] & 0x80000000) != 0)   // negative n
+            if (n.IsNegative)
                 n = -n;
 
             // calculate constant = b^(2k) / m
@@ -1366,7 +1289,6 @@ namespace QBits.Intuition.Mathematics
             for (int pos = 0; pos < exp.dataLength; pos++)
             {
                 uint mask = 0x01;
-                //Console.WriteLine("pos = " + pos);
 
                 for (int index = 0; index < 32; index++)
                 {
@@ -1395,17 +1317,12 @@ namespace QBits.Intuition.Mathematics
 
             return resultNum;
         }
-
-
-
-        //***********************************************************************
-        // Fast calculation of modular reduction using Barrett's reduction.
-        // Requires x < b^(2k), where b is the base.  In this case, base is
-        // 2^32 (uint).
-        //
-        // Reference [4]
-        //***********************************************************************
-
+        /// <summary>
+        /// Fast calculation of modular reduction using Barrett's reduction.
+        /// Requires x &lt; b^(2k), where b is the base.  In this case, base is 2^32 (uint).
+        ///
+        /// Reference [4]
+        /// </summary>
         private BigInteger BarrettReduction(BigInteger x, BigInteger n, BigInteger constant)
         {
             int k = n.dataLength,
@@ -1466,11 +1383,10 @@ namespace QBits.Intuition.Mathematics
                     r2.data[t] = (uint)mcarry;
             }
             r2.dataLength = kPlusOne;
-            while (r2.dataLength > 1 && r2.data[r2.dataLength - 1] == 0)
-                r2.dataLength--;
+            r2.FixDataLength();
 
             r1 -= r2;
-            if ((r1.data[maxLength - 1] & 0x80000000) != 0)        // negative
+            if (r1.IsNegative)
             {
                 BigInteger val = new BigInteger();
                 val.data[kPlusOne] = 0x00000001;
@@ -1483,23 +1399,19 @@ namespace QBits.Intuition.Mathematics
 
             return r1;
         }
-
-
-        //***********************************************************************
-        // Returns gcd(this, bi)
-        //***********************************************************************
-
+        /// <summary>
+        /// Returns gcd(this, bi) (Greatest Common Denominator)
+        /// </summary>
         public BigInteger gcd(BigInteger bi)
         {
-            BigInteger x;
-            BigInteger y;
+            BigInteger x, y;
 
-            if ((data[maxLength - 1] & 0x80000000) != 0)     // negative
+            if (this.IsNegative)
                 x = -this;
             else
                 x = this;
 
-            if ((bi.data[maxLength - 1] & 0x80000000) != 0)     // negative
+            if (bi.IsNegative)
                 y = -bi;
             else
                 y = bi;
@@ -1515,7 +1427,25 @@ namespace QBits.Intuition.Mathematics
 
             return g;
         }
-
+        /// <summary>
+        /// Ensures datalength is correct by checking and truncating leftmost zeros.
+        /// </summary>
+        private void FixDataLength()
+        {
+            while (dataLength > 1 && data[dataLength - 1] == 0) dataLength--;
+        }
+        /// <summary>
+        /// Property that returns true if the number is negative. False if positive.
+        /// </summary>
+        public bool IsNegative => ((data[maxIndex] & signMask) != 0);
+        /// <summary>
+        /// Property that returns true if the number is positive. False if negative.
+        /// </summary>
+        public bool IsPositive => ((data[maxIndex] & signMask) == 0);
+        /// <summary>
+        /// Property that returns sign of the number. Can be used to compare if 2 numbers have the same or different sign.
+        /// </summary>
+        public uint Sign => (data[maxIndex] & signMask);
 
         //***********************************************************************
         // Populates "this" with the specified amount of random bits
@@ -1659,7 +1589,7 @@ namespace QBits.Intuition.Mathematics
                     return false;
 
                 // calculate a^(p-1) mod p
-                BigInteger expResult = a.modPow(p_sub1, thisVal);
+                BigInteger expResult = a.ModPow(p_sub1, thisVal);
 
                 int resultLen = expResult.dataLength;
 
@@ -1770,7 +1700,7 @@ namespace QBits.Intuition.Mathematics
                 if (gcdTest.dataLength == 1 && gcdTest.data[0] != 1)
                     return false;
 
-                BigInteger b = a.modPow(t, thisVal);
+                BigInteger b = a.ModPow(t, thisVal);
 
                 /*
                 Console.WriteLine("a = " + a.ToString(10));
@@ -1878,7 +1808,7 @@ namespace QBits.Intuition.Mathematics
 
                 // calculate a^((p-1)/2) mod p
 
-                BigInteger expResult = a.modPow(p_sub1_shift, thisVal);
+                BigInteger expResult = a.ModPow(p_sub1_shift, thisVal);
                 if (expResult == p_sub1)
                     expResult = -1;
 
@@ -2199,7 +2129,7 @@ namespace QBits.Intuition.Mathematics
             BigInteger a = 2;
 
             // b = a^t mod p
-            BigInteger b = a.modPow(t, thisVal);
+            BigInteger b = a.ModPow(t, thisVal);
             bool result = false;
 
             if (b.dataLength == 1 && b.data[0] == 1)         // a^t mod p = 1
@@ -2884,8 +2814,8 @@ namespace QBits.Intuition.Mathematics
 
                 // encrypt and decrypt data
                 BigInteger bi_data = new BigInteger(val, t1);
-                BigInteger bi_encrypted = bi_data.modPow(bi_e, bi_n);
-                BigInteger bi_decrypted = bi_encrypted.modPow(bi_d, bi_n);
+                BigInteger bi_encrypted = bi_data.ModPow(bi_e, bi_n);
+                BigInteger bi_decrypted = bi_encrypted.ModPow(bi_d, bi_n);
 
                 // compare
                 if (bi_decrypted != bi_data)
@@ -2983,8 +2913,8 @@ namespace QBits.Intuition.Mathematics
 
                 // encrypt and decrypt data
                 BigInteger bi_data = new BigInteger(val, t1);
-                BigInteger bi_encrypted = bi_data.modPow(bi_e, bi_n);
-                BigInteger bi_decrypted = bi_encrypted.modPow(bi_d, bi_n);
+                BigInteger bi_encrypted = bi_data.ModPow(bi_e, bi_n);
+                BigInteger bi_decrypted = bi_encrypted.ModPow(bi_d, bi_n);
 
                 // compare
                 if (bi_decrypted != bi_data)
