@@ -5,6 +5,9 @@ using System.Text;
 
 namespace QBits.Intuition.DesignPatterns.Factory
 {
+    /// <summary>
+    /// Interface type for types that can be instantiated by a factory.
+    /// </summary>
     public interface IFactorableByString
     {
         /// <summary>

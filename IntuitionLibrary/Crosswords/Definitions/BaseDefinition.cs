@@ -10,6 +10,9 @@ namespace QBits.Intuition.Crosswords.Definitions
     /// </summary>
     public abstract class BaseDefinition : IComponent, ISite
     {
+        /// <summary>
+        /// Default constructor (protected).
+        /// </summary>
         protected BaseDefinition()
         {
             DefinitionChangedEvt += new EventHandler(delegate(object sender, EventArgs e) { }); //Default handler, obviously doing nothing. Just to make sure raising the Event Handler does not throw exception.

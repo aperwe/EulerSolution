@@ -107,11 +107,22 @@ namespace QBits.Intuition.Logger
         #endregion
     }
 
+    /// <summary>
+    /// Named definitions of useful timespans as measured in miliseconds.
+    /// </summary>
     public static class TimeContants
     {
+        /// <summary>
+        /// Name alias for 10 ms.
+        /// </summary>
         public static int InMiliseconds_10Miliseconds  = 10;
+        /// <summary>
+        /// Name alias for 1 s.
+        /// </summary>
         public static int InMiliseconds_OneSecond = 1000;
-
+        /// <summary>
+        /// Name alias for 10 s.
+        /// </summary>
         public static int InMiliseconds_TenSeconds = 10 * InMiliseconds_OneSecond;
     }
 }
