@@ -657,7 +657,7 @@ namespace QBits.Intuition.Mathematics
             while (bufLen > 1 && buffer[bufLen - 1] == 0)
                 bufLen--;
 
-            for (int count = shiftVal; count > 0; )
+            for (int count = shiftVal; count > 0;)
             {
                 if (count < shiftAmount)
                     shiftAmount = count;
@@ -1446,6 +1446,21 @@ namespace QBits.Intuition.Mathematics
         /// Property that returns sign of the number. Can be used to compare if 2 numbers have the same or different sign.
         /// </summary>
         public uint Sign => (data[maxIndex] & signMask);
+        /// <summary>
+        /// Property that returns true if the number is even. False if odd.
+        /// </summary>
+        public bool IsEven => ((data[0] & 0x1) == 0);
+        /// <summary>
+        /// Always returns a positive (Abs) value of this.
+        /// </summary>
+        public BigInteger TakePositive
+        {
+            get
+            {
+                if (this.IsNegative) return -this;
+                return this;
+            }
+        }
 
         /// <summary>
         /// Populates "this" with the specified amount of random bits
@@ -1529,11 +1544,7 @@ namespace QBits.Intuition.Mathematics
         /// False if "this" is definitely NOT prime.</returns>
         public bool FermatLittleTest(int confidence)
         {
-            BigInteger thisVal;
-            if (this.IsNegative)
-                thisVal = -this;
-            else
-                thisVal = this;
+            BigInteger thisVal = TakePositive;
 
             if (thisVal.dataLength == 1)
             {
@@ -1584,18 +1595,13 @@ namespace QBits.Intuition.Mathematics
                 int resultLen = expResult.dataLength;
 
                 // is NOT prime is a^(p-1) mod p != 1
-
                 if (resultLen > 1 || (resultLen == 1 && expResult.data[0] != 1))
                 {
-                    //Console.WriteLine("a = " + a.ToString());
                     return false;
                 }
             }
-
             return true;
         }
-
-
         /// <summary>
         /// Probabilistic prime test based on Rabin-Miller's
         /// for any p > 0 with p - 1 = 2^s * t
@@ -1609,11 +1615,7 @@ namespace QBits.Intuition.Mathematics
         /// <returns>True if "this" is a strong pseudoprime to randomly chosen bases. The number of chosen bases is given by the "confidence" parameter. False if "this" is definitely NOT prime.</returns>
         public bool RabinMillerTest(int confidence)
         {
-            BigInteger thisVal;
-            if (this.IsNegative)
-                thisVal = -this;
-            else
-                thisVal = this;
+            BigInteger thisVal = TakePositive;
 
             if (thisVal.dataLength == 1)
             {
@@ -1624,8 +1626,7 @@ namespace QBits.Intuition.Mathematics
                     return true;
             }
 
-            if ((thisVal.data[0] & 0x1) == 0)     // even numbers
-                return false;
+            if (thisVal.IsEven) return false;
 
             // calculate values of s and t
             BigInteger p_sub1 = thisVal - (new BigInteger(1));
@@ -1702,35 +1703,22 @@ namespace QBits.Intuition.Mathematics
             }
             return true;
         }
-
-
-        //***********************************************************************
-        // Probabilistic prime test based on Solovay-Strassen (Euler Criterion)
-        //
-        // p is probably prime if for any a < p (a is not multiple of p),
-        // a^((p-1)/2) mod p = J(a, p)
-        //
-        // where J is the Jacobi symbol.
-        //
-        // Otherwise, p is composite.
-        //
-        // Returns
-        // -------
-        // True if "this" is a Euler pseudoprime to randomly chosen
-        // bases.  The number of chosen bases is given by the "confidence"
-        // parameter.
-        //
-        // False if "this" is definitely NOT prime.
-        //
-        //***********************************************************************
-
+        /// <summary>
+        /// Probabilistic prime test based on Solovay-Strassen (Euler Criterion)
+        ///   p is probably prime if for any a &lt; p (a is not multiple of p),
+        ///   a^((p-1)/2) mod p = J(a, p)
+        /// where J is the Jacobi symbol.
+        ///
+        /// Otherwise, p is composite.
+        /// </summary>
+        /// <param name="confidence"></param>
+        /// <returns>
+        /// True if "this" is a Euler pseudoprime to randomly chosen bases. The number of chosen bases is given by the <paramref name="confidence"/>.
+        /// False if "this" is definitely NOT prime.
+        /// </returns>
         public bool SolovayStrassenTest(int confidence)
         {
-            BigInteger thisVal;
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)        // negative
-                thisVal = -this;
-            else
-                thisVal = this;
+            BigInteger thisVal = TakePositive;
 
             if (thisVal.dataLength == 1)
             {
@@ -1741,9 +1729,7 @@ namespace QBits.Intuition.Mathematics
                     return true;
             }
 
-            if ((thisVal.data[0] & 0x1) == 0)     // even numbers
-                return false;
-
+            if (thisVal.IsEven) return false;
 
             int bits = thisVal.BitCount();
             BigInteger a = new BigInteger();
@@ -1779,7 +1765,6 @@ namespace QBits.Intuition.Mathematics
                     return false;
 
                 // calculate a^((p-1)/2) mod p
-
                 BigInteger expResult = a.ModPow(p_sub1_shift, thisVal);
                 if (expResult == p_sub1)
                     expResult = -1;
@@ -1787,39 +1772,21 @@ namespace QBits.Intuition.Mathematics
                 // calculate Jacobi symbol
                 BigInteger jacob = Jacobi(a, thisVal);
 
-                //Console.WriteLine("a = " + a.ToString(10) + " b = " + thisVal.ToString(10));
-                //Console.WriteLine("expResult = " + expResult.ToString(10) + " Jacob = " + jacob.ToString(10));
-
                 // if they are different then it is not prime
-                if (expResult != jacob)
-                    return false;
+                if (expResult != jacob) return false;
             }
-
             return true;
         }
-
-
-        //***********************************************************************
-        // Implementation of the Lucas Strong Pseudo Prime test.
-        //
-        // Let n be an odd number with gcd(n,D) = 1, and n - J(D, n) = 2^s * d
-        // with d odd and s >= 0.
-        //
-        // If Ud mod n = 0 or V2^r*d mod n = 0 for some 0 <= r < s, then n
-        // is a strong Lucas pseudoprime with parameters (P, Q).  We select
-        // P and Q based on Selfridge.
-        //
-        // Returns True if number is a strong Lucus pseudo prime.
-        // Otherwise, returns False indicating that number is composite.
-        //***********************************************************************
-
+        /// <summary>
+        /// Implementation of the Lucas Strong Pseudo Prime test.
+        /// Let n be an odd number with gcd(n,D) = 1, and n - J(D, n) = 2^s * d, with d odd and s >= 0.
+        /// If Ud mod n = 0 or V2^r*d mod n = 0 for some 0 &lt;= r %lt; s, then n is a strong Lucas pseudoprime with parameters (P, Q).
+        /// We select P and Q based on Selfridge.
+        /// </summary>
+        /// <returns>Returns True if number is a strong Lucus pseudo prime. Otherwise, returns False indicating that number is composite.</returns>
         public bool LucasStrongTest()
         {
-            BigInteger thisVal;
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)        // negative
-                thisVal = -this;
-            else
-                thisVal = this;
+            BigInteger thisVal = TakePositive;
 
             if (thisVal.dataLength == 1)
             {
@@ -1830,12 +1797,10 @@ namespace QBits.Intuition.Mathematics
                     return true;
             }
 
-            if ((thisVal.data[0] & 0x1) == 0)     // even numbers
-                return false;
+            if (this.IsEven) return false;
 
             return LucasStrongTestHelper(thisVal);
         }
-
 
         private bool LucasStrongTestHelper(BigInteger thisVal)
         {
@@ -1861,7 +1826,7 @@ namespace QBits.Intuition.Mathematics
                     if (dCount == 20)
                     {
                         // check for square
-                        BigInteger root = thisVal.sqrt();
+                        BigInteger root = thisVal.Sqrt();
                         if (root * root == thisVal)
                             return false;
                     }
@@ -1874,14 +1839,6 @@ namespace QBits.Intuition.Mathematics
             }
 
             long Q = (1 - D) >> 2;
-
-            /*
-            Console.WriteLine("D = " + D);
-            Console.WriteLine("Q = " + Q);
-            Console.WriteLine("(n,D) = " + thisVal.gcd(D));
-            Console.WriteLine("(n,Q) = " + thisVal.gcd(Q));
-            Console.WriteLine("J(D|n) = " + BigInteger.Jacobi(D, thisVal));
-            */
 
             BigInteger p_add1 = thisVal + 1;
             int s = 0;
@@ -1904,8 +1861,7 @@ namespace QBits.Intuition.Mathematics
 
             BigInteger t = p_add1 >> s;
 
-            // calculate constant = b^(2k) / m
-            // for Barrett Reduction
+            // calculate constant = b^(2k) / m for Barrett Reduction
             BigInteger constant = new BigInteger();
 
             int nLen = thisVal.dataLength << 1;
@@ -1941,7 +1897,6 @@ namespace QBits.Intuition.Mathematics
                 lucas[2] = thisVal.BarrettReduction(lucas[2] * lucas[2], thisVal, constant);     //Q^k
             }
 
-
             if (isPrime)     // additional checks for composite numbers
             {
                 // If n is prime and gcd(n, Q) == 1, then
@@ -1950,38 +1905,25 @@ namespace QBits.Intuition.Mathematics
                 BigInteger g = thisVal.gcd(Q);
                 if (g.dataLength == 1 && g.data[0] == 1)         // gcd(this, Q) == 1
                 {
-                    if ((lucas[2].data[maxLength - 1] & 0x80000000) != 0)
-                        lucas[2] += thisVal;
+                    if (lucas[2].IsNegative) lucas[2] += thisVal;
 
                     BigInteger temp = (Q * BigInteger.Jacobi(Q, thisVal)) % thisVal;
-                    if ((temp.data[maxLength - 1] & 0x80000000) != 0)
-                        temp += thisVal;
+                    if (temp.IsNegative) temp += thisVal;
 
                     if (lucas[2] != temp)
                         isPrime = false;
                 }
             }
-
             return isPrime;
         }
-
-
-        //***********************************************************************
-        // Determines whether a number is probably prime, using the Rabin-Miller's
-        // test.  Before applying the test, the number is tested for divisibility
-        // by primes < 2000
-        //
-        // Returns true if number is probably prime.
-        //***********************************************************************
-
-        public bool isProbablePrime(int confidence)
+        /// <summary>
+        /// Determines whether a number is probably prime, using the Rabin-Miller's test. Before applying the test, the number is tested for divisibility by primes &lt; 2000
+        /// </summary>
+        /// <param name="confidence"></param>
+        /// <returns>Returns true if number is probably prime.</returns>
+        public bool IsProbablePrime(int confidence)
         {
-            BigInteger thisVal;
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)        // negative
-                thisVal = -this;
-            else
-                thisVal = this;
-
+            BigInteger thisVal = TakePositive;
 
             // test for divisibility by primes < 2000
             for (int p = 0; p < primesBelow2000.Length; p++)
@@ -1994,10 +1936,6 @@ namespace QBits.Intuition.Mathematics
                 BigInteger resultNum = thisVal % divisor;
                 if (resultNum.IntValue() == 0)
                 {
-                    /*
-    Console.WriteLine("Not prime!  Divisible by {0}\n",
-                                      primesBelow2000[p]);
-                    */
                     return false;
                 }
             }
@@ -2006,41 +1944,22 @@ namespace QBits.Intuition.Mathematics
                 return true;
             else
             {
-                //Console.WriteLine("Not prime!  Failed primality test\n");
                 return false;
             }
         }
-
-
-        //***********************************************************************
-        // Determines whether this BigInteger is probably prime using a
-        // combination of base 2 strong pseudoprime test and Lucas strong
-        // pseudoprime test.
-        //
-        // The sequence of the primality test is as follows,
-        //
-        // 1) Trial divisions are carried out using prime numbers below 2000.
-        //    if any of the primes divides this BigInteger, then it is not prime.
-        //
-        // 2) Perform base 2 strong pseudoprime test.  If this BigInteger is a
-        //    base 2 strong pseudoprime, proceed on to the next step.
-        //
-        // 3) Perform strong Lucas pseudoprime test.
-        //
-        // Returns True if this BigInteger is both a base 2 strong pseudoprime
-        // and a strong Lucas pseudoprime.
-        //
-        // For a detailed discussion of this primality test, see [6].
-        //
-        //***********************************************************************
-
-        public bool isProbablePrime()
+        /// <summary>
+        /// Determines whether this BigInteger is probably prime using a combination of base 2 strong pseudoprime test and Lucas strong pseudoprime test.
+        ///
+        /// The sequence of the primality test is as follows:
+        /// 1) Trial divisions are carried out using prime numbers below 2000. If any of the primes divides this BigInteger, then it is not prime.
+        /// 2) Perform base 2 strong pseudoprime test.  If this BigInteger is a base 2 strong pseudoprime, proceed on to the next step.
+        /// 3) Perform strong Lucas pseudoprime test.
+        /// For a detailed discussion of this primality test, see [6].
+        /// </summary>
+        /// <returns>True if this BigInteger is both a base 2 strong pseudoprime and a strong Lucas pseudoprime.</returns>
+        public bool IsProbablePrime()
         {
-            BigInteger thisVal;
-            if ((this.data[maxLength - 1] & 0x80000000) != 0)        // negative
-                thisVal = -this;
-            else
-                thisVal = this;
+            BigInteger thisVal = TakePositive;
 
             if (thisVal.dataLength == 1)
             {
@@ -2050,10 +1969,7 @@ namespace QBits.Intuition.Mathematics
                 else if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
             }
-
-            if ((thisVal.data[0] & 0x1) == 0)     // even numbers
-                return false;
-
+            if (thisVal.IsEven) return false;
 
             // test for divisibility by primes < 2000
             for (int p = 0; p < primesBelow2000.Length; p++)
@@ -2066,9 +1982,6 @@ namespace QBits.Intuition.Mathematics
                 BigInteger resultNum = thisVal % divisor;
                 if (resultNum.IntValue() == 0)
                 {
-                    //Console.WriteLine("Not prime!  Divisible by {0}\n",
-                    //                  primesBelow2000[p]);
-
                     return false;
                 }
             }
@@ -2076,7 +1989,7 @@ namespace QBits.Intuition.Mathematics
             // Perform BASE 2 Rabin-Miller Test
 
             // calculate values of s and t
-            BigInteger p_sub1 = thisVal - (new BigInteger(1));
+            BigInteger p_sub1 = thisVal - 1;
             int s = 0;
 
             for (int index = 0; index < p_sub1.dataLength; index++)
@@ -2124,23 +2037,13 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-
-        //***********************************************************************
-        // Returns the lowest 4 bytes of the BigInteger as an int.
-        //***********************************************************************
-
-        public int IntValue()
-        {
-            return (int)data[0];
-        }
-
-
-        //***********************************************************************
-        // Returns the lowest 8 bytes of the BigInteger as a long.
-        //***********************************************************************
-
+        /// <summary>
+        /// Returns the lowest 4 bytes of the BigInteger as an int.
+        /// </summary>
+        public int IntValue() => (int)data[0];
+        /// <summary>
+        /// Returns the lowest 8 bytes of the BigInteger as a long.
+        /// </summary>
         public long LongValue()
         {
             long val = 0;
@@ -2152,23 +2055,20 @@ namespace QBits.Intuition.Mathematics
             }
             catch (Exception)
             {
-                if ((data[0] & 0x80000000) != 0) // negative
+                if (IsNegative)
                     val = (int)data[0];
             }
-
             return val;
         }
-
-
-        //***********************************************************************
-        // Computes the Jacobi Symbol for a and b.
-        // Algorithm adapted from [3] and [4] with some optimizations
-        //***********************************************************************
-
+        /// <summary>
+        /// Computes the Jacobi Symbol for a and b. Algorithm adapted from [3] and [4] with some optimizations.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
         public static int Jacobi(BigInteger a, BigInteger b)
         {
             // Jacobi defined only for odd integers
-            if ((b.data[0] & 0x1) == 0)
+            if (b.IsEven)
                 throw (new ArgumentException("Jacobi defined only for odd integers."));
 
             if (a >= b) a %= b;
@@ -2214,14 +2114,13 @@ namespace QBits.Intuition.Mathematics
             else
                 return (s * Jacobi(b % a1, a1));
         }
-
-
-
-        //***********************************************************************
-        // Generates a positive BigInteger that is probably prime.
-        //***********************************************************************
-
-        public static BigInteger genPseudoPrime(int bits, int confidence, Random rand)
+        /// <summary>
+        /// Generates a positive BigInteger that is probably prime.
+        /// </summary>
+        /// <param name="bits"></param>
+        /// <param name="confidence"></param>
+        /// <param name="rand"></param>
+        public static BigInteger GenPseudoPrime(int bits, int confidence, Random rand)
         {
             BigInteger result = new BigInteger();
             bool done = false;
@@ -2232,18 +2131,16 @@ namespace QBits.Intuition.Mathematics
                 result.data[0] |= 0x01;		// make it odd
 
                 // prime test
-                done = result.isProbablePrime(confidence);
+                done = result.IsProbablePrime(confidence);
             }
             return result;
         }
-
-
-        //***********************************************************************
-        // Generates a random number with the specified number of bits such
-        // that gcd(number, this) = 1
-        //***********************************************************************
-
-        public BigInteger genCoPrime(int bits, Random rand)
+        /// <summary>
+        /// Generates a random number with the specified number of bits such that gcd(number, this) = 1
+        /// </summary>
+        /// <param name="bits"></param>
+        /// <param name="rand"></param>
+        public BigInteger GenCoPrime(int bits, Random rand)
         {
             bool done = false;
             BigInteger result = new BigInteger();
@@ -2251,24 +2148,19 @@ namespace QBits.Intuition.Mathematics
             while (!done)
             {
                 result.GenRandomBits(bits, rand);
-                //Console.WriteLine(result.ToString(16));
 
                 // gcd test
                 BigInteger g = result.gcd(this);
                 if (g.dataLength == 1 && g.data[0] == 1)
                     done = true;
             }
-
             return result;
         }
-
-
-        //***********************************************************************
-        // Returns the modulo inverse of this.  Throws ArithmeticException if
-        // the inverse does not exist.  (i.e. gcd(this, modulus) != 1)
-        //***********************************************************************
-
-        public BigInteger modInverse(BigInteger modulus)
+        /// <summary>
+        /// Returns the modulo inverse of this.  Throws ArithmeticException if the inverse does not exist.  (i.e. gcd(this, modulus) != 1)
+        /// </summary>
+        /// <param name="modulus"></param>
+        public BigInteger ModInverse(BigInteger modulus)
         {
             BigInteger[] p = { 0, 1 };
             BigInteger[] q = new BigInteger[2];    // quotients
@@ -2296,13 +2188,6 @@ namespace QBits.Intuition.Mathematics
                 else
                     MultiByteDivide(a, b, quotient, remainder);
 
-                /*
-                Console.WriteLine(quotient.dataLength);
-                Console.WriteLine("{0} = {1}({2}) + {3}  p = {4}", a.ToString(10),
-                                  b.ToString(10), quotient.ToString(10), remainder.ToString(10),
-                                  p[1].ToString(10));
-                */
-
                 q[0] = q[1];
                 r[0] = r[1];
                 q[1] = quotient; r[1] = remainder;
@@ -2318,19 +2203,15 @@ namespace QBits.Intuition.Mathematics
 
             BigInteger result = ((p[0] - (p[1] * q[0])) % modulus);
 
-            if ((result.data[maxLength - 1] & 0x80000000) != 0)
+            if (result.IsNegative)
                 result += modulus;  // get the least positive modulus
 
             return result;
         }
-
-
-        //***********************************************************************
-        // Returns the value of the BigInteger as a byte array.  The lowest
-        // index contains the MSB.
-        //***********************************************************************
-
-        public byte[] getBytes()
+        /// <summary>
+        /// Returns the value of the BigInteger as a byte array. The lowest index contains the MSB.
+        /// </summary>
+        public byte[] GetBytes()
         {
             int numBits = BitCount();
 
@@ -2339,8 +2220,6 @@ namespace QBits.Intuition.Mathematics
                 numBytes++;
 
             byte[] result = new byte[numBytes];
-
-            //Console.WriteLine(result.Length);
 
             int pos = 0;
             uint tempVal, val = data[dataLength - 1];
@@ -2368,14 +2247,11 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-        //***********************************************************************
-        // Sets the value of the specified bit to 1
-        // The Least Significant Bit position is 0.
-        //***********************************************************************
-
-        public void setBit(uint bitNum)
+        /// <summary>
+        /// Sets the value of the specified bit to 1. The Least Significant Bit position is 0.
+        /// </summary>
+        /// <param name="bitNum"></param>
+        public void SetBit(uint bitNum)
         {
             uint bytePos = bitNum >> 5;             // divide by 32
             byte bitPos = (byte)(bitNum & 0x1F);    // get the lowest 5 bits
@@ -2386,14 +2262,11 @@ namespace QBits.Intuition.Mathematics
             if (bytePos >= this.dataLength)
                 this.dataLength = (int)bytePos + 1;
         }
-
-
-        //***********************************************************************
-        // Sets the value of the specified bit to 0
-        // The Least Significant Bit position is 0.
-        //***********************************************************************
-
-        public void unsetBit(uint bitNum)
+        /// <summary>
+        /// Sets the value of the specified bit to 0. The Least Significant Bit position is 0.
+        /// </summary>
+        /// <param name="bitNum"></param>
+        public void UnsetBit(uint bitNum)
         {
             uint bytePos = bitNum >> 5;
 
@@ -2410,18 +2283,11 @@ namespace QBits.Intuition.Mathematics
                     this.dataLength--;
             }
         }
-
-
-        //***********************************************************************
-        // Returns a value that is equivalent to the integer square root
-        // of the BigInteger.
-        //
-        // The integer square root of "this" is defined as the largest integer n
-        // such that (n * n) <= this
-        //
-        //***********************************************************************
-
-        public BigInteger sqrt()
+        /// <summary>
+        /// Returns a value that is equivalent to the integer square root of the BigInteger.
+        /// The integer square root of "this" is defined as the largest integer n such that (n * n) <= this
+        /// </summary>
+        public BigInteger Sqrt()
         {
             uint numBits = (uint)this.BitCount();
 
@@ -2462,42 +2328,41 @@ namespace QBits.Intuition.Mathematics
             }
             return result;
         }
-
-
-        //***********************************************************************
-        // Returns the k_th number in the Lucas Sequence reduced modulo n.
-        //
-        // Uses index doubling to speed up the process.  For example, to calculate V(k),
-        // we maintain two numbers in the sequence V(n) and V(n+1).
-        //
-        // To obtain V(2n), we use the identity
-        //      V(2n) = (V(n) * V(n)) - (2 * Q^n)
-        // To obtain V(2n+1), we first write it as
-        //      V(2n+1) = V((n+1) + n)
-        // and use the identity
-        //      V(m+n) = V(m) * V(n) - Q * V(m-n)
-        // Hence,
-        //      V((n+1) + n) = V(n+1) * V(n) - Q^n * V((n+1) - n)
-        //                   = V(n+1) * V(n) - Q^n * V(1)
-        //                   = V(n+1) * V(n) - Q^n * P
-        //
-        // We use k in its binary expansion and perform index doubling for each
-        // bit position.  For each bit position that is set, we perform an
-        // index doubling followed by an index addition.  This means that for V(n),
-        // we need to update it to V(2n+1).  For V(n+1), we need to update it to
-        // V((2n+1)+1) = V(2*(n+1))
-        //
-        // This function returns
-        // [0] = U(k)
-        // [1] = V(k)
-        // [2] = Q^n
-        //
-        // Where U(0) = 0 % n, U(1) = 1 % n
-        //       V(0) = 2 % n, V(1) = P % n
-        //***********************************************************************
-
-        public static BigInteger[] LucasSequence(BigInteger P, BigInteger Q,
-                                                 BigInteger k, BigInteger n)
+        /// <summary>
+        /// Returns the k_th number in the Lucas Sequence reduced modulo n.
+        ///
+        /// Uses index doubling to speed up the process.  For example, to calculate V(k), we maintain two numbers in the sequence V(n) and V(n+1).
+        ///
+        /// To obtain V(2n), we use the identity
+        ///      V(2n) = (V(n) * V(n)) - (2 * Q^n)
+        /// To obtain V(2n+1), we first write it as
+        ///      V(2n+1) = V((n+1) + n)
+        /// and use the identity
+        ///      V(m+n) = V(m) * V(n) - Q * V(m-n)
+        /// Hence,
+        ///      V((n+1) + n) = V(n+1) * V(n) - Q^n * V((n+1) - n)
+        ///                   = V(n+1) * V(n) - Q^n * V(1)
+        ///                   = V(n+1) * V(n) - Q^n * P
+        ///
+        /// We use k in its binary expansion and perform index doubling for each bit position.  For each bit position that is set, we perform an
+        /// index doubling followed by an index addition.  This means that for V(n), we need to update it to V(2n+1).  For V(n+1), we need to update it to
+        /// V((2n+1)+1) = V(2*(n+1))
+        ///
+        /// This function returns
+        /// [0] = U(k)
+        /// [1] = V(k)
+        /// [2] = Q^n
+        ///
+        /// Where U(0) = 0 % n, U(1) = 1 % n
+        ///       V(0) = 2 % n, V(1) = P % n
+        /// 
+        /// </summary>
+        /// <param name="P"></param>
+        /// <param name="Q"></param>
+        /// <param name="k"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static BigInteger[] LucasSequence(BigInteger P, BigInteger Q, BigInteger k, BigInteger n)
         {
             if (k.dataLength == 1 && k.data[0] == 0)
             {
@@ -2507,8 +2372,7 @@ namespace QBits.Intuition.Mathematics
                 return result;
             }
 
-            // calculate constant = b^(2k) / m
-            // for Barrett Reduction
+            // calculate constant = b^(2k) / m for Barrett Reduction
             BigInteger constant = new BigInteger();
 
             int nLen = n.dataLength << 1;
@@ -2535,28 +2399,25 @@ namespace QBits.Intuition.Mathematics
                     s++;
                 }
             }
-
             BigInteger t = k >> s;
-
-            //Console.WriteLine("s = " + s + " t = " + t);
             return LucasSequenceHelper(P, Q, t, n, constant, s);
         }
-
-
-        //***********************************************************************
-        // Performs the calculation of the kth term in the Lucas Sequence.
-        // For details of the algorithm, see reference [9].
-        //
-        // k must be odd.  i.e LSB == 1
-        //***********************************************************************
-
-        private static BigInteger[] LucasSequenceHelper(BigInteger P, BigInteger Q,
-                                                        BigInteger k, BigInteger n,
-                                                        BigInteger constant, int s)
+        /// <summary>
+        /// Performs the calculation of the kth term in the Lucas Sequence. For details of the algorithm, see reference [9].
+        /// k must be odd.  i.e LSB == 1
+        /// </summary>
+        /// <param name="P"></param>
+        /// <param name="Q"></param>
+        /// <param name="k"></param>
+        /// <param name="n"></param>
+        /// <param name="constant"></param>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private static BigInteger[] LucasSequenceHelper(BigInteger P, BigInteger Q, BigInteger k, BigInteger n, BigInteger constant, int s)
         {
             BigInteger[] result = new BigInteger[3];
 
-            if ((k.data[0] & 0x00000001) == 0)
+            if (k.IsEven)
                 throw (new ArgumentException("Argument k must be odd."));
 
             int numbits = k.BitCount();
@@ -2570,7 +2431,6 @@ namespace QBits.Intuition.Mathematics
 
             for (int i = k.dataLength - 1; i >= 0; i--)     // iterate on the binary expansion of k
             {
-                //Console.WriteLine("round");
                 while (mask != 0)
                 {
                     if (i == 0 && mask == 0x00000001)        // last bit
@@ -2618,7 +2478,6 @@ namespace QBits.Intuition.Mathematics
 
             // at this point u1 = u(n+1) and v = v(n)
             // since the last bit always 1, we need to transform u1 to u(2n+1) and v to v(2n+1)
-
             u1 = ((u1 * v) - Q_k) % n;
             v = ((v * v1) - (P * Q_k)) % n;
             if (flag)
@@ -2627,7 +2486,6 @@ namespace QBits.Intuition.Mathematics
                 Q_k = n.BarrettReduction(Q_k * Q_k, n, constant);
 
             Q_k = (Q_k * Q) % n;
-
 
             for (int i = 0; i < s; i++)
             {
@@ -2650,12 +2508,10 @@ namespace QBits.Intuition.Mathematics
 
             return result;
         }
-
-
-        //***********************************************************************
-        // Tests the correct implementation of the /, %, * and + operators
-        //***********************************************************************
-
+        /// <summary>
+        /// Tests the correct implementation of the /, %, * and + operators
+        /// </summary>
+        /// <param name="rounds"></param>
         public static void MulDivTest(int rounds)
         {
             Random rand = new Random();
@@ -2712,10 +2568,7 @@ namespace QBits.Intuition.Mathematics
                 BigInteger bn1 = new BigInteger(val, t1);
                 BigInteger bn2 = new BigInteger(val2, t2);
 
-
-                // Determine the quotient and remainder by dividing
-                // the first number by the second.
-
+                // Determine the quotient and remainder by dividing the first number by the second.
                 BigInteger bn3 = bn1 / bn2;
                 BigInteger bn4 = bn1 % bn2;
 
@@ -2735,14 +2588,10 @@ namespace QBits.Intuition.Mathematics
                 }
             }
         }
-
-
-        //***********************************************************************
-        // Tests the correct implementation of the modulo exponential function
-        // using RSA encryption and decryption (using pre-computed encryption and
-        // decryption keys).
-        //***********************************************************************
-
+        /// <summary>
+        /// Tests the correct implementation of the modulo exponential function using RSA encryption and decryption (using pre-computed encryption and decryption keys).
+        /// </summary>
+        /// <param name="rounds"></param>
         public static void RSATest(int rounds)
         {
             Random rand = new Random(1);
@@ -2800,15 +2649,11 @@ namespace QBits.Intuition.Mathematics
             }
 
         }
-
-
-        //***********************************************************************
-        // Tests the correct implementation of the modulo exponential and
-        // inverse modulo functions using RSA encryption and decryption.  The two
-        // pseudoprimes p and q are fixed, but the two RSA keys are generated
-        // for each round of testing.
-        //***********************************************************************
-
+        /// <summary>
+        /// Tests the correct implementation of the modulo exponential and inverse modulo functions using RSA encryption and decryption.  The two
+        /// pseudoprimes p and q are fixed, but the two RSA keys are generated for each round of testing.
+        /// </summary>
+        /// <param name="rounds"></param>
         public static void RSATest2(int rounds)
         {
             Random rand = new Random();
@@ -2842,7 +2687,6 @@ namespace QBits.Intuition.Mathematics
                         (byte)0x9B, (byte)0xC2, (byte)0xA5, (byte)0xCB,
                 };
 
-
             BigInteger bi_p = new BigInteger(pseudoPrime1);
             BigInteger bi_q = new BigInteger(pseudoPrime2);
             BigInteger bi_pq = (bi_p - 1) * (bi_q - 1);
@@ -2851,8 +2695,8 @@ namespace QBits.Intuition.Mathematics
             for (int count = 0; count < rounds; count++)
             {
                 // generate private and public key
-                BigInteger bi_e = bi_pq.genCoPrime(512, rand);
-                BigInteger bi_d = bi_e.modInverse(bi_pq);
+                BigInteger bi_e = bi_pq.GenCoPrime(512, rand);
+                BigInteger bi_d = bi_e.ModInverse(bi_pq);
 
                 Console.WriteLine("\ne =\n" + bi_e.ToString(10));
                 Console.WriteLine("\nd =\n" + bi_d.ToString(10));
@@ -2897,14 +2741,11 @@ namespace QBits.Intuition.Mathematics
                 }
                 Console.WriteLine(" <PASSED>.");
             }
-
         }
-
-
-        //***********************************************************************
-        // Tests the correct implementation of sqrt() method.
-        //***********************************************************************
-
+        /// <summary>
+        /// Tests the correct implementation of sqrt() method.
+        /// </summary>
+        /// <param name="rounds"></param>
         public static void SqrtTest(int rounds)
         {
             Random rand = new Random();
@@ -2920,7 +2761,7 @@ namespace QBits.Intuition.Mathematics
                 BigInteger a = new BigInteger();
                 a.GenRandomBits(t1, rand);
 
-                BigInteger b = a.sqrt();
+                BigInteger b = a.Sqrt();
                 BigInteger c = (b + 1) * (b + 1);
 
                 // check that b is the largest integer such that b*b <= a
@@ -2933,9 +2774,9 @@ namespace QBits.Intuition.Mathematics
                 Console.WriteLine(" <PASSED>.");
             }
         }
-
-
-
+        /// <summary>
+        /// Test method.
+        /// </summary>
         public static void Main(string[] args)
         {
             // Known problem -> these two pseudoprimes passes my implementation of
@@ -2981,7 +2822,7 @@ namespace QBits.Intuition.Mathematics
 
                 BigInteger p = new BigInteger(-i);
 
-                if (p.isProbablePrime())
+                if (p.IsProbablePrime())
                 {
                     Console.Write(i + ", ");
                     count++;
@@ -2995,20 +2836,12 @@ namespace QBits.Intuition.Mathematics
             Console.WriteLine("SolovayStrassenTest(5) = " + bi1.SolovayStrassenTest(5));
             Console.WriteLine("RabinMillerTest(5) = " + bi1.RabinMillerTest(5));
             Console.WriteLine("FermatLittleTest(5) = " + bi1.FermatLittleTest(5));
-            Console.WriteLine("isProbablePrime() = " + bi1.isProbablePrime());
+            Console.WriteLine("isProbablePrime() = " + bi1.IsProbablePrime());
 
             Console.Write("\nGenerating 512-bits random pseudoprime. . .");
             Random rand = new Random();
-            BigInteger prime = BigInteger.genPseudoPrime(512, 5, rand);
+            BigInteger prime = BigInteger.GenPseudoPrime(512, 5, rand);
             Console.WriteLine("\n" + prime);
-
-            //int dwStart = System.Environment.TickCount;
-            //BigInteger.MulDivTest(100000);
-            //BigInteger.RSATest(10);
-            //BigInteger.RSATest2(10);
-            //Console.WriteLine(System.Environment.TickCount - dwStart);
-
         }
-
     }
 }
