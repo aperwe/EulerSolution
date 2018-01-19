@@ -214,7 +214,9 @@ namespace QBits.Intuition.Crosswords
         #endregion
 
         #region XmlSerializable Members
-
+        /// <summary>
+        /// Serializes the crossword to XML object.
+        /// </summary>
         virtual public void SerializeToNode(System.Xml.XmlNode myNode, SimpleXmlDocument nodeOwner)
         {
             nodeOwner.AddAttribute("columns", _columns.ToString(), myNode);
