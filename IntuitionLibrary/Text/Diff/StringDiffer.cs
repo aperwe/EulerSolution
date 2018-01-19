@@ -7,7 +7,8 @@ namespace QBits.Intuition.Text.Diff
 {
     /// <summary>
     /// Analyzes two strings and presents an information about how different they are.
-    /// <para/>Algorighm implemented after <seealso cref="http://en.wikipedia.org/wiki/Diff"/> and <seealso cref="http://en.wikipedia.org/wiki/Longest_common_subsequence_problem"/>.
+    /// <para/>Algorighm implemented after http://en.wikipedia.org/wiki/Diff
+    /// and http://en.wikipedia.org/wiki/Longest_common_subsequence_problem.
     /// </summary>
     public class StringDiffer
     {

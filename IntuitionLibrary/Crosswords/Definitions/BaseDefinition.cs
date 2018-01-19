@@ -10,6 +10,7 @@ namespace QBits.Intuition.Crosswords.Definitions
     /// </summary>
     public abstract class BaseDefinition : IComponent, ISite
     {
+        static bool fConstructorsInitialized = false;
         /// <summary>
         /// Default constructor (protected).
         /// </summary>
@@ -50,9 +51,19 @@ namespace QBits.Intuition.Crosswords.Definitions
                 DefinitionChangedEvt(this, null);
             }
         }
+        /// <summary>
+        /// Gets or sets the list of propsal solutions for the given definition.
+        /// </summary>
         public List<string> propozycje = new List<string>();
+        /// <summary>
+        /// Event raised when definition is changed.
+        /// </summary>
         public event EventHandler DefinitionChangedEvt;
-        static bool fConstructorsInitialized = false;
+        /// <summary>
+        /// Creates the definition.
+        /// </summary>
+        /// <param name="kier">Direction of the definition.</param>
+        /// <returns>Created instance.</returns>
         public static BaseDefinition CreateDefinition(Kierunek kier)
         {
             TryInitFactory();

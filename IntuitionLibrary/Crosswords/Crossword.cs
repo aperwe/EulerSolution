@@ -147,10 +147,16 @@ namespace QBits.Intuition.Crosswords
         /// we don't have to worry about them, so the derived implementation doesn't have to do anything to have them drawn.
         /// </summary>
         public abstract void DrawCrossword();
+        /// <summary>
+        /// Returns default width of display letter.
+        /// </summary>
         public int letterWidth
         {
             get { return 55; }
         }
+        /// <summary>
+        /// Returns default height of display letter.
+        /// </summary>
         public int letterHeight
         {
             get { return 44; }
