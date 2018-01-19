@@ -99,7 +99,9 @@ namespace QBits.Intuition.Crosswords.Elements
         }
 
         #region XmlSerializable Members
-
+        /// <summary>
+        /// Serializes the element to underying persistence.
+        /// </summary>
         virtual public void SerializeToNode(System.Xml.XmlNode myNode, SimpleXmlDocument nodeOwner)
         {
             nodeOwner.AddAttribute("column", _column.ToString(), myNode);
