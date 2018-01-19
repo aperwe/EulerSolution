@@ -49,6 +49,11 @@ namespace QBits.Intuition.Crosswords
         /// The parent control, where we can draw.
         /// </summary>
         protected Control _parent = null;
+        /// <summary>
+        /// Sets dimensions for the crossword.
+        /// </summary>
+        /// <param name="columns">Number of crossword columns.</param>
+        /// <param name="rows">Numer of crossword rows.</param>
         public void SetDimensions(int columns, int rows)
         {
             _columns = columns;
