@@ -201,6 +201,9 @@ namespace QBits.Intuition.Text.Diff
     /// </summary>
     public class Addition : Difference
     {
+        /// <summary>
+        /// Gets or sets the portion of the text to compare.
+        /// </summary>
         public string AddedText { get; set; }
 
         /// <summary>

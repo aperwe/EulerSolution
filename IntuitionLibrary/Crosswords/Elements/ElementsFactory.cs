@@ -24,7 +24,7 @@ namespace QBits.Intuition.Crosswords.Elements
         /// <param name="constructor">Class constructor of the crossword element.</param>
         public void RegisterConstructor(string type, ctor constructor)
         {
-            if (objectCreators.ContainsKey(type)) throw new ExecutionEngineException("Constructor already registered");
+            if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
         /// <summary>Single Access Point.</summary>

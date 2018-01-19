@@ -119,7 +119,7 @@ namespace QBits.Intuition.Crosswords.Elements
         #endregion
 
         #region FactorableByString Members
-
+        /// <summary>Returns the objet type.</summary>
         virtual public string GetObjectType()
         {
             return null;
