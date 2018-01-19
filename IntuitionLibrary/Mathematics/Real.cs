@@ -136,7 +136,9 @@ namespace QBits.Intuition.Mathematics
         {
             return ActualValue;
         }
-
+        /// <summary>
+        /// Adds two reals.
+        /// </summary>
         public override Real Add(Real other)
         {
             if (other is RealDouble)

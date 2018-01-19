@@ -37,7 +37,6 @@ namespace QBits.Intuition.Mathematics.Fibonacci
 
         private Int64 GetAt(int at)
         {
-            Int64 result = 0;
             if (dynamicSequence.Count < at) //Need to do some computation
             {
                 CreateItemsUntilAt(at);

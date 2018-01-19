@@ -89,7 +89,7 @@ namespace QBits.Intuition.Mathematics
     /// References
     /// [1] D. E. Knuth, "Seminumerical Algorithms", The Art of Computer Programming Vol. 2, 3rd Edition, Addison-Wesley, 1998.
     /// [2] K. H. Rosen, "Elementary Number Theory and Its Applications", 3rd Ed, Addison-Wesley, 1993.
-    /// [3] B. Schneier, "Applied Cryptography", 2nd Ed, John Wiley & Sons, 1996.
+    /// [3] B. Schneier, "Applied Cryptography", 2nd Ed, John Wiley &amp; Sons, 1996.
     /// [4] A. Menezes, P. van Oorschot, and S. Vanstone, "Handbook of Applied Cryptography", CRC Press, 1996, www.cacr.math.uwaterloo.ca/hac
     /// [5] A. Bosselaers, R. Govaerts, and J. Vandewalle, "Comparison of Three Modular Reduction Functions," Proc. CRYPTO'93, pp.175-186.
     /// [6] R. Baillie and S. S. Wagstaff Jr, "Lucas Pseudoprimes", Mathematics of Computation, Vol. 35, No. 152, Oct 1980, pp. 1391-1417.

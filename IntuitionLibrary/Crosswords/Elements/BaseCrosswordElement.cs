@@ -68,6 +68,9 @@ namespace QBits.Intuition.Crosswords.Elements
         /// Windows control associated with this element. Null if nothing.
         /// </summary>
         protected Control _wControl;
+        /// <summary>
+        /// Adusts the size of the dropdown menu.
+        /// </summary>
         protected static void AdjustDropDownSize(ContextMenuStrip graphicsProvider, ToolStripDropDownButton popupDropdown)
         {
             Graphics g = graphicsProvider.CreateGraphics();
