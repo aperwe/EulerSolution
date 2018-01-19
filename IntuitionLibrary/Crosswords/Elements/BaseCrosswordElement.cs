@@ -89,6 +89,7 @@ namespace QBits.Intuition.Crosswords.Elements
                 _wControl = null;
             }
         }
+        /// <summary>Returns the current object type.</summary>
         public static string ObjectType
         {
             get

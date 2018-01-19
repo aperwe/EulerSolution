@@ -2274,7 +2274,7 @@ namespace QBits.Intuition.Mathematics
         }
         /// <summary>
         /// Returns a value that is equivalent to the integer square root of the BigInteger.
-        /// The integer square root of "this" is defined as the largest integer n such that (n * n) <= this
+        /// The integer square root of "this" is defined as the largest integer n such that (n * n) &lt;= this
         /// </summary>
         public BigInteger Sqrt()
         {

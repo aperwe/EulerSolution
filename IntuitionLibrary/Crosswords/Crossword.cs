@@ -264,6 +264,9 @@ namespace QBits.Intuition.Crosswords
 
         #region FactorableByString Members
 
+        /// <summary>
+        /// Returns object type of the current implementor.
+        /// </summary>
         virtual public string GetObjectType()
         {
             return null;

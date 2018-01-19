@@ -50,6 +50,7 @@ namespace QBits.Intuition.DesignPatterns.Factory
             if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
+        /// <summary>Dictionary of object creators.</summary>
         protected Dictionary<classKey, ctor> objectCreators = new Dictionary<classKey, ctor>();
     }
 }
