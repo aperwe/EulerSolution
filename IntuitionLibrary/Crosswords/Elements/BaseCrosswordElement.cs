@@ -33,6 +33,12 @@ namespace QBits.Intuition.Crosswords.Elements
         //}
         #endregion
         #endregion
+        /// <summary>
+        /// Protected constructor. Not accessible to public.
+        /// </summary>
+        /// <param name="crossword">Parent crossword.</param>
+        /// <param name="column">Column location of the element within the crossword.</param>
+        /// <param name="row">Row location of the element within the crossword.</param>
         protected BaseCrosswordElement(Crossword crossword, int column, int row)
         {
             _crossword = crossword;

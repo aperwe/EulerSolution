@@ -24,7 +24,13 @@ namespace QBits.Intuition.Crosswords
             return loadedObject;
         }
 
+        /// <summary>
+        /// Gets or sets the persistent storage for the crossword data.
+        /// </summary>
         public static string persistentCrosswordFileName = "Crossword.xml";
+        /// <summary>
+        /// Gets or sets the XML root node name for persistency.
+        /// </summary>
         public static string xmlRootNode = "crossword";
     }
 }

@@ -17,9 +17,14 @@ namespace QBits.Intuition.Crosswords.Definitions
         {
             DefinitionChangedEvt += new EventHandler(delegate(object sender, EventArgs e) { }); //Default handler, obviously doing nothing. Just to make sure raising the Event Handler does not throw exception.
         }
-
+        /// <summary>
+        /// Direction of definition.
+        /// </summary>
         protected Kierunek _kier = Kierunek.Nieokreślony;
-        public virtual Kierunek kierunek
+        /// <summary>
+        /// Gets the direction of the definition.
+        /// </summary>
+        public virtual Kierunek Kierunek
         {
             get
             {
