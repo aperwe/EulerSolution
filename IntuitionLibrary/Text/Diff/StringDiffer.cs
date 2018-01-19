@@ -74,7 +74,7 @@ namespace QBits.Intuition.Text.Diff
         }
 
         /// <summary>
-        /// Finds the longest common subsequence as described in <seealso cref="http://en.wikipedia.org/wiki/Longest_common_subsequence_problem"/>
+        /// Finds the longest common subsequence as described in http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         /// </summary>
         /// <param name="left">Characters from the left (original) string.</param>
         /// <param name="right">Characters from the right (updated or new) string.</param>

@@ -81,6 +81,7 @@ namespace QBits.Intuition.Crosswords.Definitions
         /// Can be implemented in the implementor.
         /// </summary>
         public event EventHandler Disposed;
+        /// <summary>Returns current site.</summary>
         public ISite Site
         {
             get

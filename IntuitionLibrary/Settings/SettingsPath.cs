@@ -25,6 +25,7 @@ namespace QBits.Intuition.Settings
         /// <param name="product">Name of the product, whose settings you want to have managed.</param>
         /// <param name="initialRootPath">By default, this is %APPDATA%.</param>
         /// <param name="defaultFile">Optional name of the default file, if you are using only a single settings file.</param>
+        /// <param name="company">Company name.</param>
         public SettingsPath(string product, string initialRootPath = "%APPDATA%", string company = "Q-Bits", string defaultFile = null)
         {
             Product = product;
