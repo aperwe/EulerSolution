@@ -12,6 +12,9 @@ namespace QBits.Intuition.Mathematics.Fibonacci
     public class FibonacciSequence
     {
         LinkedList<Int64> dynamicSequence = new LinkedList<Int64>();
+        /// <summary>
+        /// Constructor of this class.
+        /// </summary>
         public FibonacciSequence()
         {
             //Axiomatic constant value.

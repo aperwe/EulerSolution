@@ -11,6 +11,9 @@ namespace QBits.Intuition.Text.Diff
     /// </summary>
     public class StringDiffer
     {
+        /// <summary>
+        /// Gets or sets original string.
+        /// </summary>
         public string OriginalString { get; set; }
 
         /// <summary>

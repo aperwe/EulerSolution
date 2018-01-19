@@ -43,7 +43,13 @@ namespace QBits.Intuition.Crosswords
         //}
         #endregion
         #endregion
+        /// <summary>
+        /// Numer of columns.
+        /// </summary>
         protected int _columns;
+        /// <summary>
+        /// Number of rows.
+        /// </summary>
         protected int _rows;
         /// <summary>
         /// The parent control, where we can draw.
@@ -65,7 +71,6 @@ namespace QBits.Intuition.Crosswords
             LoggerSAP.Log("Allocating new array of base crossword elements.");
             _letters = new BaseCrosswordElement[_columns, _rows];
         }
-
         /// <summary>
         /// Prepares a default crossword - after number of rows and columns has been specified.
         /// The default crossword consists of letters only (unassigned, of course).
@@ -81,7 +86,6 @@ namespace QBits.Intuition.Crosswords
             }
             CreateLetters();
         }
-
         /// <summary>
         /// Creates visual controls for the letters in the crossword, thus making the constructed crossword visible to the user.
         /// The controls are made children of Parent control (usually a group box).
@@ -96,6 +100,12 @@ namespace QBits.Intuition.Crosswords
                 }
             }
         }
+        /// <summary>
+        /// Replaces and redraws the element at the specified location.
+        /// </summary>
+        /// <param name="bce">Replacing element (new).</param>
+        /// <param name="column">Location column.</param>
+        /// <param name="row">Location row.</param>
         public void SubstituteCrosswordElement(BaseCrosswordElement bce, int column, int row)
         {
             if (_letters[column, row] != null)
@@ -108,6 +118,9 @@ namespace QBits.Intuition.Crosswords
                 bce.Draw(_parent.DisplayRectangle.Left + column * letterWidth, _parent.DisplayRectangle.Top + row * letterHeight, _parent);
             }
         }
+        /// <summary>
+        /// Removes all GUI controls representing the crossword.
+        /// </summary>
         public void RemoveWindowsControls()
         {
             for (int column = 0; column < _columns; column++)
@@ -118,7 +131,13 @@ namespace QBits.Intuition.Crosswords
                 }
             }
         }
+        /// <summary>
+        /// Array container for crossword elements.
+        /// </summary>
         protected BaseCrosswordElement[,] _letters;
+        /// <summary>
+        /// GUI control that is a parent for this crossword.
+        /// </summary>
         public Control Parent
         {
             set { _parent = value; }
