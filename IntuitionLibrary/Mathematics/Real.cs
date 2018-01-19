@@ -158,6 +158,8 @@ namespace QBits.Intuition.Mathematics
             }
             throw new System.NotImplementedException("Comparing RealDouble to other types is not yet supported");
         }
+        /// <summary>Shows text representation of this object.</summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return ActualValue.ToString();
