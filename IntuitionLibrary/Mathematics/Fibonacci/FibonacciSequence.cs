@@ -84,6 +84,9 @@ namespace QBits.Intuition.Mathematics.Fibonacci
     public class FibonacciSequenceBig
     {
         LinkedList<BigInteger> dynamicSequence = new LinkedList<BigInteger>();
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
         public FibonacciSequenceBig()
         {
             //Axiomatic constant value.

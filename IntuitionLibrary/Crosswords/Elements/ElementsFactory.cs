@@ -9,7 +9,13 @@ namespace QBits.Intuition.Crosswords.Elements
     /// </summary>
     public class ElementsFactory : UniversalFactory<string, BaseCrosswordElement>
     {
-
+        /// <summary>
+        /// Delegate definition for creating a crossword element at the specified location.
+        /// </summary>
+        /// <param name="crossword"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public new delegate BaseCrosswordElement ctor(Crossword crossword, int column, int row);
         /// <summary>
         /// Registers the constructor of the specified type of the crossword instance.

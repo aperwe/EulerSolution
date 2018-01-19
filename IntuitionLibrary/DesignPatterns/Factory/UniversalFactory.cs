@@ -47,7 +47,7 @@ namespace QBits.Intuition.DesignPatterns.Factory
         /// <param name="constructor">Constructor method that can create a type instance.</param>
         public void RegisterConstructor(classKey type, ctor constructor)
         {
-            if (objectCreators.ContainsKey(type)) throw new ExecutionEngineException("Constructor already registered");
+            if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
         protected Dictionary<classKey, ctor> objectCreators = new Dictionary<classKey, ctor>();

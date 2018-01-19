@@ -75,6 +75,9 @@ namespace QBits.Intuition.Crosswords.Elements
             popupDropdown.Width = textSize.Width;
             popupDropdown.Height = textSize.Height;
         }
+        /// <summary>
+        /// Removes the display element of the specified crossword element.
+        /// </summary>
         public void RemoveWindowsControl()
         {
             if (_wControl != null)

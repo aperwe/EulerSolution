@@ -108,9 +108,11 @@ namespace QBits.Intuition.Mathematics
         {
             return left.Add(right);
         }
-
+        /// <summary>
+        /// Comparer method.
+        /// </summary>
+        /// <param name="other">Element to compare.</param>
         public abstract int CompareTo(Real other);
-
         #endregion
     }
     /// <summary>
