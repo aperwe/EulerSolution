@@ -13,7 +13,6 @@ namespace QBits.Intuition.Settings
     {
         #region Private members
         string Product;
-        string Path;
         string InitialPath;
         string Company;
         string DefaultFile;

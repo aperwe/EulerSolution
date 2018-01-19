@@ -9,6 +9,7 @@ namespace QBits.Intuition.Crosswords.Elements
     /// </summary>
     public class ElementsFactory : UniversalFactory<string, BaseCrosswordElement>
     {
+
         public new delegate BaseCrosswordElement ctor(Crossword crossword, int column, int row);
         /// <summary>
         /// Registers the constructor of the specified type of the crossword instance.
@@ -41,6 +42,9 @@ namespace QBits.Intuition.Crosswords.Elements
             return objectCreators[type](crossword, column, row);
         }
         static ElementsFactory _SAP;
+        /// <summary>
+        /// Collection or constructors of crossword elements.
+        /// </summary>
         protected new Dictionary<string, ctor> objectCreators = new Dictionary<string, ctor>();
     }
 }

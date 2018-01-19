@@ -6,38 +6,28 @@ using System.Text;
 namespace QBits.Intuition.Mathematics
 {
     /*
-     *    No matter where you got this code, be aware that MIRACL is NOT 
-     *    free software. For commercial use a license is required.
+     *    No matter where you got this code, be aware that MIRACL is NOT free software. For commercial use a license is required.
      *	  See www.shamus.ie
      *
      *    MIRACL  C++ Header file big.h
-     *
      *    AUTHOR  :    N.Coghlan
      *                 Modified by M.Scott
-     *             
      *    PURPOSE :    Definition of class Big
      *
-     *   Bigs are normally created on the heap, but by defining BIGS=m
-     *   on the compiler command line, Bigs are instead mostly created from the 
-     *   stack. Note that m must be same or less than the n in the main program 
-     *   with for example 
+     *   Bigs are normally created on the heap, but by defining BIGS=m on the compiler command line, Bigs are instead mostly created from the 
+     *   stack. Note that m must be same or less than the n in the main program with for example 
      *
      *   Miracl precison(n,0); 
-     *
      *   where n is the (fixed) size in words of each Big.
      *
-     *   This may be faster, as C++ tends to create and destroy lots of 
-     *   temporaries. Especially recommended if m is small. Do not use
-     *   for program development
+     *   This may be faster, as C++ tends to create and destroy lots of temporaries. Especially recommended if m is small. Do not use for program development
      *
      *   However Bigs created from a string are always allocated from the heap.
-     *   This is useful for creating large read-only constants which are larger 
-     *   than m. 
+     *   This is useful for creating large read-only constants which are larger than m. 
      *
      *   NOTE:- I/O conversion
      *
      *   To convert a hex character string to a Big
-     *
      *         Big x;
      *         char c[100];
      *
@@ -49,8 +39,7 @@ namespace QBits.Intuition.Mathematics
      *         mip->IOBASE=16;
      *         c << x;
      *
-     *   To convert to/from pure binary, see the from_binary()
-     *   and to_binary() friend functions.
+     *   To convert to/from pure binary, see the from_binary() and to_binary() friend functions.
      *
      *   int len;
      *   char c[100];
@@ -63,8 +52,6 @@ namespace QBits.Intuition.Mathematics
      *                              
      *   Copyright (c) 1988-2001 Shamus Software Ltd.
      */
-
-
 
     /// <summary>
     /// A real number of arbitrary precision.

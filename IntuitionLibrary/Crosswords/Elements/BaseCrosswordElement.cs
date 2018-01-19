@@ -56,7 +56,13 @@ namespace QBits.Intuition.Crosswords.Elements
         /// Parent crossword of this element.
         /// </summary>
         protected Crossword _crossword;
+        /// <summary>
+        /// Gets or sets this element's location.
+        /// </summary>
         protected int _column;
+        /// <summary>
+        /// Gets or sets this element's location.
+        /// </summary>
         protected int _row;
         /// <summary>
         /// Windows control associated with this element. Null if nothing.

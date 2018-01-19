@@ -31,7 +31,13 @@ namespace QBits.Intuition.Crosswords.Definitions
                 return _kier;
             }
         }
+        /// <summary>
+        /// Holds the definition of the crossword element.
+        /// </summary>
         protected string _definicja;
+        /// <summary>
+        /// Gets or sets the definition for crossword element.
+        /// </summary>
         public virtual string definicja
         {
             get
@@ -60,7 +66,9 @@ namespace QBits.Intuition.Crosswords.Definitions
         }
 
         #region IComponent Members
-
+        /// <summary>
+        /// Can be implemented in the implementor.
+        /// </summary>
         public event EventHandler Disposed;
         public ISite Site
         {
