@@ -98,6 +98,7 @@ namespace QBits.Intuition.Crosswords.Definitions
 
         #region IDisposable Members
 
+        /// <summary>Called by IDisposable.</summary>
         public void Dispose()
         {
             throw new Exception("The method or operation is not implemented.");

@@ -27,6 +27,7 @@ namespace QBits.Intuition.Crosswords.Elements
             if (objectCreators.ContainsKey(type)) throw new ExecutionEngineException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
+        /// <summary>Single Access Point.</summary>
         public new static ElementsFactory SAP
         {
             get

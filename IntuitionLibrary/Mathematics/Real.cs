@@ -148,7 +148,7 @@ namespace QBits.Intuition.Mathematics
             }
             throw new System.NotImplementedException("Adding RealDouble with other Real type is not yet supported");
         }
-
+        /// <summary>Comparison implementation.</summary>
         public override int CompareTo(Real other)
         {
             if (other is RealDouble)

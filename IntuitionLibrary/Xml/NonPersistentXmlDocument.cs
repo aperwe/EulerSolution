@@ -6,8 +6,11 @@ using System.Xml;
 
 namespace QBits.Intuition.Xml
 {
+    /// <summary>Class for manipulating non-persistence in XML</summary>
     public class NonPersistentXMLDocument : SimpleXmlDocument
     {
+        /// <summary>Default constructor.</summary>
+        /// <param name="rootNodeName"></param>
         public NonPersistentXMLDocument(string rootNodeName)
             : base(null, rootNodeName)
         {

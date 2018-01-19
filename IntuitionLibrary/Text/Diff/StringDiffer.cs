@@ -143,9 +143,10 @@ namespace QBits.Intuition.Text.Diff
             return LCS;
         }
     }
-
+    /// <summary>Extension methods for manipulating arrays.</summary>
     public static class Extensions
     {
+        /// <summary>Returns the previous diagonal value.</summary>
         public static int PreviousDiagonal(this int[,] me, int x, int y)
         {
             int previousX = x - 1;
@@ -154,12 +155,14 @@ namespace QBits.Intuition.Text.Diff
             if (previousY < 0) return 0;
             return me[previousX, previousY];
         }
+        /// <summary>Returns the previous x-1 value.</summary>
         public static int PreviousInX(this int[,] me, int x, int y)
         {
             int previousX = x - 1;
             if (previousX < 0) return 0;
             return me[previousX, y];
         }
+        /// <summary>Returns the previous y-1 value.</summary>
         public static int PreviousInY(this int[,] me, int x, int y)
         {
             int previousY = y - 1;
