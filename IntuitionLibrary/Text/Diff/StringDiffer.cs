@@ -7,10 +7,14 @@ namespace QBits.Intuition.Text.Diff
 {
     /// <summary>
     /// Analyzes two strings and presents an information about how different they are.
-    /// <para/>Algorighm implemented after <seealso cref="http://en.wikipedia.org/wiki/Diff"/> and <seealso cref="http://en.wikipedia.org/wiki/Longest_common_subsequence_problem"/>.
+    /// <para/>Algorighm implemented after http://en.wikipedia.org/wiki/Diff
+    /// and http://en.wikipedia.org/wiki/Longest_common_subsequence_problem.
     /// </summary>
     public class StringDiffer
     {
+        /// <summary>
+        /// Gets or sets original string.
+        /// </summary>
         public string OriginalString { get; set; }
 
         /// <summary>
@@ -70,7 +74,7 @@ namespace QBits.Intuition.Text.Diff
         }
 
         /// <summary>
-        /// Finds the longest common subsequence as described in <seealso cref="http://en.wikipedia.org/wiki/Longest_common_subsequence_problem"/>
+        /// Finds the longest common subsequence as described in http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         /// </summary>
         /// <param name="left">Characters from the left (original) string.</param>
         /// <param name="right">Characters from the right (updated or new) string.</param>
@@ -139,9 +143,10 @@ namespace QBits.Intuition.Text.Diff
             return LCS;
         }
     }
-
+    /// <summary>Extension methods for manipulating arrays.</summary>
     public static class Extensions
     {
+        /// <summary>Returns the previous diagonal value.</summary>
         public static int PreviousDiagonal(this int[,] me, int x, int y)
         {
             int previousX = x - 1;
@@ -150,12 +155,14 @@ namespace QBits.Intuition.Text.Diff
             if (previousY < 0) return 0;
             return me[previousX, previousY];
         }
+        /// <summary>Returns the previous x-1 value.</summary>
         public static int PreviousInX(this int[,] me, int x, int y)
         {
             int previousX = x - 1;
             if (previousX < 0) return 0;
             return me[previousX, y];
         }
+        /// <summary>Returns the previous y-1 value.</summary>
         public static int PreviousInY(this int[,] me, int x, int y)
         {
             int previousY = y - 1;
@@ -169,6 +176,7 @@ namespace QBits.Intuition.Text.Diff
     /// </summary>
     public class Same : Difference
     {
+        /// <summary>Gets or sets the string.</summary>
         public string SameText { get; set; }
 
         /// <summary>
@@ -194,6 +202,9 @@ namespace QBits.Intuition.Text.Diff
     /// </summary>
     public class Addition : Difference
     {
+        /// <summary>
+        /// Gets or sets the portion of the text to compare.
+        /// </summary>
         public string AddedText { get; set; }
 
         /// <summary>
@@ -214,16 +225,12 @@ namespace QBits.Intuition.Text.Diff
         }
     }
 
-    /// <summary>
-    /// A difference type that is a text removal.
-    /// </summary>
+    /// <summary>A difference type that is a text removal.</summary>
     public class Deletion : Difference
     {
+        /// <summary>Deleted text instance.</summary>
         public string DeletedText { get; set; }
-
-        /// <summary>
-        /// Constructs an indicator that a string item has been added to the original string.
-        /// </summary>
+        /// <summary>Constructs an indicator that a string item has been added to the original string.</summary>
         /// <param name="text">Substring that is deemed as 'addition'.</param>
         public Deletion(string text)
         {

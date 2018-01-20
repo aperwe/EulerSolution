@@ -263,7 +263,7 @@ namespace QBits.Intuition.Text
         /// Assembles the current part by adding the specified string to it.
         /// <para/>Note: to have this string added to the working string, you need to call <see cref="AppendCurrentPart()"/>.
         /// </summary>
-        /// <param name="newSegment">New segment to be added to <paramref name="CurrentPart"/></param>
+        /// <param name="newSegment">New segment to be added to current part.</param>
         internal void AppendToCurrentPart(string newSegment)
         {
             CurrentPart += newSegment;

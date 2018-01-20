@@ -48,7 +48,7 @@ namespace EulerProblems.Problems
 
         private class Lagrange
         {
-            internal int row;
+            //internal int row;
             internal long combinations;
             public override string ToString()
             {

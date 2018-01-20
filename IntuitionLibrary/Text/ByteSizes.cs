@@ -7,6 +7,9 @@ namespace QBits.Intuition.Text
     /// </summary>
     public enum ByteSizes : long
     {
+        /// <summary>
+        /// Unit of 1 KB.
+        /// </summary>
         KiloUnit = 1024,
         /// <summary>
         /// One kilobyte (KB). Equal to 1024 bytes.
