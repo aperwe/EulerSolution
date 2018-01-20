@@ -9,25 +9,12 @@ namespace QBits.Intuition.Crosswords.Elements
     /// </summary>
     public class ElementsFactory : UniversalFactory<string, BaseCrosswordElement>
     {
-        /// <summary>
-        /// Delegate definition for creating a crossword element at the specified location.
-        /// </summary>
-        /// <param name="crossword"></param>
-        /// <param name="column"></param>
-        /// <param name="row"></param>
-        /// <returns></returns>
         public new delegate BaseCrosswordElement ctor(Crossword crossword, int column, int row);
-        /// <summary>
-        /// Registers the constructor of the specified type of the crossword instance.
-        /// </summary>
-        /// <param name="type">Class type name.</param>
-        /// <param name="constructor">Class constructor of the crossword element.</param>
         public void RegisterConstructor(string type, ctor constructor)
         {
-            if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
+            if (objectCreators.ContainsKey(type)) throw new ExecutionEngineException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
-        /// <summary>Single Access Point.</summary>
         public new static ElementsFactory SAP
         {
             get
@@ -36,22 +23,11 @@ namespace QBits.Intuition.Crosswords.Elements
                 return _SAP;
             }
         }
-        /// <summary>
-        /// Call this to create the crossword element of the specified type within the given crossword.
-        /// </summary>
-        /// <param name="type">Element type.</param>
-        /// <param name="crossword">Parent crossword.</param>
-        /// <param name="column">Location of the crossword element.</param>
-        /// <param name="row">Location of the crossword element.</param>
-        /// <returns></returns>
         public BaseCrosswordElement CreateObject(string type, Crossword crossword, int column, int row)
         {
             return objectCreators[type](crossword, column, row);
         }
         static ElementsFactory _SAP;
-        /// <summary>
-        /// Collection or constructors of crossword elements.
-        /// </summary>
         protected new Dictionary<string, ctor> objectCreators = new Dictionary<string, ctor>();
     }
 }

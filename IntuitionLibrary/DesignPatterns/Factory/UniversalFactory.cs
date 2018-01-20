@@ -31,26 +31,15 @@ namespace QBits.Intuition.DesignPatterns.Factory
             }
         }
         static UniversalFactory<classKey, classBase> _SAP;
-        /// <summary>
-        /// Creates an instance of the specified class type.
-        /// </summary>
-        /// <param name="type">Type name to create instance of.</param>
-        /// <returns>Instance of the specified type.</returns>
         public classBase CreateObject(classKey type)
         {
             return objectCreators[type]();
         }
-        /// <summary>
-        /// Registers a constructor of the given class type.
-        /// </summary>
-        /// <param name="type">Type name this constructor creates.</param>
-        /// <param name="constructor">Constructor method that can create a type instance.</param>
         public void RegisterConstructor(classKey type, ctor constructor)
         {
-            if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
+            if (objectCreators.ContainsKey(type)) throw new ExecutionEngineException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
-        /// <summary>Dictionary of object creators.</summary>
         protected Dictionary<classKey, ctor> objectCreators = new Dictionary<classKey, ctor>();
     }
 }

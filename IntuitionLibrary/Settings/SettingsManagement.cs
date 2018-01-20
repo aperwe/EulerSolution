@@ -6,16 +6,11 @@ using System.Data;
 
 namespace QBits.Intuition.Settings
 {
-    /// <summary>
-    /// Extension methods for managing settings files for an application.
-    /// </summary>
     public static class SettingsManagement
     {
         /// <summary>
-        /// Persists the data from database on disk to the file pointed to by <paramref name="dbFileName"/>.
+        /// Persists the data from database on disk to the file pointed to by <see cref="dbFileName"/>.
         /// </summary>
-        /// <param name="dbFileName">Name of the settings database file.</param>
-        /// <param name="me">Dataset to which settings are serialized/deseralized.</param>
         public static void SaveData(this DataSet me, string dbFileName)
         {
             if (me == null) return;
