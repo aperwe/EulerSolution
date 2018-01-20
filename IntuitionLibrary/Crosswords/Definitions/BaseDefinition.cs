@@ -10,6 +10,7 @@ namespace QBits.Intuition.Crosswords.Definitions
     /// </summary>
     public abstract class BaseDefinition : IComponent, ISite
     {
+        static bool fConstructorsInitialized = false;
         /// <summary>
         /// Default constructor (protected).
         /// </summary>
@@ -17,16 +18,27 @@ namespace QBits.Intuition.Crosswords.Definitions
         {
             DefinitionChangedEvt += new EventHandler(delegate(object sender, EventArgs e) { }); //Default handler, obviously doing nothing. Just to make sure raising the Event Handler does not throw exception.
         }
-
+        /// <summary>
+        /// Direction of definition.
+        /// </summary>
         protected Kierunek _kier = Kierunek.Nieokreślony;
-        public virtual Kierunek kierunek
+        /// <summary>
+        /// Gets the direction of the definition.
+        /// </summary>
+        public virtual Kierunek Kierunek
         {
             get
             {
                 return _kier;
             }
         }
+        /// <summary>
+        /// Holds the definition of the crossword element.
+        /// </summary>
         protected string _definicja;
+        /// <summary>
+        /// Gets or sets the definition for crossword element.
+        /// </summary>
         public virtual string definicja
         {
             get
@@ -39,9 +51,19 @@ namespace QBits.Intuition.Crosswords.Definitions
                 DefinitionChangedEvt(this, null);
             }
         }
+        /// <summary>
+        /// Gets or sets the list of propsal solutions for the given definition.
+        /// </summary>
         public List<string> propozycje = new List<string>();
+        /// <summary>
+        /// Event raised when definition is changed.
+        /// </summary>
         public event EventHandler DefinitionChangedEvt;
-        static bool fConstructorsInitialized = false;
+        /// <summary>
+        /// Creates the definition.
+        /// </summary>
+        /// <param name="kier">Direction of the definition.</param>
+        /// <returns>Created instance.</returns>
         public static BaseDefinition CreateDefinition(Kierunek kier)
         {
             TryInitFactory();
@@ -55,8 +77,11 @@ namespace QBits.Intuition.Crosswords.Definitions
         }
 
         #region IComponent Members
-
+        /// <summary>
+        /// Can be implemented in the implementor.
+        /// </summary>
         public event EventHandler Disposed;
+        /// <summary>Returns current site.</summary>
         public ISite Site
         {
             get
@@ -73,6 +98,7 @@ namespace QBits.Intuition.Crosswords.Definitions
 
         #region IDisposable Members
 
+        /// <summary>Called by IDisposable.</summary>
         public void Dispose()
         {
             throw new Exception("The method or operation is not implemented.");
@@ -121,10 +147,14 @@ namespace QBits.Intuition.Crosswords.Definitions
         #endregion
     }
     delegate BaseDefinition defConstructor();
+    /// <summary>Direction indicator</summary>
     public enum Kierunek
     {
+        /// <summary>Undefined.</summary>
         Nieokreślony,
+        /// <summary>Horizontal.</summary>
         Poziomo,
+        /// <summary>Vertical.</summary>
         Pionowo
     }
 }
