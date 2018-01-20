@@ -6,40 +6,29 @@ namespace QBits.Intuition.Mathematics
     /// <summary>
     /// BigInteger Class Version 1.03
     ///
-    /// Copyright (c) 2002 Chew Keong TAN
-    /// All rights reserved.
+    /// Copyright (c) 2002 Chew Keong TAN, All rights reserved.
     ///
-    /// Permission is hereby granted, free of charge, to any person obtaining a
-    /// copy of this software and associated documentation files (the
-    /// "Software"), to deal in the Software without restriction, including
-    /// without limitation the rights to use, copy, modify, merge, publish,
-    /// distribute, and/or sell copies of the Software, and to permit persons
-    /// to whom the Software is furnished to do so, provided that the above
-    /// copyright notice(s) and this permission notice appear in all copies of
-    /// the Software and that both the above copyright notice(s) and this
-    /// permission notice appear in supporting documentation.
+    /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+    /// (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+    /// merge, publish, distribute, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+    /// provided that the above copyright notice(s) and this permission notice appear in all copies of the Software and that both
+    /// the above copyright notice(s) and this permission notice appear in supporting documentation.
     ///
-    /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-    /// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    /// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
-    /// OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-    /// HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
-    /// INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
-    /// FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
-    /// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+    /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    /// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+    /// HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
+    /// FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
     /// WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     ///
     /// Disclaimer
     /// ----------
-    /// Although reasonable care has been taken to ensure the correctness of this
-    /// implementation, this code should never be used in any application without
-    /// proper verification and testing.  I disclaim all liability and responsibility
-    /// to any person or entity with respect to any loss or damage caused, or alleged
-    /// to be caused, directly or indirectly, by the use of this BigInteger class.
+    /// Although reasonable care has been taken to ensure the correctness of this implementation, this code should never be used in any application
+    /// without proper verification and testing.  I disclaim all liability and responsibility to any person or entity with respect
+    /// to any loss or damage caused, or alleged to be caused, directly or indirectly, by the use of this BigInteger class.
     ///
     /// Comments, bugs and suggestions to (http://www.codeproject.com/csharp/biginteger.asp)
     ///
-    /// Overloaded Operators +, -, *, /, %, >>, &lt;&lt;, ==, !=, >, &lt;, >=, &lt;=, &, |, ^, ++, --, ~
+    /// Overloaded Operators +, -, *, /, %, >>, &lt;&lt;, ==, !=, >, &lt;, >=, &lt;=, &amp;, |, ^, ++, --, ~
     ///
     /// Features
     /// 1) Arithmetic operations involving large signed integers (2's complement).
@@ -100,12 +89,12 @@ namespace QBits.Intuition.Mathematics
     /// References
     /// [1] D. E. Knuth, "Seminumerical Algorithms", The Art of Computer Programming Vol. 2, 3rd Edition, Addison-Wesley, 1998.
     /// [2] K. H. Rosen, "Elementary Number Theory and Its Applications", 3rd Ed, Addison-Wesley, 1993.
-    /// [3] B. Schneier, "Applied Cryptography", 2nd Ed, John Wiley & Sons, 1996.
+    /// [3] B. Schneier, "Applied Cryptography", 2nd Ed, John Wiley &amp; Sons, 1996.
     /// [4] A. Menezes, P. van Oorschot, and S. Vanstone, "Handbook of Applied Cryptography", CRC Press, 1996, www.cacr.math.uwaterloo.ca/hac
     /// [5] A. Bosselaers, R. Govaerts, and J. Vandewalle, "Comparison of Three Modular Reduction Functions," Proc. CRYPTO'93, pp.175-186.
     /// [6] R. Baillie and S. S. Wagstaff Jr, "Lucas Pseudoprimes", Mathematics of Computation, Vol. 35, No. 152, Oct 1980, pp. 1391-1417.
     /// [7] H. C. Williams, "Édouard Lucas and Primality Testing", Canadian Mathematical
-    ///     Society Series of Monographs and Advance Texts, vol. 22, John Wiley & Sons, New York, NY, 1998.
+    ///     Society Series of Monographs and Advance Texts, vol. 22, John Wiley &amp; Sons, New York, NY, 1998.
     /// [8] P. Ribenboim, "The new book of prime number records", 3rd edition, Springer-Verlag, New York, NY, 1995.
     /// [9] M. Joye and J.-J. Quisquater, "Efficient computation of full Lucas sequences", Electronics Letters, 32(6), 1996, pp 537-538.
     /// </summary>
@@ -2285,7 +2274,7 @@ namespace QBits.Intuition.Mathematics
         }
         /// <summary>
         /// Returns a value that is equivalent to the integer square root of the BigInteger.
-        /// The integer square root of "this" is defined as the largest integer n such that (n * n) <= this
+        /// The integer square root of "this" is defined as the largest integer n such that (n * n) &lt;= this
         /// </summary>
         public BigInteger Sqrt()
         {

@@ -12,6 +12,9 @@ namespace QBits.Intuition.Mathematics.Fibonacci
     public class FibonacciSequence
     {
         LinkedList<Int64> dynamicSequence = new LinkedList<Int64>();
+        /// <summary>
+        /// Constructor of this class.
+        /// </summary>
         public FibonacciSequence()
         {
             //Axiomatic constant value.
@@ -34,7 +37,6 @@ namespace QBits.Intuition.Mathematics.Fibonacci
 
         private Int64 GetAt(int at)
         {
-            Int64 result = 0;
             if (dynamicSequence.Count < at) //Need to do some computation
             {
                 CreateItemsUntilAt(at);
@@ -81,6 +83,9 @@ namespace QBits.Intuition.Mathematics.Fibonacci
     public class FibonacciSequenceBig
     {
         LinkedList<BigInteger> dynamicSequence = new LinkedList<BigInteger>();
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
         public FibonacciSequenceBig()
         {
             //Axiomatic constant value.

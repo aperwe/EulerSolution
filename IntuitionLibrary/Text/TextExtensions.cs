@@ -5,6 +5,9 @@ using System.Text;
 
 namespace QBits.Intuition.Text
 {
+    /// <summary>
+    /// Extension method for manipulating strings.
+    /// </summary>
     public static class TextExtensions
     {
         /// <summary>
