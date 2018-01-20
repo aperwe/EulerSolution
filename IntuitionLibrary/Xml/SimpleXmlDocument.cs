@@ -6,8 +6,10 @@ using System.Xml;
 
 namespace QBits.Intuition.Xml
 {
+    /// <summary>Simple representation of a persistence XML file.</summary>
     public class SimpleXmlDocument
     {
+        /// <summary>Default constructor.</summary>
         public SimpleXmlDocument(string fileName)
         {
             BasicConstructor(fileName);
@@ -43,22 +45,28 @@ namespace QBits.Intuition.Xml
             fName.Value = attributeValue;
             currentNode.Attributes.Append(fName);
         }
+        /// <summary>Creates a new child node in the document.</summary>
+        /// <param name="type">Node type to create.</param>
+        /// <param name="name">Node name.</param>
+        /// <param name="uri">Node URI.</param>
+        /// <returns>Reference to the newly created node.</returns>
         protected XmlNode CreateChildNode(XmlNodeType type, string name, string uri)
         {
             XmlNode newNode = doc.CreateNode(type, name, uri);
             return newNode;
         }
+        /// <summary>Creates a child node under specified node.</summary>
+        /// <param name="currentNode">Parent node to create the specified node under.</param>
+        /// <param name="name">Child node name.</param>
+        /// <returns>Child node name.</returns>
         public XmlNode CreateChildNode(XmlNode currentNode, string name)
         {
             return currentNode.AppendChild(CreateChildNode(XmlNodeType.Element, name, null));
         }
-        /// <summary>Geths the root node of the XML document.</summary>
-        public XmlNode rootNode
-        {
-            get { return docRootNode; }
-        }
+        /// <summary>Gets the root node of the XML document.</summary>
+        public XmlNode RootNode => docRootNode;
         /// <summary>Gets the XML document.</summary>
-        public XmlDocument document
+        public XmlDocument Document
         {
             get { return doc; }
         }
