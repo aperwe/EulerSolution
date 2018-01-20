@@ -177,25 +177,12 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public int A { get; private set; }
     }
-    /// <summary>
-    /// Extension methods for <see cref="double"/> type.
-    /// </summary>
     public static class Rozszerzenia
     {
-        /// <summary>
-        /// Returns true is <paramref name="ja"/> is greater than <paramref name="co"/>
-        /// </summary>
-        /// <param name="ja">Compared object.</param>
-        /// <param name="co">Object to compare with.</param>
         public static bool JestWiększeNiż(this double ja, double co)
         {
             return ja > co;
         }
-        /// <summary>
-        /// Returns true is <paramref name="ja"/> is smaller than <paramref name="co"/>
-        /// </summary>
-        /// <param name="ja">Compared object.</param>
-        /// <param name="co">Object to compare with.</param>
         public static bool JestMniejszeNiż(this double ja, double co)
         {
             return ja < co;

@@ -34,6 +34,7 @@ namespace EulerStarter
             var h = bi.ToHexString();
             var test = ~bi;
             var test2 = -bi;
+            BigInteger.Main(new string[0]);
         }
 
         private void CreateButtonsForSolvers(IEnumerable<SolverInfo> solvers)

@@ -5,9 +5,10 @@ using System.Text;
 
 namespace QBits.Intuition.Mathematics
 {
-    /// <summary>A class of complex numbers.
+    /// <summary>
+    /// A class of complex numbers.
     /// Some equations for implementations were based on descriptions in this help:
-    /// http://commons.apache.org/math/apidocs/org/apache/commons/math/complex/Complex.html
+    /// <see cref="http://commons.apache.org/math/apidocs/org/apache/commons/math/complex/Complex.html"/>
     /// </summary>
     public class Complex
     {

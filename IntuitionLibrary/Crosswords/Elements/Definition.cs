@@ -174,7 +174,7 @@ namespace QBits.Intuition.Crosswords.Elements
         {
             base.SerializeToNode(myNode, nodeOwner);
             nodeOwner.AddAttribute("definition", _def.definicja, myNode);
-            nodeOwner.AddAttribute("direction", _def.Kierunek.ToString(), myNode);
+            nodeOwner.AddAttribute("direction", _def.kierunek.ToString(), myNode);
             XmlNode possibilities = nodeOwner.CreateChildNode(myNode, "possibilities");
             foreach (string word in _def.propozycje)
             {
