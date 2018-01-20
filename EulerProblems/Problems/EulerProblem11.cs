@@ -37,13 +37,13 @@ namespace EulerProblems.Problems
             ArrayAPI arrayAPI = new ArrayAPI(numbers);
             int maxRight = 0, maxDown = 0, maxDiagLeftDown = 0, maxDiagRightDown = 0;
             int iterationsRight = 0, iterationsDown = 0, iterationsDiagLeftDown = 0, iterationsDiagRightDown = 0;
-            int maxReducedExtent = 20 - 4, maxExtent = 20; //Max dimension extent to move (reserve 4 to accommodate checked sequence length of 4)
+            int maxX = 20, maxY = 20; //Dimensions of the array
 
             #region Adjacent to the right
             {
-                foreach (int y in Enumerable.Range(0, maxExtent))
+                foreach (int y in Enumerable.Range(0, 20))
                 {
-                    foreach (int x in Enumerable.Range(0, maxReducedExtent))
+                    foreach (int x in Enumerable.Range(0, 16))
                     {
                         var elements = arrayAPI.ElementsAtRight(x, y, 4);
                         var product = elements.Aggregate((a, prod) => a * prod);
@@ -56,9 +56,9 @@ namespace EulerProblems.Problems
 
             #region Adjacent down
             {
-                foreach (int y in Enumerable.Range(0, maxReducedExtent))
+                foreach (int y in Enumerable.Range(0, 16))
                 {
-                    foreach (int x in Enumerable.Range(0, maxExtent))
+                    foreach (int x in Enumerable.Range(0, 20))
                     {
                         var elements = arrayAPI.ElementsDown(x, y, 4);
                         var product = elements.Aggregate((a, prod) => a * prod);
@@ -71,9 +71,9 @@ namespace EulerProblems.Problems
 
             #region Adjacent diagonally down and left
             {
-                foreach (int y in Enumerable.Range(0, maxReducedExtent))
+                foreach (int y in Enumerable.Range(0, 16))
                 {
-                    foreach (int x in Enumerable.Range(3, maxReducedExtent))
+                    foreach (int x in Enumerable.Range(3, 16))
                     {
                         var elements = arrayAPI.ElementsDiagonallyLeftDown(x, y, 4);
                         var product = elements.Aggregate((a, prod) => a * prod);
@@ -86,9 +86,9 @@ namespace EulerProblems.Problems
 
             #region Adjacent diagonally down and right
             {
-                foreach (int y in Enumerable.Range(0, maxReducedExtent))
+                foreach (int y in Enumerable.Range(0, 16))
                 {
-                    foreach (int x in Enumerable.Range(0, maxReducedExtent))
+                    foreach (int x in Enumerable.Range(0, 16))
                     {
                         var elements = arrayAPI.ElementsDiagonallyRightDown(x, y, 4);
                         var product = elements.Aggregate((a, prod) => a * prod);

@@ -17,7 +17,7 @@ namespace QBits.Intuition.Xml
 
         public XmlNode CreateParam(string name, string value)
         {
-            XmlNode configParam = CreateChildNode(RootNode, "param");
+            XmlNode configParam = CreateChildNode(rootNode, "param");
             AddAttribute("name", name, configParam);
             AddAttribute("value", value, configParam);
             return configParam;
@@ -42,7 +42,7 @@ namespace QBits.Intuition.Xml
                 get
                 {
                     string xpath = string.Format("/config/param[@name='{0}']", paramName);
-                    return Params.Document.SelectSingleNode(xpath);
+                    return Params.document.SelectSingleNode(xpath);
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace QBits.Intuition.Xml
                     string xpath = string.Format("/config/param[@name='{0}']", paramName);
                     try
                     {
-                        retVal = Params.Document.SelectSingleNode(xpath).Attributes["value"].Value;
+                        retVal = Params.document.SelectSingleNode(xpath).Attributes["value"].Value;
                     }
                     catch { }
                     return retVal;
