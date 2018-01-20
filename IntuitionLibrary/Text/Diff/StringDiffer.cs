@@ -176,6 +176,7 @@ namespace QBits.Intuition.Text.Diff
     /// </summary>
     public class Same : Difference
     {
+        /// <summary>Gets or sets the string.</summary>
         public string SameText { get; set; }
 
         /// <summary>
@@ -224,16 +225,12 @@ namespace QBits.Intuition.Text.Diff
         }
     }
 
-    /// <summary>
-    /// A difference type that is a text removal.
-    /// </summary>
+    /// <summary>A difference type that is a text removal.</summary>
     public class Deletion : Difference
     {
+        /// <summary>Deleted text instance.</summary>
         public string DeletedText { get; set; }
-
-        /// <summary>
-        /// Constructs an indicator that a string item has been added to the original string.
-        /// </summary>
+        /// <summary>Constructs an indicator that a string item has been added to the original string.</summary>
         /// <param name="text">Substring that is deemed as 'addition'.</param>
         public Deletion(string text)
         {

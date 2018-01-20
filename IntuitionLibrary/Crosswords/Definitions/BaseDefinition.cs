@@ -147,10 +147,14 @@ namespace QBits.Intuition.Crosswords.Definitions
         #endregion
     }
     delegate BaseDefinition defConstructor();
+    /// <summary>Direction indicator</summary>
     public enum Kierunek
     {
+        /// <summary>Undefined.</summary>
         Nieokreślony,
+        /// <summary>Horizontal.</summary>
         Poziomo,
+        /// <summary>Vertical.</summary>
         Pionowo
     }
 }
