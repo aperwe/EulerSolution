@@ -36,19 +36,13 @@ namespace QBits.Intuition.Threading
             return n;
         }
         /// <summary>
-        /// Key object used to lock access to this <see cref="ThreadSafeObject{SafeObject}"/>.
+        /// Key object used to lock access to this <see cref="ThreadSafeObject"/>
         /// </summary>
         public object Key { get { return _key; } }
-        /// <summary>
-        /// Returns string representation of this.
-        /// </summary>
         public override string ToString()
         {
             return theObject.ToString();
         }
-        /// <summary>
-        /// Default implementation of hash function.
-        /// </summary>
         public override int GetHashCode()
         {
             return theObject.GetHashCode();

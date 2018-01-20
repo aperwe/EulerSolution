@@ -8,7 +8,7 @@ namespace QBits.Intuition.SysUtils
 {
     /// <summary>
     /// Class that allows easy retrieval of .Net framework properties, such as version installed and service pack number.
-    /// <para/>Implementation (incomplete) based on information on http://stackoverflow.com/questions/199080/how-to-detect-what-net-framework-versions-and-service-packs-are-installed.
+    /// <para/>Implementation (incomplete) based on information on <seealso cref="http://stackoverflow.com/questions/199080/how-to-detect-what-net-framework-versions-and-service-packs-are-installed"/>.
     /// </summary>
     public class DotNetFramework
     {

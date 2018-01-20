@@ -33,12 +33,6 @@ namespace QBits.Intuition.Crosswords.Elements
         //}
         #endregion
         #endregion
-        /// <summary>
-        /// Protected constructor. Not accessible to public.
-        /// </summary>
-        /// <param name="crossword">Parent crossword.</param>
-        /// <param name="column">Column location of the element within the crossword.</param>
-        /// <param name="row">Row location of the element within the crossword.</param>
         protected BaseCrosswordElement(Crossword crossword, int column, int row)
         {
             _crossword = crossword;
@@ -56,21 +50,12 @@ namespace QBits.Intuition.Crosswords.Elements
         /// Parent crossword of this element.
         /// </summary>
         protected Crossword _crossword;
-        /// <summary>
-        /// Gets or sets this element's location.
-        /// </summary>
         protected int _column;
-        /// <summary>
-        /// Gets or sets this element's location.
-        /// </summary>
         protected int _row;
         /// <summary>
         /// Windows control associated with this element. Null if nothing.
         /// </summary>
         protected Control _wControl;
-        /// <summary>
-        /// Adusts the size of the dropdown menu.
-        /// </summary>
         protected static void AdjustDropDownSize(ContextMenuStrip graphicsProvider, ToolStripDropDownButton popupDropdown)
         {
             Graphics g = graphicsProvider.CreateGraphics();
@@ -78,9 +63,6 @@ namespace QBits.Intuition.Crosswords.Elements
             popupDropdown.Width = textSize.Width;
             popupDropdown.Height = textSize.Height;
         }
-        /// <summary>
-        /// Removes the display element of the specified crossword element.
-        /// </summary>
         public void RemoveWindowsControl()
         {
             if (_wControl != null)
@@ -89,7 +71,6 @@ namespace QBits.Intuition.Crosswords.Elements
                 _wControl = null;
             }
         }
-        /// <summary>Returns the current object type.</summary>
         public static string ObjectType
         {
             get
@@ -99,9 +80,7 @@ namespace QBits.Intuition.Crosswords.Elements
         }
 
         #region XmlSerializable Members
-        /// <summary>
-        /// Serializes the element to underying persistence.
-        /// </summary>
+
         virtual public void SerializeToNode(System.Xml.XmlNode myNode, SimpleXmlDocument nodeOwner)
         {
             nodeOwner.AddAttribute("column", _column.ToString(), myNode);
@@ -119,7 +98,7 @@ namespace QBits.Intuition.Crosswords.Elements
         #endregion
 
         #region FactorableByString Members
-        /// <summary>Returns the objet type.</summary>
+
         virtual public string GetObjectType()
         {
             return null;

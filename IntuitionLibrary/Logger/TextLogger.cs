@@ -86,11 +86,7 @@ namespace QBits.Intuition.Logger
         #endregion
 
         #region ILogger Members
-        /// <summary>
-        /// Take new log entry into the logger queue.
-        /// </summary>
-        /// <param name="logLevel">Logging level.</param>
-        /// <param name="entry">String entry.</param>
+
         public void AcceptLogEntry(LogLevel logLevel, string entry)
         {
             lock (logEntries.Key)

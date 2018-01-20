@@ -118,9 +118,7 @@ namespace QBits.Intuition.Text.Palindroms
                 dict.Add(new XElement("w", lcWord));
             }
         }
-        /// <summary>
-        /// Finds a palindrome for the specified source string.
-        /// </summary>
+
         public static string FindPalindrom(string palindromSource)
         {
             throw new NotImplementedException();
