@@ -98,7 +98,7 @@ namespace QBits.Intuition.Mathematics
     /// [8] P. Ribenboim, "The new book of prime number records", 3rd edition, Springer-Verlag, New York, NY, 1995.
     /// [9] M. Joye and J.-J. Quisquater, "Efficient computation of full Lucas sequences", Electronics Letters, 32(6), 1996, pp 537-538.
     /// </summary>
-    public class BigInteger
+    public class BigInteger : IComparable
     {
         /// <summary>
         /// Maximum length of the BigInteger in uint (4 bytes). Change this to suit the required level of precision.
@@ -775,7 +775,9 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public override bool Equals(object o)
         {
+            if (o == null) return false;
             BigInteger bi = (BigInteger)o;
+
 
             if (this.dataLength != bi.dataLength)
                 return false;
@@ -2831,6 +2833,38 @@ namespace QBits.Intuition.Mathematics
             Random rand = new Random();
             BigInteger prime = BigInteger.GenPseudoPrime(512, 5, rand);
             Console.WriteLine("\n" + prime);
+        }
+
+        /// <summary>
+        /// Calculates Power of this to <paramref name="b"/>.
+        /// </summary>
+        /// <param name="b">Power. Must be integer.</param>
+        /// <returns>a^b</returns>
+        public BigInteger Power(BigInteger b)
+        {
+            BigInteger result = new BigInteger(1);
+            if (b == 0) return 1; //Axiomatic value
+            for (BigInteger iterator = 0; iterator < b; iterator++)
+            {
+                result *= this;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Compares two BigInteger values.
+        /// </summary>
+        /// <param name="rightValue">Object to compare to</param>
+        /// <returns>0 if both values are equal. 1 if <paramref name="rightValue"/> > this. -1 if this > <paramref name="rightValue"/> </returns>
+        int IComparable.CompareTo(object rightValue)
+        {
+            BigInteger right = rightValue as BigInteger;
+            if (right == null) return 1;
+            var retval = this > right;
+            if (retval) return 1;
+            retval = this < right;
+            if (retval) return -1;
+            return 0;
         }
     }
 }
