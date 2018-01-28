@@ -1,11 +1,4 @@
-﻿using QBits.Intuition.Mathematics;
-using QBits.Intuition.Mathematics.Fibonacci;
-using QBits.Intuition.Mathematics.Primes;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -26,7 +19,7 @@ namespace EulerProblems.Problems
             Permutations<int> permutations = new Permutations<int>();
             var allSequencesToCheck = permutations.GeneratePermutations(new List<int>(numbers));
             long iterationCounter = 0;
-            List<PandigitTester> allCombinations = new List<PandigitTester>();
+            List<PandigitCandidate> allCombinations = new List<PandigitCandidate>();
 
             //All sequences of length 9 are ready.
             foreach (var sequence in allSequencesToCheck)
@@ -41,7 +34,7 @@ namespace EulerProblems.Problems
                         iterationCounter++;
                         var fistSequence = sequence.Take(i);
                         var secondSequence = sequence.Skip(i).Take(j);
-                        var tester = new PandigitTester(fistSequence, secondSequence);
+                        var tester = new PandigitCandidate(fistSequence, secondSequence);
                         allCombinations.Add(tester);
                     }
                 }
@@ -55,7 +48,7 @@ namespace EulerProblems.Problems
             var finalList = newCollection.ToList();
             //Since there are multiple results in the list, group them by product to make sure we include only one distinct product.
             var uniqueList = finalList.GroupBy(candidate => candidate.Product);
-            StringBuilder answerPart = new StringBuilder();
+            StringBuilder answerPart = new StringBuilder().AppendLine();
             long sumProducts = 0;
             foreach (var group in uniqueList)
             {
@@ -63,121 +56,22 @@ namespace EulerProblems.Problems
                 sumProducts += group.Key;
             }
 
-
-
             answer = string.Format("All sequences = {0}. Loop iterations: {1}. Results: {2}. Sum of unique products: {3}. List of results: {4}", allSequencesToCheck.Count, iterationCounter, finalList.Count, sumProducts, answerPart);
-
-            //PandigitGenerator pandigitGenerator = new PandigitGenerator();
-            //List<PandigitTester> allCombinations = new List<PandigitTester>();
-
-            ////Enumerable.Range(1, 9).AsParallel().ForAll(multiplicandLength =>
-            //foreach (int multiplicandLength in Enumerable.Range(1, 9))
-            //{
-            //    var collection = pandigitGenerator.Generate(multiplicandLength);
-            //    if (multiplicandLength == 4)
-            //        allCombinations.ToString();
-            //    lock (allCombinations)
-            //    {
-            //        allCombinations.AddRange(collection);
-            //    }
-            //}
-            ////);
-            //foreach (var item in allCombinations)
-            //{
-            //    if (item.IsATruePandigit())
-            //    {
-            //        //Do something
-            //        var kup = item.ToString();
-            //    }
-            //}
-            //answer = string.Format("Still computing... Count = {0}.", allCombinations.LongCount());
-        }
-    }
-    internal class PandigitGenerator
-    {
-        int[] numbers = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        int[] masks = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100 };
-
-        const int maxBits = 0x1FF;
-        private Permutations<int> permuatator = new Permutations<int>();
-
-        internal IEnumerable<PandigitTester> Generate(int multiplicandLength)
-        {
-            List<PandigitTester> result = new List<PandigitTester>();
-
-            for (int bitValue = 0; bitValue <= maxBits; bitValue++)
-            {
-                //Construct input sequences for permutations
-                List<int> multiplicandDigits = new List<int>();
-                List<int> multiplierDigits = new List<int>();
-                for (int bit = 0; bit < 9; bit++)
-                {
-                    int currentDigit = numbers[bit];
-                    if (BitSet(bitValue, bit)) multiplicandDigits.Add(currentDigit);
-                    else multiplierDigits.Add(currentDigit);
-                }
-                //We have inputs ready for permuation in multiplicantDigits and multiplierDigits
-                if ((multiplicandDigits.Count > 0) && (multiplierDigits.Count > 0))
-                {
-                    IEnumerable<PandigitTester> permutations = MakePermutations(multiplicandDigits, multiplierDigits);
-                    result.AddRange(permutations);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Generate permutations of numbers that cen be constructed from the lists of digits
-        /// </summary>
-        /// <param name="multiplicandDigits"></param>
-        /// <param name="multplierDigits"></param>
-        /// <returns></returns>
-        private IEnumerable<PandigitTester> MakePermutations(List<int> multiplicandDigits, List<int> multplierDigits)
-        {
-            var perms = permuatator.GeneratePermutations(multiplicandDigits);
-            var perms2 = permuatator.GeneratePermutations(multplierDigits);
-            List<PandigitTester> results = new List<PandigitTester>();
-            long length = perms.LongCount();
-            if (length == 0)
-            {
-                var p = length.ToString();
-            }
-            foreach(var mutiplicandPerm in perms)
-            {
-                foreach(var multiplierPerm in perms2)
-                {
-                    var candidate = new PandigitTester(multiplicand: mutiplicandPerm, multiplier: multiplierPerm);
-                    //if (candidate.IsATruePandigit())
-                        results.Add(candidate);
-                }
-            }
-            return results;
-        }
-        /// <summary>
-        /// Tests if a bit is set or not in the specified <paramref name="bitValue"/>
-        /// </summary>
-        /// <param name="bitValue"></param>
-        /// <param name="bit"></param>
-        /// <returns>True if bit is set. False if not set.</returns>
-        private bool BitSet(int bitValue, int bit)
-        {
-            var mask = masks[bit];
-            var retVal = bitValue & mask;
-            return retVal != 0;
         }
     }
     /// <summary>
     /// Single instance describing a combination of multiplicand*multiplier=product.
     /// </summary>
-    internal class PandigitTester : IEqualityComparer
+    internal class PandigitCandidate
     {
         static char[] digits = new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         internal long Multiplicand { get; private set; }
         internal long Multiplier { get; private set; }
         internal long Product => Multiplicand * Multiplier;
-
-        public PandigitTester(IEnumerable<int> multiplicand, IEnumerable<int> multiplier)
+        /// <summary>Creates an instance of the candidate with the specified multiplicand and multiplier.</summary>
+        /// <param name="multiplicand">Value of the multiplicand.</param>
+        /// <param name="multiplier">Value of the multiplier.</param>
+        public PandigitCandidate(IEnumerable<int> multiplicand, IEnumerable<int> multiplier)
         {
             int tenM = 1; Multiplicand = 0;
             foreach (var m in multiplicand)
@@ -192,15 +86,13 @@ namespace EulerProblems.Problems
                 tenM2 *= 10;
             }
         }
-
+        /// <summary>Displays info aout this <seealso cref="PandigitCandidate"/>.</summary>
         public override string ToString()
         {
             return string.Format("{0} * {1} = {2}", Multiplicand, Multiplier, Product);
         }
 
-        /// <summary>
-        /// Checks if the specified combination of a,b, and a*b is a Pandigit combination.
-        /// </summary>
+        /// <summary>Checks if the specified combination of a,b, and a*b is a Pandigit combination.</summary>
         /// <returns>True if it is, false if it is not.</returns>
         internal bool IsATruePandigit()
         {
@@ -230,17 +122,6 @@ namespace EulerProblems.Problems
             return sb.ToString().OrderBy(c => c).ToString();
         }
 
-        bool IEqualityComparer.Equals(object x, object y)
-        {
-            var left = x as PandigitTester;
-            var right = y as PandigitTester;
-            return left.AllDigitsSorted().Equals(right.AllDigitsSorted());
-        }
-
-        int IEqualityComparer.GetHashCode(object obj)
-        {
-            return ((PandigitTester)obj).AllDigitsSorted().GetHashCode();
-        }
     }
     /// <summary>
     /// Class used to generate permutations
@@ -266,15 +147,13 @@ namespace EulerProblems.Problems
 
             // Build the combinations recursively.
             PermuteItems(items, in_selection, current_permutation, results, 0);
-
-            // Return the results.
             return results;
         }
 
         /// <summary>
         /// Recursively permute the items that are not yet in the current selection.
         /// </summary>
-        /// <param name="items"></param>
+        /// <param name="items">List of permutations</param>
         /// <param name="in_selection"></param>
         /// <param name="current_permutation"></param>
         /// <param name="results"></param>
