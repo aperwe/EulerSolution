@@ -33,7 +33,7 @@ namespace EulerProblems.Problems
                     {
                         int totalLength = i + j;
                         if (totalLength > 8) continue; //If 9 or longer, there is no space for product digits, so no point in continuing. This is definitely not a candidate.
-                        iterationCounter++;
+                        lock (this) iterationCounter++;
                         var fistSequence = sequence.Take(i);
                         var secondSequence = sequence.Skip(i).Take(j);
                         var tester = new PandigitCandidate(fistSequence, secondSequence);
