@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Q-Bits")]
 [assembly: AssemblyProduct("Intuition")]
-[assembly: AssemblyCopyright("Copyright ©Artur Perwenis 2009-2015")]
+[assembly: AssemblyCopyright("Copyright ©Artur Perwenis 2009-2018")]
 [assembly: AssemblyTrademark("Q-Bits")]
 [assembly: AssemblyCulture("")]
 
@@ -33,8 +33,8 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.2.13.22")]
-[assembly: AssemblyFileVersion("3.2.13.22")]
+[assembly: AssemblyVersion("3.2.14.23")]
+[assembly: AssemblyFileVersion("3.2.14.23")]
 [assembly: NeutralResourcesLanguageAttribute("")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")]
