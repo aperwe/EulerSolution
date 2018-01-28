@@ -23,7 +23,8 @@ namespace EulerProblems.Problems
             List<PandigitCandidate> allCombinations = new List<PandigitCandidate>();
 
             //All sequences of length 9 are ready.
-            foreach (var sequence in allSequencesToCheck)
+            //foreach (var sequence in allSequencesToCheck)
+            allSequencesToCheck.AsParallel().ForAll(sequence =>
             {
                 // Now break each sequence into lengths of 2 through 9
                 foreach (int i in Enumerable.Range(1, 9))
@@ -31,15 +32,17 @@ namespace EulerProblems.Problems
                     foreach (int j in Enumerable.Range(1, 9))
                     {
                         int totalLength = i + j;
-                        if (totalLength > 9) continue;
+                        if (totalLength > 8) continue; //If 9 or longer, there is no space for product digits, so no point in continuing. This is definitely not a candidate.
                         iterationCounter++;
                         var fistSequence = sequence.Take(i);
                         var secondSequence = sequence.Skip(i).Take(j);
                         var tester = new PandigitCandidate(fistSequence, secondSequence);
-                        allCombinations.Add(tester);
+                        if (tester.IsATruePandigit()) //Test early in parallel, to maximize effort spent in parallel
+                            lock (allCombinations) allCombinations.Add(tester);
                     }
                 }
             }
+            );
 
             //All combinations to check for pandigitability are in allCombinations collection.
             //Select only those that are pandigital.
@@ -102,10 +105,6 @@ namespace EulerProblems.Problems
             sb.Append(Multiplier);
             sb.Append(Product);
             if (sb.Length != 9) return false; //Required but not sufficient
-            if (Multiplicand == 17)
-            {
-                var mmm = Multiplicand.ToString();
-            }
             var array = sb.ToString().ToCharArray();
             var result = digits.All(digit => array.Contains(digit)); //Check that all digits 1-9 are contained within the array.
             return result;
