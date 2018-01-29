@@ -51,11 +51,21 @@ namespace EulerProblems.Problems
             //Translate original fractions to their shorter versions
             List<FractionRepresentation> simpleFractions = (from item in list select item.ShorterValue).ToList();
 
+            //Finally, from simple versions of the final set of fractions create a single fraction
+            int finalN = 1, finalD = 1;
+
+            simpleFractions.ForEach(fraction => { finalN *= fraction.Nominator; finalD *= fraction.Denominator; });
+            int nwd = MoreMath.NWD(finalN, finalD);
+            FractionRepresentation final = new FractionRepresentation(finalN / nwd, finalD / nwd);
+
+
             StringBuilder DEBUGString = new StringBuilder().AppendLine();
             list.ForEach(item => DEBUGString.AppendLine($"{item.Nominator}/{item.Denominator}"));
             DEBUGString.AppendLine("=== Shorter ===");
             simpleFractions.ForEach(item => DEBUGString.AppendLine($"{item.Nominator}/{item.Denominator}"));
-            answer = $"Computing... {counter}/{list.Count}. {DEBUGString}";
+            DEBUGString.AppendLine("=== Final ===");
+            DEBUGString.AppendLine($"{final.ToString()}");
+            answer = $"Computing... {counter}/{list.Count}. {DEBUGString} Final denominator is {final.Denominator}.";
         }
 
         /// <summary>
@@ -83,6 +93,10 @@ namespace EulerProblems.Problems
                 catch { Denominator = 0; }
             }
 
+            public override string ToString()
+            {
+                return $"{Nominator}/{Denominator}";
+            }
             /// <summary>
             /// Nominator
             /// </summary>
