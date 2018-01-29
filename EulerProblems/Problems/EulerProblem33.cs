@@ -22,8 +22,8 @@ namespace EulerProblems.Problems
             int counter = 0;
             List<FractionRepresentation> list = new List<FractionRepresentation>();
             //Loop over 2-digit nominators
-            //ParallelEnumerable.Range(10, 90).ForAll(nominator =>
-            foreach (int nominator in Enumerable.Range(10, 90))
+            ParallelEnumerable.Range(10, 90).ForAll(nominator =>
+            //foreach (int nominator in Enumerable.Range(10, 90))
             {
                 foreach (int denominator in Enumerable.Range(10, 90))
                 {
@@ -47,9 +47,14 @@ namespace EulerProblems.Problems
                     }
                 }
             }
-            //);
+            );
+            //Translate original fractions to their shorter versions
+            List<FractionRepresentation> simpleFractions = (from item in list select item.ShorterValue).ToList();
+
             StringBuilder DEBUGString = new StringBuilder().AppendLine();
             list.ForEach(item => DEBUGString.AppendLine($"{item.Nominator}/{item.Denominator}"));
+            DEBUGString.AppendLine("=== Shorter ===");
+            simpleFractions.ForEach(item => DEBUGString.AppendLine($"{item.Nominator}/{item.Denominator}"));
             answer = $"Computing... {counter}/{list.Count}. {DEBUGString}";
         }
 
@@ -131,15 +136,7 @@ namespace EulerProblems.Problems
             {
                 get
                 {
-                    var digitsToRemove = ListOfDigitsRepeatedInNominatorAndDenominator;
-                    if (digitsToRemove.Length == 2) //Check how many of these are there
-                    {
-                        bool DEBUG_Stop_Here = true;
-                    }
-                    var firstDigitToRemove = digitsToRemove.First();
-                    var newNominator = new string(NominatorString.Where(c => c != firstDigitToRemove).ToArray());
-                    var newDenominator = new string(DenominatorString.Where(c => c != firstDigitToRemove).ToArray());
-                    var newFraction = new FractionRepresentation(newNominator, newDenominator);
+                    var newFraction = ShorterValue;
 
                     var newFractionValue = newFraction.FractionValue;
                     return newFractionValue == this.FractionValue;
@@ -162,6 +159,22 @@ namespace EulerProblems.Problems
                     if ((nom.First() == repetition) && (denom.Last() == repetition)) return true;
                     if ((nom.Last() == repetition) && (denom.First() == repetition)) return true;
                     return false;
+                }
+            }
+
+            /// <summary>
+            /// For curious fractions it will return the shorter version of fraction with redundant numbers removed.
+            /// </summary>
+            public FractionRepresentation ShorterValue
+            {
+                get
+                {
+                    var digitsToRemove = ListOfDigitsRepeatedInNominatorAndDenominator;
+                    var firstDigitToRemove = digitsToRemove.First();
+                    var newNominator = new string(NominatorString.Where(c => c != firstDigitToRemove).ToArray());
+                    var newDenominator = new string(DenominatorString.Where(c => c != firstDigitToRemove).ToArray());
+                    var newFraction = new FractionRepresentation(newNominator, newDenominator);
+                    return newFraction;
                 }
             }
         }
