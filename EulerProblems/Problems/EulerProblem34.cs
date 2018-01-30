@@ -16,8 +16,35 @@ namespace EulerProblems.Problems
     {
         protected override void Solve(out string answer)
         {
-            answer = $"Computing...";
+            int fact2 = Factorial(2);
+            int fact5 = Factorial(5);
+            int sum = 0;
+            //TODO: Is this upper limit enough?
+            foreach (int number in Enumerable.Range(3, 100000))
+            {
+                //TODO, break each number ito digits
+                //TODO: get factorials of each digit
+                //TODO: sum factorials
+                //TODO: compare sum(factorials) with the input number.
+                //TODO: If they are equal, add number to the sum.
+            }
+            answer = $"Computing... {fact2}, {fact5}. Answer is {sum}.";
         }
-
+        /// <summary>
+        /// Produces a factorial for the specified number.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns>Factorial</returns>
+        public int Factorial(int number)
+        {
+            //Axioms
+            if (number < 0) return 0;
+            if (number == 0) return 1;
+            if (number == 1) return 1;
+            //Otherwise iteratively calculate the factorial
+            int retVal = 1;
+            while (number > 1) retVal *= number--;
+            return retVal;
+        }
     }
 }
