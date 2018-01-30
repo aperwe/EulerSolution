@@ -16,19 +16,30 @@ namespace EulerProblems.Problems
     {
         protected override void Solve(out string answer)
         {
-            int fact2 = Factorial(2);
-            int fact5 = Factorial(5);
             int sum = 0;
-            //TODO: Is this upper limit enough?
-            foreach (int number in Enumerable.Range(3, 100000))
+            List<int> items = new List<int>();
+            //TODO: Is this upper limit enough? Factorial of 9! = 362880.
+            foreach (int number in Enumerable.Range(3, 10_000_000))
             {
                 //TODO, break each number ito digits
+                var digitArray = from digit in number.ToString().ToArray()
+                                 select digit - '0';
                 //TODO: get factorials of each digit
+                var factorialArray = from digit in digitArray
+                                     select Factorial(digit);
                 //TODO: sum factorials
+                var sumFactorials = factorialArray.Sum();
                 //TODO: compare sum(factorials) with the input number.
-                //TODO: If they are equal, add number to the sum.
+                if (number == sumFactorials)
+                {
+                    //TODO: If they are equal, add number to the sum.
+                    sum += sumFactorials;
+                    items.Add(number);
+                }
             }
-            answer = $"Computing... {fact2}, {fact5}. Answer is {sum}.";
+            StringBuilder DEBUGString = new StringBuilder().AppendLine();
+            items.ForEach(item => DEBUGString.Append($"{item}; "));
+            answer = $"Computing... Answer is {sum}. Count items is {items.Count}. Items: {DEBUGString.ToString()}";
         }
         /// <summary>
         /// Produces a factorial for the specified number.
