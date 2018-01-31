@@ -77,18 +77,8 @@ namespace EulerProblems.Problems
         /// <param name="multiplier">Value of the multiplier.</param>
         public PandigitCandidate(IEnumerable<int> multiplicand, IEnumerable<int> multiplier)
         {
-            int tenM = 1; Multiplicand = 0;
-            foreach (var m in multiplicand)
-            {
-                Multiplicand += tenM * m;
-                tenM *= 10;
-            }
-            int tenM2 = 1; Multiplier = 0;
-            foreach (var m in multiplier)
-            {
-                Multiplier += tenM2 * m;
-                tenM2 *= 10;
-            }
+            Multiplicand = MoreMath.IntFromDigits(multiplicand);
+            Multiplier = MoreMath.IntFromDigits(multiplier);
         }
         /// <summary>Displays info aout this <seealso cref="PandigitCandidate"/>.</summary>
         public override string ToString()
