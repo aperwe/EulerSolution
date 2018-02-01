@@ -114,5 +114,35 @@ namespace QBits.Intuition.Mathematics
             while (number > 1) retVal *= number--;
             return retVal;
         }
+        /// <summary>
+        /// Returns a number constructed from array of digits representing that int.
+        /// </summary>
+        /// <param name="digits">Array of digits</param>
+        /// <returns>Int value</returns>
+        public static int IntFromDigits(IEnumerable<int> digits)
+        {
+            int tenM = 1, retVal = 0;
+            foreach (var d in digits)
+            {
+                retVal += tenM * d;
+                tenM *= 10;
+            }
+            return retVal;
+        }
+        /// <summary>
+        /// Returns a number constructed from array of digit chars representing that int.
+        /// </summary>
+        /// <param name="digits">Array of digit chars. Note, '0' = 48, '1' = 49, '2' = 50, ...</param>
+        /// <returns>Int value</returns>
+        public static int IntFromDigits(IEnumerable<char> digits)
+        {
+            int tenM = 1, retVal = 0;
+            foreach (var d in digits)
+            {
+                retVal += tenM * (d -'0');
+                tenM *= 10;
+            }
+            return retVal;
+        }
     }
 }
