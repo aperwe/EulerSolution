@@ -23,7 +23,7 @@ namespace EulerProblems.Problems
         protected override void Solve(out string answer)
         {
             List<int> primes = new List<int>();
-            Enumerable.Range(2, 1_000_000).ToList().ForEach(number =>
+            Enumerable.Range(2, 999_998).ToList().ForEach(number =>
                 {
                     if (primesolver.IsPrime(number))
                     {
@@ -33,7 +33,9 @@ namespace EulerProblems.Problems
                         }
                     }
                 });
-            answer = $"Computing... Primes {primes.Count}.";
+            StringBuilder DEBUGString = new StringBuilder().AppendLine();
+            primes.ForEach(prime => DEBUGString.AppendLine($"{prime}"));
+            answer = $"Computing... Primes {primes.Count}. Primes: {DEBUGString}";
         }
         /// <summary>
         /// Test if the given prime is a circular prime.
@@ -48,6 +50,7 @@ namespace EulerProblems.Problems
             {
                 List<char> rotation = new List<char>(digits.Skip(i));
                 rotation.AddRange(digits.Take(i));
+                rotation.Reverse(); //Ensure correct order of digits when reconstructing whole number
                 var rotatedPrime = MoreMath.IntFromDigits(rotation);
                 if (!primesolver.IsPrime(rotatedPrime)) return false;
             }
