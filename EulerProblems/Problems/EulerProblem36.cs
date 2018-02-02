@@ -24,7 +24,7 @@ namespace EulerProblems.Problems
             int sum = 0;
 
             //Create Parallel stuff
-            var parallels = GetParallelRanges(1, 999999, 32);
+            var parallels = Parallelization.GetParallelRanges(1, 999_999, 32);
 
             //var ranges = Enumerable.Range(1, 999_999).AsParallel();
             //foreach (var i in range)
@@ -51,31 +51,6 @@ namespace EulerProblems.Problems
             );
 
             answer = $"Computing... Sum = {sum}. Count = {counter}.";
-        }
-
-        /// <summary>
-        /// Gets a list of sub-ranges that can be used in parallel loop to iterate over whole range.
-        /// </summary>
-        /// <param name="start">The value of the first integer in this sequence.</param>
-        /// <param name="count">The number of sequential integers to generate.</param>
-        /// <param name="partitions">The number of partitions (sub-ranges) into which to divide the whole range produced.</param>
-        /// <returns>Easily parallelizable list of partitions on which you can call .ForAll() delegate.</returns>
-        public ParallelQuery<IEnumerable<int>> GetParallelRanges(int start, int count, int partitions)
-        {
-            List<IEnumerable<int>> enumerables = new List<IEnumerable<int>>();
-            int partitionSize = (count + 1) / partitions; //Handle odd counts properly
-            int end = count + start;
-            for (int pos = start, range = partitionSize; pos < end; pos += partitionSize)
-            {
-                if ((pos + range) > end) //Make sure the last partition is capped to ensure proper total count
-                {
-                    range = end - pos;
-                }
-                var item = Enumerable.Range(pos, range);
-                enumerables.Add(item);
-            }
-            var parallels = enumerables.AsParallel();
-            return parallels;
         }
 
         /// <summary>
