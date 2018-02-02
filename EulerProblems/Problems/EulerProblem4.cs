@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QBits.Intuition.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace EulerProblems.Problems
             var left = Enumerable.Range(100, 900).Reverse().AsParallel();
             var right = Enumerable.Range(100, 900).Reverse();
             var palindromeCandidates = new SortedSet<NumericPalindrome>();
+            PalindromeManipulator palindromeManipulator = new PalindromeManipulator();
 
             left.ForAll(a =>
             {
@@ -27,7 +29,7 @@ namespace EulerProblems.Problems
                 foreach (var b in right)
                 {
                     var candidate = new NumericPalindrome(a * b);
-                    if (candidate.IsPalindrome) palindromeCandidates.Add(candidate);
+                    if (palindromeManipulator.IsPalindrome(candidate._numberString)) palindromeCandidates.Add(candidate);
                 }
             });
             var result = palindromeCandidates.Last().Number;
@@ -48,19 +50,6 @@ namespace EulerProblems.Problems
         {
             _number = number;
             _numberString = number.ToString();
-        }
-
-        public bool IsPalindrome
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(_numberString)) return true;
-                var maxLen = (_numberString.Length / 2) + 1; //+1 to cover for middle digit in numbers with odd-number of digits.
-                var iterators = Enumerable.Range(0, maxLen);
-                var reverseSequence = _numberString.Reverse().ToList();
-                var returnValue = iterators.All(i => _numberString[i] == reverseSequence[i]); //Palindrome is when all digits from either direction match.
-                return returnValue;
-            }
         }
 
         public int CompareTo(NumericPalindrome right)
