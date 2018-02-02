@@ -6,7 +6,7 @@ using System.Text;
 namespace QBits.Intuition.Mathematics.Primes
 {
     /// <summary>
-    /// Manages prime numbers management
+    /// Manages prime numbers management. Threadsafe.
     /// </summary>
     public class PrimeSolver
     {
@@ -127,6 +127,7 @@ namespace QBits.Intuition.Mathematics.Primes
 
         /// <summary>
         /// Tests using this simple trial method: http://www.wikihow.com/Check-if-a-Number-Is-Prime
+        /// If test is passed (i.e. the number is a prime), it is added to the set of known primes.
         /// </summary>
         /// <param name="testedInteger">Number tested for primality.</param>
         private void MakeTest(long testedInteger)
@@ -156,7 +157,6 @@ namespace QBits.Intuition.Mathematics.Primes
             //Now we are pretty sure the number is a prime. Add it to the known set of cached primes.
             lock (knownPrimes)
             knownPrimes.Add(testedInteger);
-
         }
 
         /// <summary>

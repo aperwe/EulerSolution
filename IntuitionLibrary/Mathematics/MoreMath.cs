@@ -137,7 +137,7 @@ namespace QBits.Intuition.Mathematics
         public static int IntFromDigits(IEnumerable<char> digits)
         {
             int tenM = 1, retVal = 0;
-            foreach (var d in digits)
+            foreach (var d in digits.Reverse())
             {
                 retVal += tenM * (d -'0');
                 tenM *= 10;
