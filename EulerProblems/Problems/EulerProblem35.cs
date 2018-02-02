@@ -24,7 +24,6 @@ namespace EulerProblems.Problems
         protected override void Solve(out string answer)
         {
             List<int> primes = new List<int>();
-            //Enumerable.Range(2, 999_998).ToList().ForEach(number =>
             Parallelization.GetParallelRanges(2, 999_998, 100).ForAll(sequence =>
                  {
                      foreach (int number in sequence)
@@ -56,7 +55,6 @@ namespace EulerProblems.Problems
             {
                 List<char> rotation = new List<char>(digits.Skip(i));
                 rotation.AddRange(digits.Take(i));
-                rotation.Reverse(); //Ensure correct order of digits when reconstructing whole number
                 var rotatedPrime = MoreMath.IntFromDigits(rotation);
                 if (!primesolver.IsPrime(rotatedPrime)) return false;
             }
