@@ -91,6 +91,8 @@
     <Compile Include="AbstractLanguageIntelligence\Model\Brains\MiddleLayer.cs" />
     <Compile Include="AbstractLanguageIntelligence\Model\Brains\OutputLayer.cs" />
     <Compile Include="Assemblies\AssemblyHelper.cs" />
+    <Compile Include="Collections\PalindromeManipulator.cs" />
+    <Compile Include="Collections\Parallelization.cs" />
     <Compile Include="Collections\StringCache.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
     <Compile Include="Mathematics\BigInteger.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Mathematics\Complex.cs" />
     <Compile Include="Mathematics\ContinuedFractionSquare.cs" />
     <Compile Include="Mathematics\MoreMath.cs" />
+    <Compile Include="Mathematics\Permutations.cs" />
     <Compile Include="Mathematics\Primes\NumberDivisor.cs" />
     <Compile Include="Mathematics\Primes\PrimeSolver.cs" />
     <Compile Include="Mathematics\Real.cs" />
