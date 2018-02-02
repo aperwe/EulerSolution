@@ -1,4 +1,5 @@
-﻿using QBits.Intuition.Mathematics;
+﻿using QBits.Intuition.Collections;
+using QBits.Intuition.Mathematics;
 using QBits.Intuition.Mathematics.Primes;
 using System;
 using System.Collections.Generic;
@@ -23,16 +24,21 @@ namespace EulerProblems.Problems
         protected override void Solve(out string answer)
         {
             List<int> primes = new List<int>();
-            Enumerable.Range(2, 999_998).ToList().ForEach(number =>
-                {
-                    if (primesolver.IsPrime(number))
-                    {
-                        if (IsCircularPrime(number))
-                        {
-                            primes.Add(number);
-                        }
-                    }
-                });
+            //Enumerable.Range(2, 999_998).ToList().ForEach(number =>
+            Parallelization.GetParallelRanges(2, 999_998, 100).ForAll(sequence =>
+                 {
+                     foreach (int number in sequence)
+                     {
+                         if (primesolver.IsPrime(number))
+                         {
+                             if (IsCircularPrime(number))
+                             {
+                                 lock (this) primes.Add(number);
+                             }
+                         }
+                     }
+                 }
+                 );
             StringBuilder DEBUGString = new StringBuilder().AppendLine();
             primes.ForEach(prime => DEBUGString.AppendLine($"{prime}"));
             answer = $"Computing... Primes {primes.Count}. Primes: {DEBUGString}";
