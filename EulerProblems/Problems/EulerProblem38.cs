@@ -42,7 +42,7 @@ namespace EulerProblems.Problems
              });
             var result = list.OrderByDescending(item => item.Pandigits);
             var max = result.First();
-            answer = $"Computing... Count = {list.Count}, {max}";
+            answer = $"Count = {list.Count}, Largest pandigital: {max}";
         }
         /// <summary>
         /// Model representing a number and its pandigital representation
@@ -95,7 +95,7 @@ namespace EulerProblems.Problems
             }
             public override string ToString()
             {
-                return $"{Number} ({data.Number}*{data.Multiplier}={data.Pandigit}";
+                return $"{Number} ({data.Number}*{data.Multiplier}={data.Pandigit})";
             }
         }
         struct Data
