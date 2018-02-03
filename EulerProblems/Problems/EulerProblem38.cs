@@ -23,20 +23,26 @@ namespace EulerProblems.Problems
     {
         protected override void Solve(out string answer)
         {
-            List<Representation> list = new List<Representation>();
-            Parallelization.GetParallelRanges(1, 1_000_000, 1).ForAll(sequence =>
+            var list = new List<Representation>();
+            Parallelization.GetParallelRanges(1, 10_000, 4).ForAll(sequence =>
              {
                  foreach (int number in sequence)
                  {
-                     foreach (int maxMultiplier in Enumerable.Range(1, 999))
+                     foreach (int maxMultiplier in Enumerable.Range(2, 99))
                      {
                          var candidate = new Representation(number, maxMultiplier);
-                         lock (this) list.Add(candidate);
+                         if (candidate.IsPandigital())
+                         {
+                             lock (this) list.Add(candidate);
+                             break; //If pandigit is found, multiplying by higher multipliers definitely will fail.
+                         }
                      }
                  }
 
              });
-            answer = $"Computing... Count = {list.Count}";
+            var result = list.OrderByDescending(item => item.Pandigits);
+            var max = result.First();
+            answer = $"Computing... Count = {list.Count}, {max}";
         }
         /// <summary>
         /// Model representing a number and its pandigital representation
@@ -44,13 +50,59 @@ namespace EulerProblems.Problems
         internal class Representation
         {
             private int Number;
-            private int maxMultiplier;
-
+            private int MaxMultiplier;
+            private static char[] digits = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            Data data = new Data();
+            internal string Pandigits => data.Pandigit;
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="number"></param>
+            /// <param name="maxMultiplier">n>1</param>
             public Representation(int number, int maxMultiplier)
             {
-                this.Number = number;
-                this.maxMultiplier = maxMultiplier;
+                Number = number;
+                if (maxMultiplier < 2) throw new ArgumentOutOfRangeException("maxMultiplier", "Value must be n>1");
+                MaxMultiplier = maxMultiplier;
             }
+
+            /// <summary>
+            /// Returns true if the specified number, concatenated with its <see cref="MaxMultiplier"/> multiplications is pandigital. False otherwise.
+            /// </summary>
+            /// <returns></returns>
+            internal bool IsPandigital()
+            {
+                StringBuilder representation = new StringBuilder().Append(Number);
+                for (int multiplier = 2; multiplier <= MaxMultiplier; multiplier++)
+                {
+                    representation.Append(Number * multiplier);
+                    if (representation.Length > 9) return false; //String larger than 9 cannot be 1-9 pandigital
+                    if (IsPandigital(representation.ToString().ToArray()))
+                    {
+                        data.Pandigit = representation.ToString();
+                        data.Number = Number;
+                        data.Multiplier = multiplier;
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+
+            private bool IsPandigital(char[] chars)
+            {
+                return digits.All(c => chars.Contains(c));
+            }
+            public override string ToString()
+            {
+                return $"{Number} ({data.Number}*{data.Multiplier}={data.Pandigit}";
+            }
+        }
+        struct Data
+        {
+            internal string Pandigit;
+            internal int Number;
+            internal int Multiplier;
         }
     }
 }
