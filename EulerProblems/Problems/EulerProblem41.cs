@@ -17,9 +17,10 @@ namespace EulerProblems.Problems
     {
         protected override void Solve(out string answer)
         {
+            //Of course we will assume that this number will start with 9
             var list = new List<PrimeRep>();
             var primeSolver = new PrimeSolver();
-            Parallelization.GetParallelRanges(1, 1_200_000, 10).ForAll(range =>
+            Parallelization.GetParallelRanges(1, 9_876_543_210, 10).ForAll(range =>
             {
                 foreach (int num in range)
                 {

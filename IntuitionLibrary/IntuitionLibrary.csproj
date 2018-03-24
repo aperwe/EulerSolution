@@ -91,6 +91,7 @@
     <Compile Include="AbstractLanguageIntelligence\Model\Brains\MiddleLayer.cs" />
     <Compile Include="AbstractLanguageIntelligence\Model\Brains\OutputLayer.cs" />
     <Compile Include="Assemblies\AssemblyHelper.cs" />
+    <Compile Include="Collections\Enumerable.cs" />
     <Compile Include="Collections\PalindromeManipulator.cs" />
     <Compile Include="Collections\Parallelization.cs" />
     <Compile Include="Collections\StringCache.cs" />
