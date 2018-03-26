@@ -146,6 +146,7 @@
     <Compile Include="Mathematics\Complex.cs" />
     <Compile Include="Mathematics\ContinuedFractionSquare.cs" />
     <Compile Include="Mathematics\MoreMath.cs" />
+    <Compile Include="Mathematics\Pandigits.cs" />
     <Compile Include="Mathematics\Permutations.cs" />
     <Compile Include="Mathematics\Primes\NumberDivisor.cs" />
     <Compile Include="Mathematics\Primes\PrimeSolver.cs" />

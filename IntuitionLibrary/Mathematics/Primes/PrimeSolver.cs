@@ -156,7 +156,7 @@ namespace QBits.Intuition.Mathematics.Primes
 
             //Now we are pretty sure the number is a prime. Add it to the known set of cached primes.
             lock (knownPrimes)
-            knownPrimes.Add(testedInteger);
+                knownPrimes.Add(testedInteger);
         }
 
         /// <summary>

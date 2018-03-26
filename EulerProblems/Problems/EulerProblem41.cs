@@ -9,7 +9,8 @@ using System.Text;
 namespace EulerProblems.Problems
 {
     /// <summary>
-    /// We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is also prime.
+    /// We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once.
+    /// For example, 2143 is a 4-digit pandigital and is also prime.
     /// What is the largest n-digit pandigital prime that exists?
     /// </summary>
     [ProblemSolverClass("Pandigital prime", DisplayName = "Problem 41")]
@@ -20,33 +21,46 @@ namespace EulerProblems.Problems
             //Of course we will assume that this number will start with 9
             var list = new List<PrimeRep>();
             var primeSolver = new PrimeSolver();
-            Parallelization.GetParallelRanges(1, 9_876_543_210, 10).ForAll(range =>
+            var pandigitizer = new Pandigits();
+            //var range = Enumerable64.Range(9_000_000_000, 0_876_543_210);
+            ///var largestToSmallestRange = range.OrderByDescending<long>(0);
+            Parallelization.GetParallelRanges(9_000_000_000, 0_876_543_210, 200).ForAll(sequence =>
+            //var p = Enumerable64.Range(9_800_000_000, 0_076_543_210).Reverse();
             {
-                foreach (int num in range)
+                foreach (var k in sequence.Reverse()) // Go from largest to smallest
                 {
-                    var rep = new PrimeRep(primeSolver, num);
+                    var rep = new PrimeRep(primeSolver, k);
                     if (rep.IsPrime)
                     {
-                        lock (this) list.Add(rep);
+                        if (pandigitizer.IsPandigital(rep.Value))
+                        {
+                            lock (this) list.Add(rep);
+                            //break; //Because this is the largest by definition, no need to search other values.
+                        }
                     }
                 }
-            }
-            );
-            answer = $"Computing... Count = {list.Count}";
+            });
+            var maxItem = list.OrderByDescending(x => x.Value);
+            var value = maxItem.FirstOrDefault().Value;
+
+            answer = $"Largest n-digit pandigital prime is: {value}";
         }
     }
+    /// <summary>
+    /// Prime representation (Facade) for a given number
+    /// </summary>
     internal class PrimeRep
     {
         private readonly PrimeSolver primeSolver;
-        private static char[] digits = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        private int Number;
+        private long Number;
 
-        public PrimeRep(PrimeSolver primeSolver, int num)
+        public PrimeRep(PrimeSolver primeSolver, long num)
         {
             this.primeSolver = primeSolver;
             Number = num;
         }
 
         public bool IsPrime => primeSolver.IsPrime(Number);
+        public long Value => Number;
     }
 }
