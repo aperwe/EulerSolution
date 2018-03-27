@@ -24,7 +24,7 @@ namespace EulerProblems.Problems
             var pandigitizer = new Pandigits();
             //var range = Enumerable64.Range(9_000_000_000, 0_876_543_210);
             ///var largestToSmallestRange = range.OrderByDescending<long>(0);
-            Parallelization.GetParallelRanges(9_000_000_000, 0_876_543_210, 200).ForAll(sequence =>
+            Parallelization.GetParallelRanges(7_000_000_000, 2_876_543_210, 200).ForAll(sequence =>
             //var p = Enumerable64.Range(9_800_000_000, 0_076_543_210).Reverse();
             {
                 foreach (var k in sequence.Reverse()) // Go from largest to smallest
@@ -43,7 +43,7 @@ namespace EulerProblems.Problems
             var maxItem = list.OrderByDescending(x => x.Value);
             var value = maxItem.FirstOrDefault().Value;
 
-            answer = $"Largest n-digit pandigital prime is: {value}";
+            answer = $"Largest n-digit pandigital prime is from 7,000,000,000 to 9,8: {value}";
         }
     }
     /// <summary>

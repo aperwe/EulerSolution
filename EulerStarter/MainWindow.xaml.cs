@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using EulerProblems;
-using EulerProblems.Problems;
 using QBits.Intuition.Mathematics;
 
 namespace EulerStarter
@@ -28,13 +18,6 @@ namespace EulerStarter
             var classLoader = new ProblemSolverClassLoader();
             var solvers = classLoader.LoadProblemSolvers();
             CreateButtonsForSolvers(solvers);
-            //Test BigInteger
-            BigInteger bi = 77795551;
-            var p = bi.ToString();
-            var h = bi.ToHexString();
-            var test = ~bi;
-            var test2 = -bi;
-            BigInteger.Main(new string[0]);
         }
 
         private void CreateButtonsForSolvers(IEnumerable<SolverInfo> solvers)
