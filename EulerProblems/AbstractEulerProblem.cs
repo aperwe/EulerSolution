@@ -20,6 +20,10 @@ namespace EulerProblems
                 }
             }
         }
+        protected void UpdateProgress(string progressMessage)
+        {
+            Answer = progressMessage;
+        }
         public event EventHandler<AnswerAgr> AnswerAvailableEventHandler;
 
         /// <summary>

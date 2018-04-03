@@ -46,6 +46,10 @@ namespace QBits.Intuition.Collections
         {
             List<IEnumerable<long>> enumerables = new List<IEnumerable<long>>();
             long partitionSize = (count + 1) / partitions; //Handle odd counts properly
+            #region Hadle case when partitions is larget than count
+            //In this case you have to ensure partition size must be at least 1
+            partitionSize = Math.Max(partitionSize, 1);
+            #endregion
             long end = count + start;
             for (long pos = start, range = partitionSize; pos < end; pos += partitionSize)
             {

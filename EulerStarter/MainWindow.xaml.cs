@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using EulerProblems;
 using QBits.Intuition.Mathematics;
+using QBits.Intuition.UI;
 
 namespace EulerStarter
 {
@@ -37,12 +39,12 @@ namespace EulerStarter
             var problemType = (sender as Button).Tag as Type;
             var problem = Activator.CreateInstance(problemType) as AbstractEulerProblem;
             problem.AnswerAvailableEventHandler += UpdateAnswerUI;
-            problem.StartSolving();
+            Task result = Task.Run(() => problem.StartSolving());
         }
 
         private void UpdateAnswerUI(object sender, AnswerAgr e)
         {
-            textBoxAnswer.Text = e.Answer;
+            this.InvokeOnUIThread(() => textBoxAnswer.Text = e.Answer);
         }
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
