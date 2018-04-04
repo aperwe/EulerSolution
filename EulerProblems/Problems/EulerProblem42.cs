@@ -17,7 +17,7 @@ namespace EulerProblems.Problems
     /// Using words.txt (right click and 'Save Link/Target As...'), 
     /// a 16K text file containing nearly two-thousand common English words, how many are triangle words?
     /// </summary>
-    [ProblemSolverClass("Pandigital prime", DisplayName = "Problem 42")]
+    [ProblemSolverClass("Triangle numbers", DisplayName = "Problem 42")]
     public class EulerProblem42 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

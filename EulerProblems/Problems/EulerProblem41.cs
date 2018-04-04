@@ -21,7 +21,7 @@ namespace EulerProblems.Problems
             //Of course we will assume that this number will start with 9
             var list = new List<PrimeRep>();
             var primeSolver = new PrimeSolver();
-            var pandigitizer = new Pandigits();
+            var pandigitizer = new Pandigits('1', 7);
             long start = 0_000_000;
             long count = 7_654_321;
             long progressDone = 0;
