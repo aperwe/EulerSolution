@@ -60,7 +60,7 @@ namespace EulerProblems.Problems
             /// Checks for primeness of this number.
             /// </summary>
             internal bool IsPrime() => solver.IsPrime(Number);
-            private bool IsPrime(int num) => solver.IsPrime(num);
+            private bool IsPrime(long num) => solver.IsPrime(num);
 
             /// <summary>
             /// Makes iterations for each string representation to ensure it is also a prime.
@@ -77,14 +77,14 @@ namespace EulerProblems.Problems
                 //First truncate from the left
                 for (int index = 1; index < digitLength; index++)
                 {
-                    int testInt = MoreMath.IntFromDigits(digitArray.Skip(index));
+                    long testInt = MoreMath.IntFromDigits(digitArray.Skip(index));
                     if (!IsPrime(testInt)) return false;
                 }
 
                 //Now trunctate from the right
                 for (int index = 1; index < digitLength; index++)
                 {
-                    int testInt = MoreMath.IntFromDigits(digitArray.Take(index));
+                    long testInt = MoreMath.IntFromDigits(digitArray.Take(index));
                     if (!IsPrime(testInt)) return false;
                 }
 

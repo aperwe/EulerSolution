@@ -119,9 +119,9 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         /// <param name="digits">Array of digits</param>
         /// <returns>Int value</returns>
-        public static int IntFromDigits(IEnumerable<int> digits)
+        public static long IntFromDigits(IEnumerable<int> digits)
         {
-            int tenM = 1, retVal = 0;
+            long tenM = 1, retVal = 0;
             foreach (var d in digits)
             {
                 retVal += tenM * d;
@@ -134,9 +134,9 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         /// <param name="digits">Array of digit chars. Note, '0' = 48, '1' = 49, '2' = 50, ...</param>
         /// <returns>Int value</returns>
-        public static int IntFromDigits(IEnumerable<char> digits)
+        public static long IntFromDigits(IEnumerable<char> digits)
         {
-            int tenM = 1, retVal = 0;
+            long tenM = 1, retVal = 0;
             foreach (var d in digits.Reverse())
             {
                 retVal += tenM * (d -'0');
