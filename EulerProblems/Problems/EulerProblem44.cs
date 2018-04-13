@@ -29,7 +29,7 @@ namespace EulerProblems.Problems
                 PentagonNumber pj = new PentagonNumber(j);
                 pentagonManager.Add(pj);
             }
-            long count = maxCount*maxCount;
+            long count = maxCount * maxCount;
             long progressDone = 0;
 
             //Create all pairs 5000x5000
@@ -51,7 +51,7 @@ namespace EulerProblems.Problems
                             }
 
                         }
-                        lock(this)
+                        lock (this)
                         {
                             progressDone++;
                             if (progressDone % 100_000 == 0)
