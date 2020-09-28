@@ -56,6 +56,7 @@
     <Compile Include="Problems\EulerProblem18.cs" />
     <Compile Include="Problems\EulerProblem19.cs" />
     <Compile Include="Problems\EulerProblem20.cs" />
+    <Compile Include="Problems\EulerProblem46.cs" />
     <Compile Include="Problems\EulerProblem45.cs" />
     <Compile Include="Problems\EulerProblem44.cs" />
     <Compile Include="Problems\EulerProblem43.cs" />
