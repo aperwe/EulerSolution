@@ -21,19 +21,19 @@ namespace EulerStarter
             Assembly problemAssembly = Assembly.GetAssembly(typeof(AbstractEulerProblem));
             var allTypes = problemAssembly.GetTypes();
             var infoList = new List<SolverInfo>();
-            foreach (Type t in allTypes)
+            foreach (Type type in allTypes)
             {
-                foreach (var a in t.GetCustomAttributes(false))
+                foreach (var attrib in type.GetCustomAttributes(false))
                 {
-                    if (a is ProblemSolverClassAttribute)
+                    if (attrib is ProblemSolverClassAttribute)
                     {
-                        var psca = a as ProblemSolverClassAttribute;
-                        SolverInfo si = new SolverInfo
+                        var psca = attrib as ProblemSolverClassAttribute;
+                        SolverInfo solver = new SolverInfo
                         {
                             DisplayName = psca.DisplayName,
-                            TypeInfo = t
+                            TypeInfo = type
                         };
-                        infoList.Add(si);
+                        infoList.Add(solver);
                     }
                 }
             }
