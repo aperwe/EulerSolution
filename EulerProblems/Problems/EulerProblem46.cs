@@ -21,50 +21,12 @@ namespace EulerProblems.Problems
     /// It turns out that the conjecture was false.
     /// What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
     /// </summary>
-    [ProblemSolverClass("Goldbach's other conjecture", DisplayName = "Problem 45 parallel")]
+    [ProblemSolverClass("Goldbach's other conjecture", DisplayName = "Problem 46")]
     public class EulerProblem46 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)
         {
-            var triangleNumbers = new Dictionary<long, long>();
-            var pentagonalNumbers = new Dictionary<long, long>();
-            var hexagonalNumbers = new Dictionary<long, long>();
-            var maxN = 100000;
-            GenerateNumbers(1, maxN, triangleNumbers, pentagonalNumbers, hexagonalNumbers);
-            var results = new List<long>();
-
-            Parallel.ForEach(triangleNumbers, (pair) =>
-            {
-                var currentTriangle = pair.Value;
-                if (IsPentagonal(currentTriangle, pentagonalNumbers))
-                {
-                    if (IsHexagonal(currentTriangle, hexagonalNumbers))
-                    {
-                        lock (results) //async
-                        {
-                            results.Add(pair.Key);
-                            results.Add(currentTriangle);
-                        }
-                    }
-                }
-            });
-
-            var strings = results.Select(n => n.ToString());
-            var joinedStrings = string.Join("; ", strings);
-            answer = $"In range of n = {maxN}: {joinedStrings}...";
-        }
-
-        private bool IsPentagonal(long triangleValue, Dictionary<long, long> pentagonalNumbers) => pentagonalNumbers.ContainsValue(triangleValue);
-        private bool IsHexagonal(long triangleValue, Dictionary<long, long> hexagonalNumbers) => hexagonalNumbers.ContainsValue(triangleValue);
-
-        private void GenerateNumbers(long min, long max, Dictionary<long, long> triangleNumbers, Dictionary<long, long> pentagonalNumbers, Dictionary<long, long> hexagonalNumbers)
-        {
-            foreach (long n in Enumerable64.Range(min, max - min))
-            {
-                triangleNumbers.Add(n, n * (n + 1) / 2);
-                pentagonalNumbers.Add(n, n * (3 * n - 1) / 2);
-                hexagonalNumbers.Add(n, n * (2 * n - 1));
-            }
+            answer = $"Solution not created yet...";
         }
     }
 

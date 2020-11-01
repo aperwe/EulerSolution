@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EulerProblems.Problems
 {
@@ -29,18 +30,22 @@ namespace EulerProblems.Problems
             var maxN = 100000;
             GenerateNumbers(1, maxN, triangleNumbers, pentagonalNumbers, hexagonalNumbers);
             var results = new List<long>();
-            foreach (var pair in triangleNumbers)
+
+            Parallel.ForEach(triangleNumbers, (pair) =>
             {
                 var currentTriangle = pair.Value;
                 if (IsPentagonal(currentTriangle, pentagonalNumbers))
                 {
                     if (IsHexagonal(currentTriangle, hexagonalNumbers))
                     {
-                        results.Add(pair.Key);
-                        results.Add(currentTriangle);
+                        lock (results) //async
+                        {
+                            results.Add(pair.Key);
+                            results.Add(currentTriangle);
+                        }
                     }
                 }
-            }
+            });
 
             var strings = results.Select(n => n.ToString());
             var joinedStrings = string.Join("; ", strings);
