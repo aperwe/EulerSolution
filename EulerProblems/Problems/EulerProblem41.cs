@@ -13,7 +13,7 @@ namespace EulerProblems.Problems
     /// For example, 2143 is a 4-digit pandigital and is also prime.
     /// What is the largest n-digit pandigital prime that exists?
     /// </summary>
-    [ProblemSolverClass("Pandigital prime", DisplayName = "Problem 41")]
+    [ProblemSolver("Pandigital prime", displayName = "Problem 41")]
     public class EulerProblem41 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

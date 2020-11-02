@@ -15,7 +15,7 @@ namespace EulerProblems.Problems
     /// If dn represents the nth digit of the fractional part, find the value of the following expression.
     /// d1 × d10 × d100 × d1000 × d10000 × d100000 × d1000000
     /// </summary>
-    [ProblemSolverClass("Champernowne's constant", DisplayName = "Problem 40")]
+    [ProblemSolver("Champernowne's constant", displayName = "Problem 40")]
     public class EulerProblem40 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

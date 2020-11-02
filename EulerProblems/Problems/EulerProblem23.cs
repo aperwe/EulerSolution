@@ -18,7 +18,7 @@ namespace EulerProblems.Problems
     /// 
     /// Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
     /// </summary>
-    [ProblemSolverClass("Problem 23", DisplayName = "Problem 23")]
+    [ProblemSolver("Problem 23", displayName = "Problem 23")]
     public class EulerProblem23 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -19,7 +19,7 @@ namespace EulerProblems.Problems
     /// 
     /// NOTE: Once the chain starts the terms are allowed to go above one million.
     /// </summary>
-    [ProblemSolverClass("Problem 14", DisplayName = "Problem 14")]
+    [ProblemSolver("Problem 14", displayName = "Problem 14")]
     public class EulerProblem14 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

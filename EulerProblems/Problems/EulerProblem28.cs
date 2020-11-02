@@ -18,7 +18,7 @@ namespace EulerProblems.Problems
     /// 17 16 15 14 13
     /// It can be verified that the sum of the numbers on the diagonals is 101.
     /// What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral formed in the same way?</summary>
-    [ProblemSolverClass("Problem 28", DisplayName = "Problem 28a")]
+    [ProblemSolver("Problem 28", displayName = "Problem 28a")]
     public class EulerProblem28a : AbstractEulerProblem
     {
         protected override void Solve(out string answer)
@@ -81,7 +81,7 @@ namespace EulerProblems.Problems
         public override string ToString() => string.Format("Answer: {0}, Array size: {1}", answer, ArraySize);
     }
 
-    [ProblemSolverClass("Problem 28", DisplayName = "Problem 28b")]
+    [ProblemSolver("Problem 28", displayName = "Problem 28b")]
     public class EulerProblem28b : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

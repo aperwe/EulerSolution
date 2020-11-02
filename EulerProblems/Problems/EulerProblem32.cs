@@ -11,7 +11,7 @@ namespace EulerProblems.Problems
     /// Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
     /// HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
     /// </summary>
-    [ProblemSolverClass("Problem 32", DisplayName = "Problem 32")]
+    [ProblemSolver("Problem 32", displayName = "Problem 32")]
     public class EulerProblem32 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

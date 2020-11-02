@@ -15,7 +15,7 @@ namespace EulerProblems.Problems
     /// It can be seen that P4 + P7 = 22 + 70 = 92 = P8.However, their difference, 70 − 22 = 48, is not pentagonal.
     /// Find the pair of pentagonal numbers, Pj and Pk, for which their sum and difference are pentagonal and D = | Pk − Pj| is minimised; what is the value of D?
     /// </summary>
-    [ProblemSolverClass("Pentagon numbers", DisplayName = "Problem 44")]
+    [ProblemSolver("Pentagon numbers", displayName = "Problem 44")]
     public class EulerProblem44 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

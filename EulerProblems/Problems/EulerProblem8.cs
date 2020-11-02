@@ -30,7 +30,7 @@ namespace EulerProblems.Problems
     /// 71636269561882670428252483600823257530420752963450
     /// Find the thirteen adjacent digits in the 1000-digit number that have the greatest product. What is the value of this product?
     /// </summary>
-    [ProblemSolverClass("Problem 8", DisplayName = "Problem 8")]
+    [ProblemSolver("Problem 8", displayName = "Problem 8")]
     public class EulerProblem8 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

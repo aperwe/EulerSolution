@@ -10,7 +10,7 @@ namespace EulerProblems.Problems
     /// The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
     /// Find the sum of all the primes below two million.
     /// </summary>
-    [ProblemSolverClass("Problem 10", DisplayName = "Problem 10")]
+    [ProblemSolver("Problem 10", "Problem 10", "none")]
     public class EulerProblem10 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

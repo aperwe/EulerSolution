@@ -25,13 +25,14 @@ namespace EulerStarter
             {
                 foreach (var attrib in type.GetCustomAttributes(false))
                 {
-                    if (attrib is ProblemSolverClassAttribute)
+                    if (attrib is ProblemSolverAttribute)
                     {
-                        var psca = attrib as ProblemSolverClassAttribute;
+                        var psca = attrib as ProblemSolverAttribute;
                         SolverInfo solver = new SolverInfo
                         {
-                            DisplayName = psca.DisplayName,
-                            TypeInfo = type
+                            DisplayName = psca.displayName,
+                            TypeInfo = type,
+                            ProblemDescription = psca.problemDefinition,
                         };
                         infoList.Add(solver);
                     }

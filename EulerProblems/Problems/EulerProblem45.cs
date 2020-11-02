@@ -19,7 +19,7 @@ namespace EulerProblems.Problems
     /// It can be verified that T285 = P165 = H143 = 40755.
     /// Find the next triangle number that is also pentagonal and hexagonal.
     /// </summary>
-    [ProblemSolverClass("Triangular, pentagonal and hexagonal numbers", DisplayName = "Problem 45")]
+    [ProblemSolver("Triangular, pentagonal and hexagonal numbers", displayName = "Problem 45")]
     public class EulerProblem45 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

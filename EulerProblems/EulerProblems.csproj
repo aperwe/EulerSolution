@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractEulerProblem.cs" />
-    <Compile Include="ProblemSolverClassAttribute.cs" />
+    <Compile Include="ProblemSolverAttribute.cs" />
     <Compile Include="Problems\EulerProblem10.cs" />
     <Compile Include="Problems\EulerProblem11.cs" />
     <Compile Include="Problems\EulerProblem12.cs" />

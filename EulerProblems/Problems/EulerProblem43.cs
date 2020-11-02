@@ -21,7 +21,7 @@ namespace EulerProblems.Problems
     /// d8d9d10= 289 is divisible by 17
     /// Find the sum of all 0 to 9 pandigital numbers with this property.
     /// </summary>
-    [ProblemSolverClass("Pandigital prime", DisplayName = "Problem 43")]
+    [ProblemSolver("Pandigital prime", displayName = "Problem 43")]
     public class EulerProblem43 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

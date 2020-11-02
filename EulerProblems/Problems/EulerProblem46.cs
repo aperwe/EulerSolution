@@ -21,7 +21,7 @@ namespace EulerProblems.Problems
     /// It turns out that the conjecture was false.
     /// What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
     /// </summary>
-    [ProblemSolverClass("Goldbach's other conjecture", DisplayName = "Problem 46")]
+    [ProblemSolver("Goldbach's other conjecture", "Problem 46", "It was proposed by Christian Goldbach that every odd composite number can be written as the sum of a prime and twice a square.\\nIt turns out that the conjecture was false.\\n What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?")]
     public class EulerProblem46 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

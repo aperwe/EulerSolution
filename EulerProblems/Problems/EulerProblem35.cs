@@ -13,7 +13,7 @@ namespace EulerProblems.Problems
     /// There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
     /// How many circular primes are there below one million?
     /// </summary>
-    [ProblemSolverClass("Problem 35", DisplayName = "Problem 35")]
+    [ProblemSolver("Problem 35", displayName = "Problem 35")]
     public class EulerProblem35 : AbstractEulerProblem
     {
         PrimeSolver primesolver;

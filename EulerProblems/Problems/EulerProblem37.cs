@@ -13,7 +13,7 @@ namespace EulerProblems.Problems
     /// Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
     /// NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
     /// </summary>
-    [ProblemSolverClass("Problem 37", DisplayName = "Problem 37")]
+    [ProblemSolver("Problem 37", displayName = "Problem 37")]
     public class EulerProblem37 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -35,7 +35,7 @@ namespace EulerProblems.Problems
 
     /// NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route.However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)
     /// </summary>
-    [ProblemSolverClass("Problem 18", DisplayName = "Problem 18")]
+    [ProblemSolver("Problem 18", displayName = "Problem 18")]
     public class EulerProblem18 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -12,7 +12,7 @@ namespace EulerProblems.Problems
     /// The prime factors of 13195 are 5, 7, 13 and 29. So 5*7*13*29 = 13195
     /// What is the largest prime factor of the number 600851475143 ?
     /// </summary>
-    [ProblemSolverClass("Problem 3", DisplayName = "Problem 3")]
+    [ProblemSolver("Problem 3", displayName = "Problem 3")]
     public class EulerProblem3 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

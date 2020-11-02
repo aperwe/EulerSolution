@@ -19,7 +19,7 @@ namespace EulerProblems.Problems
     /// 
     /// How many different ways can £2 be made using any number of coins?
     /// </summary>
-    [ProblemSolverClass("Problem 31", DisplayName = "Problem 31")]
+    [ProblemSolver("Problem 31", displayName = "Problem 31")]
     public class EulerProblem31 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

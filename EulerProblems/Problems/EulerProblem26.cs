@@ -27,7 +27,7 @@ namespace EulerProblems.Problems
     /// 
     /// Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
     /// </summary>
-    [ProblemSolverClass("Problem 26", DisplayName = "Problem 26")]
+    [ProblemSolver("Problem 26", displayName = "Problem 26")]
     public class EulerProblem26 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

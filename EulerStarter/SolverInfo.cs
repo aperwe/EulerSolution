@@ -18,6 +18,6 @@ namespace EulerStarter
         /// <summary>
         /// Description of the problem this solver is trying to solve. Provided by the solver class.
         /// </summary>
-        public string ProblemDefinition { get; internal set; }
+        public string ProblemDescription { get; internal set; }
     }
 }

@@ -13,7 +13,7 @@ namespace EulerProblems.Problems
     /// {20,48,52}, {24,45,51}, {30,40,50}
     /// For which value of p ≤ 1000, is the number of solutions maximised?
     /// </summary>
-    [ProblemSolverClass("Problem 39", DisplayName = "Problem 39")]
+    [ProblemSolver("Problem 39", displayName = "Problem 39")]
     public class EulerProblem39 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

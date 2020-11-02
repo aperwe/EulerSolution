@@ -6,6 +6,7 @@
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -26,11 +27,14 @@
             </WrapPanel.Resources>
             <!--Buttons will be created dynamically and will go into this panel.-->
         </WrapPanel>
-        <GroupBox Grid.Row="1" Header="Answer box">
+        <GroupBox Grid.Row="1" Header="Problem definition">
+            <TextBox x:Name="textBoxProblemDefinition" TextWrapping="Wrap" Text="Problem definition (if provided) will be displayed here." IsReadOnly="True"/>
+        </GroupBox>
+        <GroupBox Grid.Row="2" Header="Answer box">
             <TextBox x:Name="textBoxAnswer" TextWrapping="Wrap" Text="Solution answer will go here." IsReadOnly="True"/>
 
         </GroupBox>
-        <StackPanel Grid.Row="2" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Right">
             <Button Content="Exit" Margin="2" Padding="4,1" Click="ButtonExit_Click">
                 <Button.Background>
                     <RadialGradientBrush>

@@ -11,7 +11,7 @@ namespace EulerProblems.Problems
     /// Find the sum of all numbers which are equal to the sum of the factorial of their digits.
     /// Note: as 1! = 1 and 2! = 2 are not sums they are not included.
     /// </summary>
-    [ProblemSolverClass("Problem 34", DisplayName = "Problem 34")]
+    [ProblemSolver("Problem 34", displayName = "Problem 34")]
     public class EulerProblem34 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)
