@@ -29,14 +29,18 @@ namespace EulerStarter
                 Button button = new Button { Content = si.DisplayName };
                 button.Style = buttonsPanel.Resources["problemButton"] as Style;
                 button.Click += GenericClickHandler;
-                button.Tag = si.TypeInfo;
+                //Make Button.Tag property as SolverInfo object.
+                button.Tag = si;
                 buttonsPanel.Children.Add(button);
             }
         }
 
         private void GenericClickHandler(object sender, RoutedEventArgs e)
         {
-            var problemType = (sender as Button).Tag as Type;
+            var si = (sender as Button).Tag as SolverInfo;
+            var problemType = si.TypeInfo;
+            this.textBoxProblemDefinition.Text = "[MOVE TO RESOURCE FILE] Problem definition (if provided) will be displayed here.";
+            if (!string.IsNullOrEmpty(si.ProblemDescription)) { this.textBoxProblemDefinition.Text = si.ProblemDescription; }
             var problem = Activator.CreateInstance(problemType) as AbstractEulerProblem;
             problem.AnswerAvailableEventHandler += UpdateAnswerUI;
             Task result = Task.Run(() => problem.StartSolving());
