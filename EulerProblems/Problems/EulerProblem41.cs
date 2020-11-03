@@ -8,12 +8,12 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once.
-    /// For example, 2143 is a 4-digit pandigital and is also prime.
-    /// What is the largest n-digit pandigital prime that exists?
-    /// </summary>
-    [ProblemSolver("Pandigital prime", displayName = "Problem 41")]
+    /// <summary/>
+    [ProblemSolver("Pandigital prime", displayName = "Problem 41", problemDefinition =
+@"We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is also prime.
+
+What is the largest n-digit pandigital prime that exists?"
+        )]
     public class EulerProblem41 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -8,11 +8,10 @@ using QBits.Intuition.Mathematics.Primes;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// The prime factors of 13195 are 5, 7, 13 and 29. So 5*7*13*29 = 13195
-    /// What is the largest prime factor of the number 600851475143 ?
-    /// </summary>
-    [ProblemSolver("Problem 3", displayName = "Problem 3")]
+    /// <summary/>
+    [ProblemSolver("Problem 3", displayName = "Problem 3", problemDefinition = 
+        @"The prime factors of 13195 are 5, 7, 13 and 29. So 5*7*13*29 = 13195
+What is the largest prime factor of the number 600851475143 ?")]
     public class EulerProblem3 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

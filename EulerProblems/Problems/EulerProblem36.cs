@@ -8,12 +8,14 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// The decimal number, 585 = 10010010012 (binary), is palindromic in both bases.
-    /// Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2.
-    /// (Please note that the palindromic number, in either base, may not include leading zeros.)
-    /// </summary>
-    [ProblemSolver("Problem 36", displayName = "Problem 36")]
+    /// <summary/>
+    [ProblemSolver("Double-base palindromes", displayName = "Problem 36", problemDefinition =
+@"The decimal number, 585 = 1001001001^^2 (binary), is palindromic in both bases.
+
+Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2.
+
+(Please note that the palindromic number, in either base, may not include leading zeros.)"
+        )]
     public class EulerProblem36 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -6,12 +6,10 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// http://projecteuler.net/problem=4
-    /// A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99.
-    /// Find the largest palindrome made from the product of two 3-digit numbers.
-    /// </summary>
-    [ProblemSolver("Problem 4", displayName = "Problem 4")]
+    /// <summary/>
+    [ProblemSolver("Problem 4", displayName = "Problem 4", problemDefinition = 
+        @"A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99.
+Find the largest palindrome made from the product of two 3-digit numbers.")]
     public class EulerProblem4 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

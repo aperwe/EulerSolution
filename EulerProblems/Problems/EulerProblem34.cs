@@ -6,12 +6,14 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// 145 is a curious number, as 1! + 4! + 5! = 1 + 24 + 120 = 145.
-    /// Find the sum of all numbers which are equal to the sum of the factorial of their digits.
-    /// Note: as 1! = 1 and 2! = 2 are not sums they are not included.
-    /// </summary>
-    [ProblemSolver("Problem 34", displayName = "Problem 34")]
+    /// <summary/>
+    [ProblemSolver("Digit factorials", displayName = "Problem 34", problemDefinition =
+@"145 is a curious number, as 1! + 4! + 5! = 1 + 24 + 120 = 145.
+
+Find the sum of all numbers which are equal to the sum of the factorial of their digits.
+
+Note: As 1! = 1 and 2! = 2 are not sums they are not included."
+        )]
     public class EulerProblem34 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

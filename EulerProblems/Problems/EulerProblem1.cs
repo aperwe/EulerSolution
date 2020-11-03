@@ -5,11 +5,11 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
-    /// Find the sum of all the multiples of 3 or 5 below 1000.
-    /// </summary>
-    [ProblemSolver("Problem 1", displayName = "Problem 1")]
+    /// <summary/>
+    [ProblemSolver("Problem 1", displayName = "Problem 1", problemDefinition =
+@"If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9.
+The sum of these multiples is 23.
+Find the sum of all the multiples of 3 or 5 below 1000.")]
     public class EulerProblem1 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

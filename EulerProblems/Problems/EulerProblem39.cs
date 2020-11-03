@@ -8,12 +8,14 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// If p is the perimeter of a right angle triangle with integral length sides, {a,b,c}, there are exactly three solutions for p = 120.
-    /// {20,48,52}, {24,45,51}, {30,40,50}
-    /// For which value of p ≤ 1000, is the number of solutions maximised?
-    /// </summary>
-    [ProblemSolver("Problem 39", displayName = "Problem 39")]
+    /// <summary/>
+    [ProblemSolver("Integer right triangles", displayName = "Problem 39", problemDefinition =
+@"If p is the perimeter of a right angle triangle with integral length sides, {a,b,c}, there are exactly three solutions for p = 120.
+
+{20,48,52}, {24,45,51}, {30,40,50}
+
+For which value of p ≤ 1000, is the number of solutions maximised?"
+)]
     public class EulerProblem39 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

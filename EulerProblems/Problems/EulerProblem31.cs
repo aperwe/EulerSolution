@@ -10,16 +10,16 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// In England the currency is made up of pound, £, and pence, p, and there are eight coins in general circulation:
-    /// 1p, 2p, 5p, 10p, 20p, 50p, £1 (100p) and £2 (200p).
-    /// 
-    /// It is possible to make £2 in the following way:
-    /// 1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
-    /// 
-    /// How many different ways can £2 be made using any number of coins?
-    /// </summary>
-    [ProblemSolver("Problem 31", displayName = "Problem 31")]
+    /// <summary/>
+    [ProblemSolver("Coin sums", displayName = "Problem 31", problemDefinition =
+@"In the United Kingdom the currency is made up of pound (£) and pence (p). There are eight coins in general circulation:
+
+1p, 2p, 5p, 10p, 20p, 50p, £1 (100p), and £2 (200p).
+It is possible to make £2 in the following way:
+
+1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
+How many different ways can £2 be made using any number of coins?"
+        )]
     public class EulerProblem31 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

@@ -6,12 +6,11 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// https://projecteuler.net/problem=7
-    /// By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
-    /// What is the 10 001st prime number?
-    /// </summary>
-    [ProblemSolver("Problem 7", displayName = "Problem 7")]
+    /// <summary/>
+    [ProblemSolver("Problem 7", displayName = "Problem 7", 
+        problemDefinition = 
+@"By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+What is the 10 001st prime number?")]
     public class EulerProblem7 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

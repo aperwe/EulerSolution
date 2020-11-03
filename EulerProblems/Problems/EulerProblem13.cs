@@ -108,7 +108,7 @@ namespace EulerProblems.Problems
     /// 20849603980134001723930671666823555245252804609722
     /// 53503534226472524250874054075591789781264330331690
     /// </summary>
-    [ProblemSolver("Problem 13", displayName = "Problem 13")]
+    [ProblemSolver("Large sum", displayName = "Problem 13", problemDefinition = "Work out the first ten digits of the sum of the following one-hundred 50-digit numbers.")]
     public class EulerProblem13 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)

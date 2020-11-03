@@ -6,11 +6,12 @@ using System.Text;
 
 namespace EulerProblems.Problems
 {
-    /// <summary>
-    /// Starting in the top left corner of a 2×2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
-    /// How many such routes are there through a 20×20 grid?
-    /// </summary>
-    [ProblemSolver("Problem 15", displayName = "Problem 15")]
+    /// <summary/>
+    [ProblemSolver("Lattice paths", displayName = "Problem 15", problemDefinition =
+@"Starting in the top left corner of a 2×2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
+
+How many such routes are there through a 20×20 grid?"
+        )]
     public class EulerProblem15 : AbstractEulerProblem
     {
         protected override void Solve(out string answer)
