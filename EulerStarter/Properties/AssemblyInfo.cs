@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Q-Bits")]
 [assembly: AssemblyProduct("EulerStarter")]
-[assembly: AssemblyCopyright("Copyright ©Artur Perwenis  2013-2018")]
+[assembly: AssemblyCopyright("Copyright ©Artur Perwenis 2013-2020")]
 [assembly: AssemblyTrademark("Q-Bits")]
 [assembly: AssemblyCulture("")]
 

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Q-Bits")]
 [assembly: AssemblyProduct("EulerProblems")]
-[assembly: AssemblyCopyright("Copyright Q-Bits©  2013-2018")]
+[assembly: AssemblyCopyright("Copyright Q-Bits©  2013-2020")]
 [assembly: AssemblyTrademark("Q-Bits")]
 [assembly: AssemblyCulture("")]
 

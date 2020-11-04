@@ -98,6 +98,24 @@ namespace QBits.Intuition.Mathematics.Primes
             return listOfSolutions;
         }
 
+        /// <summary>
+        /// Computes and returns the list of all primes which are smaller than the <paramref name="upperBound"/>.
+        /// </summary>
+        /// <param name="upperBound"></param>
+        /// <returns>List of primes</returns>
+        public List<long> GetPrimesSmallerThan(long upperBound)
+        {
+            List<long> retVal = new List<long>();
+            foreach (int candidate in Enumerable64.Range(1, upperBound))
+            {
+                if (IsPrime(candidate))
+                {
+                    retVal.Add(candidate);
+                }
+            }
+            return retVal;
+        }
+
 
         /// <summary>
         /// Tests whether the <paramref name="divisor"/> is a divisor of <paramref name="number"/>.
