@@ -5,7 +5,7 @@ using System.Linq;
 using System.Resources;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems60to69
 {
     [ProblemSolver("Problem 67", displayName = "Problem 67")]
     public class EulerProblem67 : Problems10to19.EulerProblem18

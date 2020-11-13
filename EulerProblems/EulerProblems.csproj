@@ -87,7 +87,7 @@
     <Compile Include="Problems\Problems00to09\EulerProblem2.cs" />
     <Compile Include="Problems\Problems00to09\EulerProblem4.cs" />
     <Compile Include="Problems\Problems00to09\EulerProblem6.cs" />
-    <Compile Include="Problems\EulerProblem67.cs" />
+    <Compile Include="Problems\Problems60to67\EulerProblem67.cs" />
     <Compile Include="Problems\Problems00to09\EulerProblem7.cs" />
     <Compile Include="Problems\Problems00to09\EulerProblem8.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
