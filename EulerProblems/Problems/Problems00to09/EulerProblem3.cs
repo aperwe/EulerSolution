@@ -6,7 +6,7 @@ using QBits.Intuition.Mathematics.Fibonacci;
 using QBits.Intuition.Mathematics;
 using QBits.Intuition.Mathematics.Primes;
 
-namespace EulerProblems.Problems.Problems0to9
+namespace EulerProblems.Problems.Problems00to09
 {
     /// <summary/>
     [ProblemSolver("Problem 3", displayName = "Problem 03", problemDefinition = 

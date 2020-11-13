@@ -5,7 +5,7 @@ using System.Text;
 using QBits.Intuition.Mathematics.Fibonacci;
 using QBits.Intuition.Mathematics;
 
-namespace EulerProblems.Problems.Problems0to9
+namespace EulerProblems.Problems.Problems00to09
 {
     /// <summary/>
     [ProblemSolver("Problem 2", displayName = "Problem 02", problemDefinition =
