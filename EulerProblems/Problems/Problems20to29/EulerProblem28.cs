@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems20to29
 {
     /// <summary/>
     [ProblemSolver("Number spiral diagonals", displayName = "Problem 28a", problemDefinition =

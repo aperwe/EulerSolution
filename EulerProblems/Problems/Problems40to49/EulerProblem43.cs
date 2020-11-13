@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems40to49
 {
     /// <summary/>
     [ProblemSolver("Sub-string divisibility", displayName = "Problem 43", problemDefinition =

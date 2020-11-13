@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems30to39
 {
     /// <summary/>
     [ProblemSolver("Digit factorials", displayName = "Problem 34", problemDefinition =

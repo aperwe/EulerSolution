@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems40to49
 {
     /// <summary/>
     [ProblemSolver("Pandigital prime", displayName = "Problem 41", problemDefinition =

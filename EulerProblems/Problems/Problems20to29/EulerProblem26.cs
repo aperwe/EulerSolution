@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems20to29
 {
     /// <summary/>
     [ProblemSolver("Reciprocal cycles", displayName = "Problem 26", problemDefinition =

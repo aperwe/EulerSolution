@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems30to39
 {
     /// <summary/>
     [ProblemSolver("Digit fifth powers", displayName = "Problem 30", problemDefinition =

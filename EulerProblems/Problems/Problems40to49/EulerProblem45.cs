@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems40to49
 {
     /// <summary/>
     [ProblemSolver("Triangular, pentagonal and hexagonal numbers", displayName = "Problem 45", problemDefinition =

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems.Problems11to99
+namespace EulerProblems.Problems.Problems10to19
 {
     /// <summary/>
     [ProblemSolver("Longest Collatz sequence", displayName = "Problem 14", problemDefinition =

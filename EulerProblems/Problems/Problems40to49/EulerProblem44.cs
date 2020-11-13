@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems40to49
 {
     /// <summary/>
     [ProblemSolver("Pentagon numbers", displayName = "Problem 44", problemDefinition =

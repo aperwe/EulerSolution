@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems20to29
 {
     /// <summary/>
     [ProblemSolver("Lexicographic permutations", displayName = "Problem 24", problemDefinition =

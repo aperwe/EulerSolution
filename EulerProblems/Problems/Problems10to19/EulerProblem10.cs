@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems.Problems11to99
+namespace EulerProblems.Problems.Problems10to19
 {
     /// <summary/>
     [ProblemSolver("Problem 10", "Problem 10", problemDefinition =

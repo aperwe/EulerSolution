@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems.Problems11to99
+namespace EulerProblems.Problems.Problems10to19
 {
     /// <summary>
     /// Work out the first ten digits of the sum of the following one-hundred 50-digit numbers.
