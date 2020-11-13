@@ -8,7 +8,7 @@ using System.Text;
 namespace EulerProblems.Problems
 {
     [ProblemSolver("Problem 67", displayName = "Problem 67")]
-    public class EulerProblem67 : EulerProblem18
+    public class EulerProblem67 : Problems11to99.EulerProblem18
     {
         protected override void Solve(out string answer)
         {

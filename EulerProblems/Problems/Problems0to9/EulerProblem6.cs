@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems0to9
 {
     /// <summary/>
-    [ProblemSolver("Problem 6", displayName = "Problem 6",
+    [ProblemSolver("Problem 6", displayName = "Problem 06",
         problemDefinition = 
         @"The sum of the squares of the first ten natural numbers is,
  1^2 + 2^2 + ... + 10^2 = 385

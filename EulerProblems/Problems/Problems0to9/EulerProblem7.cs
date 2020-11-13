@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems0to9
 {
     /// <summary/>
-    [ProblemSolver("Problem 7", displayName = "Problem 7", 
+    [ProblemSolver("Problem 7", displayName = "Problem 07", 
         problemDefinition = 
 @"By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
 What is the 10 001st prime number?")]

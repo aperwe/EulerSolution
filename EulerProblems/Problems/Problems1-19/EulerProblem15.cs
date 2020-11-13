@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems11to99
 {
     /// <summary/>
     [ProblemSolver("Lattice paths", displayName = "Problem 15", problemDefinition =

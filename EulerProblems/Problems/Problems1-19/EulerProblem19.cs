@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EulerProblems.Problems
+namespace EulerProblems.Problems.Problems11to99
 {
     /// <summary/>
     [ProblemSolver("Counting Sundays", displayName = "Problem 19", problemDefinition =
