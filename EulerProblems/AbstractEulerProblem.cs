@@ -24,6 +24,8 @@ namespace EulerProblems
         {
             Answer = progressMessage;
         }
+        /// <summary>Returns currently elapsed time of solver execution</summary>
+        protected TimeSpan ElapsedTime => DateTime.Now - start;
         public event EventHandler<AnswerAgr> AnswerAvailableEventHandler;
 
         /// <summary>
