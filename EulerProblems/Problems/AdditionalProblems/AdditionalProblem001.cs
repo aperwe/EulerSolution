@@ -31,7 +31,11 @@ return number of steps(2).
 
 
             StringBuilder stringBuilder = new StringBuilder();
-            BigInteger bigInteger = 1;
+            //BigInteger bigInteger = 277777788888899;
+            //UInt64 bigInteger = 277777788888899; checked already 11 is max
+            //UInt64 bigInteger = 277778163000000; checked already 11 is max
+            //UInt64 bigInteger = 277783080000000; checked already 11 is max
+            UInt64 bigInteger = 277785000000000; //<current max (program running)
             int persistence = 0;
             int maxPersistence = 0;
 
@@ -40,13 +44,13 @@ return number of steps(2).
                 persistence = Persistence(bigInteger);
                 if (persistence > maxPersistence)
                 {
-                    stringBuilder.AppendLine($"Multiplication number persistence of ({bigInteger}) = {persistence}. Elapsed time: {ElapsedTime}");
+                    stringBuilder.Insert(0, $"Multiplication number persistence of ({bigInteger}) = {persistence}. Elapsed time: {ElapsedTime}\n");
                     UpdateProgress(stringBuilder.ToString());
                     maxPersistence = persistence;
                 }
-                if (bigInteger % 1000000 == 0)
+                if (bigInteger % 1000000000 == 0)
                 {
-                    stringBuilder.AppendLine($"Current ({bigInteger}) = {persistence}. Elapsed time: {ElapsedTime}");
+                    stringBuilder.Insert(0, $"Current ({bigInteger}) = {persistence}. Elapsed time: {ElapsedTime}\n");
                     UpdateProgress(stringBuilder.ToString());
                 }
                 bigInteger++;
@@ -55,12 +59,14 @@ return number of steps(2).
             answer += $"Multiplication number persistence of ({bigInteger}) = {persistence}.";
         }
 
-        private int Persistence(BigInteger bigInteger)
+        //private int Persistence(BigInteger bigInteger)
+        private int Persistence(UInt64 bigInteger)
         {
             if (bigInteger < 10) return 0;
 
             int steps = 0;
-            BigInteger current = bigInteger;
+            //BigInteger current = bigInteger;
+            UInt64 current = bigInteger;
             while (current > 9) //repeat while current multiplication has 2 or more digits
             {
                 current = Multiply(current);
@@ -72,7 +78,8 @@ return number of steps(2).
         /// <summary>Mutiplies digits in <paramref name="current"/> and returns the multiplication result.</summary>
         /// <param name="current"></param>
         /// <returns>Digit multiplication result</returns>
-        private BigInteger Multiply(BigInteger current)
+        //private BigInteger Multiply(BigInteger current)
+        private UInt64 Multiply(UInt64 current)
         {
             var bytes = current.ToString().ToArray().Select((b) => b - '0');
 
@@ -86,8 +93,8 @@ return number of steps(2).
             }
             #endregion
 
-            long retVal = 1;
-            foreach (var b in bytes) retVal *= b;
+            UInt64 retVal = 1;
+            foreach (var b in bytes) retVal *= (UInt64)b;
             return retVal;
         }
     }
