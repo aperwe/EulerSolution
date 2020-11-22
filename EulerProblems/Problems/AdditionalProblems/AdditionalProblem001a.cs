@@ -27,14 +27,14 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 278292911269186; //<current max (program still running)
-        //                  278292911269186
+        UInt64 bigInteger = 278311911269204; //<current max (program still running)
+        //                  278311911269204
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
         StringBuilder stringBuilder = new StringBuilder(); //Status message.
 
         Queue<IEnumerable<ulong>> inputBatches = new Queue<IEnumerable<ulong>>(); //Input thread will be feeding this with new processing batches.
-        UInt64 increment = 1000000001;  //1 processing chunk for output thread
+        UInt64 increment = 700000003;  //1 processing chunk for output thread
         List<NumberPersistenceCandidate> interestingCandidates = new List<NumberPersistenceCandidate>();
         protected override void Solve(out string answer)
         {
@@ -149,18 +149,23 @@ Parallelized.
         {
             while (ThreadContinueFlag)
             {
-                Task.Delay(TimeSpan.FromMinutes(10)).Wait(); //Do update every 10 mins or so
+                Task.Delay(TimeSpan.FromMinutes(5)).Wait(); //Do update every 10 mins or so
                 lock (interestingCandidates)
                 {
                     var countBefore = interestingCandidates.Count;
 
+                    var maxPersistence =0;
                     var dupa = from x in interestingCandidates
                                orderby x.PersistenceFound descending
-                               orderby x.NumberChecked ascending
                                select x;
-                    AddStatusThreadsafe($"Found {dupa.Count()} items. Pruning shorter.");
-                    interestingCandidates = (from x in dupa select x).Take(3).ToList();
-                    AddStatusThreadsafe($"Leaving [{interestingCandidates.Count}] maximum of: [{interestingCandidates.First().NumberChecked}] with persistence [{interestingCandidates.First().PersistenceFound}].");
+                    maxPersistence = dupa.First().PersistenceFound;
+                    var maxPersistencePearls = from x in interestingCandidates
+                              where x.PersistenceFound == maxPersistence
+                              orderby x.NumberChecked ascending
+                              select x;
+                    AddStatusThreadsafe($"Found {countBefore} items. Pruning shorter.");
+                    interestingCandidates = (from x in maxPersistencePearls select x).Take(7).ToList();
+                    AddStatusThreadsafe($"Leaving in result queue [{interestingCandidates.Count}] maximum of: [{interestingCandidates.First().NumberChecked}] with persistence [{interestingCandidates.First().PersistenceFound}].");
                 }
             }
         }
