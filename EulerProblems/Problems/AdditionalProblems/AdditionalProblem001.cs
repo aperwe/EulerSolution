@@ -32,10 +32,12 @@ return number of steps(2).
 
             StringBuilder stringBuilder = new StringBuilder();
             //BigInteger bigInteger = 277777788888899;
-            //UInt64 bigInteger = 277777788888899; checked already 11 is max
-            //UInt64 bigInteger = 277778163000000; checked already 11 is max
-            //UInt64 bigInteger = 277783080000000; checked already 11 is max
-            UInt64 bigInteger = 277785000000000; //<current max (program running)
+            //UInt64 bigInteger =     277777788888899; checked already 11 is max
+            //UInt64 bigInteger =     277778163000000; checked already 11 is max
+            //UInt64 bigInteger =     277783080000000; checked already 11 is max
+            //UInt64 bigInteger =     277816000000000; checked already 11 is max
+            UInt64 bigInteger   =     277820000000000; //<current max (program running)
+            //                        277969000000000
             int persistence = 0;
             int maxPersistence = 0;
 
