@@ -27,14 +27,14 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 278311911269204; //<current max (program still running)
-        //                  278311911269204
+        UInt64 bigInteger = 278607411270327; //<current max (program still running)
+        //                  278607411270327
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
         StringBuilder stringBuilder = new StringBuilder(); //Status message.
 
         Queue<IEnumerable<ulong>> inputBatches = new Queue<IEnumerable<ulong>>(); //Input thread will be feeding this with new processing batches.
-        UInt64 increment = 700000003;  //1 processing chunk for output thread
+        UInt64 increment = 40000000;  //1 processing chunk for output thread
         List<NumberPersistenceCandidate> interestingCandidates = new List<NumberPersistenceCandidate>();
         protected override void Solve(out string answer)
         {
@@ -58,11 +58,15 @@ Parallelized.
             var sortingTask = Task.Run(AnalyzeMaxCandidatesAndRemoveLesserCandidates);
             #endregion
 
+            #region Create string trimming task
+            var trimmingTask = Task.Run(PeriodicallyPruneStringBuilder);
+            #endregion
 
             #region Wait for all work to finish (now - it will finish never, unless you kill the application)
             inputTask.Wait();
             outputTasks.ForEach(t => t.Wait());
             sortingTask.Wait();
+            trimmingTask.Wait();
             #endregion
 
             UpdateProgress($"Multiplication number persistence of ({bigInteger}) = {persistence}.");
@@ -85,7 +89,7 @@ Parallelized.
                     }
                 }
                 if (newBatches > 0) AddStatusThreadsafe($"Input thread added {newBatches} new batches.");
-                Task.Delay(TimeSpan.FromSeconds(30)).Wait();
+                Task.Delay(TimeSpan.FromMinutes(3)).Wait();
             }
             AddStatusThreadsafe($"Input task finished.");
         }
@@ -103,18 +107,55 @@ Parallelized.
                         workItem = inputBatches.Dequeue();
                     }
                     int currentPersistence = 0;
-                    int maxPersistence = 0;
+                    int maxPersistence = 9; //We can safely skip all lesser persistences as completely trifle
                     UInt64 numberWithMaxPersistence = 0; //Remember this at the end of the thread.
                     AddStatusThreadsafe($"Starting batch at {workItem.First()}. Batch length {workItem.Count()}.");
 
-                    foreach (UInt64 i in workItem)
+                    #region Optimization
+                    //Take number e.g.: 278,615,911,271,111. Note size of a batch - Processing 2mil takes ~1 second
+                    //So movement 100 times takes 1 minute: 278,615,9xx,xxx,xxx
+                    //            Whole range moves here             40,000,000 - about 20 secs of execution
+                    //So an whole range can be checked for optimization by checking lead digits above x:
+                    //                                      278,615,9xx,xxx,xxx
+                    //Step 1: Take lead digits (non-x) skipping 8 initial x-ed digits
+                    int xedDigits = 8;
+                    //Step 2: Check if start and end of range have the same lead digits
+                    // - If not, check whole range (optimization is not safe)
+                    //Step 3: If yes, check for 0, 5+{2,4,8}
+                    var rangeStart = workItem.First();
+                    var rangeEnd = workItem.Last();
+                    var startLeadBytes = rangeStart.ToString().Reverse().Skip(xedDigits).ToArray().Select((b) => b - '0');
+                    var endLeadBytes = rangeEnd.ToString().Reverse().Skip(xedDigits).ToArray().Select((b) => b - '0');
+                    if (startLeadBytes.Count() == endLeadBytes.Count())
                     {
-                        currentPersistence = Persistence(i);
+                        if (startLeadBytes.SequenceEqual(endLeadBytes))
+                        {
+                            bool skipWholeSequenceFlag = false; //Set to true if whole range has max 2 persistence.
+                            if (startLeadBytes.Any(b => b == 0)) skipWholeSequenceFlag = true;
+                            if (startLeadBytes.Any(b => b == 5))
+                            {
+                                if (startLeadBytes.Any(b => b == 2)) skipWholeSequenceFlag = true;
+                                if (startLeadBytes.Any(b => b == 4)) skipWholeSequenceFlag = true;
+                                if (startLeadBytes.Any(b => b == 8)) skipWholeSequenceFlag = true;
+                            }
+                            if (skipWholeSequenceFlag)
+                            {
+                                AddStatusThreadsafe($"Skipped whole [{rangeStart} ... {rangeEnd}] (optimized. Elapsed time: {ElapsedTime}");
+                                continue; //Get out of the while loop and take the next work item.
+                            }
+                        }
+                    }
+                    #endregion
+
+
+                    foreach (UInt64 candidate in workItem)
+                    {
+                        currentPersistence = Persistence(candidate);
                         if (currentPersistence > maxPersistence)
                         {
-                            AddStatusThreadsafe($"Multiplication number persistence of ({i}) = {currentPersistence}. Elapsed time: {ElapsedTime}");
+                            AddStatusThreadsafe($"Multiplication number persistence of ({candidate}) = {currentPersistence}. Elapsed time: {ElapsedTime}");
                             maxPersistence = currentPersistence;
-                            numberWithMaxPersistence = i;
+                            numberWithMaxPersistence = candidate;
                             var dupa = new NumberPersistenceCandidate
                             {
                                 TimeStamp = DateTime.Now,
@@ -127,10 +168,6 @@ Parallelized.
                         }
                     }
                     AddStatusThreadsafe($"Thread finished. Max persistence of ({maxPersistence}) for ({numberWithMaxPersistence}). Max checked: [{workItem.Last()}]. Elapsed time: {ElapsedTime}");
-                    //Here: Do all the work on the given range
-                    //Step 1: Find greatest (MNP)
-                    //Step 2: Add Greatest MNP + Value to ListX as finding
-                    //Step 3: Have another thread sort greatest MNP+Value
                 }
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             }
@@ -154,19 +191,32 @@ Parallelized.
                 {
                     var countBefore = interestingCandidates.Count;
 
-                    var maxPersistence =0;
+                    var maxPersistence = 0;
                     var dupa = from x in interestingCandidates
                                orderby x.PersistenceFound descending
                                select x;
                     maxPersistence = dupa.First().PersistenceFound;
                     var maxPersistencePearls = from x in interestingCandidates
-                              where x.PersistenceFound == maxPersistence
-                              orderby x.NumberChecked ascending
-                              select x;
-                    AddStatusThreadsafe($"Found {countBefore} items. Pruning shorter.");
+                                               where x.PersistenceFound == maxPersistence
+                                               orderby x.NumberChecked ascending
+                                               select x;
                     interestingCandidates = (from x in maxPersistencePearls select x).Take(7).ToList();
-                    AddStatusThreadsafe($"Leaving in result queue [{interestingCandidates.Count}] maximum of: [{interestingCandidates.First().NumberChecked}] with persistence [{interestingCandidates.First().PersistenceFound}].");
+                    AddStatusThreadsafe($"Found {countBefore} items. Leaving [{interestingCandidates.Count}] in result queue. Best number: [{interestingCandidates.First().NumberChecked}], persistence [{interestingCandidates.First().PersistenceFound}].");
                 }
+            }
+        }
+        private void PeriodicallyPruneStringBuilder()
+        {
+            int maxBuffer = 10000;
+            while (ThreadContinueFlag)
+            {
+                lock(stringBuilder)
+                {
+                    var trimmedString = stringBuilder.ToString().Take(maxBuffer);
+                    stringBuilder.Clear().Append(trimmedString);
+
+                }
+                Task.Delay(TimeSpan.FromHours(1)).Wait();
             }
         }
 
