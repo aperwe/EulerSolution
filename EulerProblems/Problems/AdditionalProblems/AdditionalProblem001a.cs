@@ -27,16 +27,15 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 278829411270323; //<current max (program still running)
-        UInt64 maxChecked = 278829411270323;
-        //                  278829411270323
+        UInt64 bigInteger = 279206621270322; //<current max (program still running)
+        UInt64 maxChecked = 279206621270322;
+        UInt64 batchSize  =        21000007;  //1 processing chunk for output thread
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
         StringBuilder stringBuilder = new StringBuilder(); //Status message.
         bool VerboseLogging = false; //Set to false to reduce amount of logging.
 
         Queue<IEnumerable<ulong>> inputBatches = new Queue<IEnumerable<ulong>>(); //Input thread will be feeding this with new processing batches.
-        UInt64 increment = 10000000;  //1 processing chunk for output thread
         List<NumberPersistenceCandidate> interestingCandidates = new List<NumberPersistenceCandidate>();
         protected override void Solve(out string answer)
         {
@@ -84,8 +83,8 @@ Parallelized.
                 {
                     foreach (int i in Enumerable.Range(1, 300 - inputBatches.Count))
                     {
-                        var tnew = Enumerable64.Range(bigInteger, increment);
-                        bigInteger += increment;
+                        var tnew = Enumerable64.Range(bigInteger, batchSize);
+                        bigInteger += batchSize;
                         lock (Locker)
                         {
                             inputBatches.Enqueue(tnew);
@@ -117,8 +116,10 @@ Parallelized.
                     //Take number e.g.: 278,615,911,271,111. Note size of a batch - Processing 2mil takes ~1 second
                     //So movement 100 times takes 1 minute: 278,615,9xx,xxx,xxx
                     //            Whole range moves here             40,000,000 - about 20 secs of execution
+                    //                                               10,000,000
+                    //                                            1,000,000,000
                     //So an whole range can be checked for optimization by checking lead digits above x:
-                    //                                      278,615,9xx,xxx,xxx
+                    //                                      278,61x,xxx,xxx,xxx
                     //Step 1: Take lead digits (non-x) skipping 8 initial x-ed digits
                     int xedDigits = 8;
                     //Step 2: Check if start and end of range have the same lead digits
@@ -159,7 +160,7 @@ Parallelized.
                         }
                     }
                     if (VerboseLogging) AddStatusThreadsafe($"Thread finished. Max persistence of ({maxPersistence}) for ({numberWithMaxPersistence}). Max checked: [{workItem.Last()}]. Elapsed time: {ElapsedTime}.");
-                    maxChecked = Math.Max(maxChecked, workItem.Last() - (300 * increment));
+                    maxChecked = Math.Max(maxChecked, workItem.Last() - (300 * batchSize));
                 }
                 if (inputBatches.Count < 10)
                 {
@@ -221,7 +222,7 @@ Parallelized.
         }
         private void PeriodicallyPruneStringBuilder()
         {
-            int maxBuffer = 10000;
+            int maxBuffer = 3000;
             while (ThreadContinueFlag)
             {
                 lock(stringBuilder)
@@ -229,7 +230,7 @@ Parallelized.
                     var trimmedString = stringBuilder.ToString().Take(maxBuffer).ToArray();
                     stringBuilder.Clear().Append(new String(trimmedString));
                 }
-                Task.Delay(TimeSpan.FromHours(1)).Wait();
+                Task.Delay(TimeSpan.FromMinutes(2)).Wait();
             }
         }
 
