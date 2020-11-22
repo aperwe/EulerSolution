@@ -27,9 +27,9 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 278708211270325; //<current max (program still running)
-        UInt64 maxChecked = 278708211270325;
-        //                  278708211270325
+        UInt64 bigInteger = 278829411270323; //<current max (program still running)
+        UInt64 maxChecked = 278829411270323;
+        //                  278829411270323
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
         StringBuilder stringBuilder = new StringBuilder(); //Status message.
@@ -52,8 +52,8 @@ Parallelized.
 
             #region Create output processing tasks
             List<Task> outputTasks = new List<Task>();
-            //We have 16 cores to execute, leave 1 for OS, 1 for input, 1 for misc.
-            foreach (int i in Enumerable.Range(1, 13)) outputTasks.Add(Task.Run(OutputGenerator)); //12 processing threads because we have 16 threads (core i9).
+            //We have x cores to execute, leave 1 for other tasks.
+            foreach (int i in Enumerable.Range(1, Math.Max(Environment.ProcessorCount - 1, 1))) outputTasks.Add(Task.Run(OutputGenerator));
             #endregion
 
             #region Create sorting task
@@ -94,7 +94,7 @@ Parallelized.
                     }
                     AddStatusThreadsafe($"Input thread added {newBatches} new batches.");
                 }
-                Task.Delay(TimeSpan.FromMinutes(1)).Wait();
+                Task.Delay(TimeSpan.FromSeconds(10)).Wait();
             }
             AddStatusThreadsafe($"Input task finished.");
         }
@@ -107,10 +107,7 @@ Parallelized.
                 IEnumerable<ulong> workItem; //Item take off the queue
                 while (inputBatches.Count > 0)
                 {
-                    lock (Locker)
-                    {
-                        workItem = inputBatches.Dequeue();
-                    }
+                    lock (Locker) workItem = inputBatches.Dequeue();
                     int currentPersistence = 0;
                     int maxPersistence = 9; //We can safely skip all lesser persistences as completely trifle
                     UInt64 numberWithMaxPersistence = 0; //Remember this at the end of the thread.
@@ -134,14 +131,13 @@ Parallelized.
                     bool skipWholeSequenceFlag = false; //Set to true if whole range has max 2 persistence.
                     skipWholeSequenceFlag = CheckRangeIfCanBeSkipped(startLeadBytes, endLeadBytes);
                     if (!skipWholeSequenceFlag) //Check 10x greater
-                    skipWholeSequenceFlag |= CheckRangeIfCanBeSkipped(startLeadBytes.Skip(1), endLeadBytes.Skip(1));
+                        skipWholeSequenceFlag |= CheckRangeIfCanBeSkipped(startLeadBytes.Skip(1), endLeadBytes.Skip(1));
                     if (skipWholeSequenceFlag)
                     {
                         AddStatusThreadsafe($"Skipped whole [{rangeStart} ... {rangeEnd}] (optimized). Elapsed time: {ElapsedTime}");
                         continue; //Get out of the while loop and take the next work item.
                     }
                     #endregion
-
 
                     foreach (UInt64 candidate in workItem)
                     {
@@ -165,7 +161,11 @@ Parallelized.
                     if (VerboseLogging) AddStatusThreadsafe($"Thread finished. Max persistence of ({maxPersistence}) for ({numberWithMaxPersistence}). Max checked: [{workItem.Last()}]. Elapsed time: {ElapsedTime}.");
                     maxChecked = Math.Max(maxChecked, workItem.Last() - (300 * increment));
                 }
-                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+                if (inputBatches.Count < 10)
+                {
+                    AddStatusThreadsafe($"Sleeping because inputBatches.Count = {inputBatches.Count}");
+                    Task.Delay(TimeSpan.FromMilliseconds(200)).Wait(); //Let CPU relax a bit if input queue is short.
+                }
             }
             ///Checks if initial digits of the range indicate, that persistance is max 1-2
             bool CheckRangeIfCanBeSkipped(IEnumerable<int> startLeadBytes, IEnumerable<int> endLeadBytes)
@@ -228,7 +228,6 @@ Parallelized.
                 {
                     var trimmedString = stringBuilder.ToString().Take(maxBuffer).ToArray();
                     stringBuilder.Clear().Append(new String(trimmedString));
-
                 }
                 Task.Delay(TimeSpan.FromHours(1)).Wait();
             }
@@ -247,7 +246,6 @@ Parallelized.
                 current = Multiply(current);
                 steps++;
             }
-
             return steps;
         }
         /// <summary>Mutiplies digits in <paramref name="current"/> and returns the multiplication result.</summary>
