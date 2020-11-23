@@ -27,8 +27,8 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 279206621270322; //<current max (program still running)
-        UInt64 maxChecked = 279206621270322;
+        UInt64 bigInteger = 279362819322387; //<current max (program still running)
+        UInt64 maxChecked = 279362819322387;
         UInt64 batchSize  =        21000007;  //1 processing chunk for output thread
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
@@ -117,7 +117,7 @@ Parallelized.
                     //So movement 100 times takes 1 minute: 278,615,9xx,xxx,xxx
                     //            Whole range moves here             40,000,000 - about 20 secs of execution
                     //                                               10,000,000
-                    //                                            1,000,000,000
+                    //                                               21,000,007
                     //So an whole range can be checked for optimization by checking lead digits above x:
                     //                                      278,61x,xxx,xxx,xxx
                     //Step 1: Take lead digits (non-x) skipping 8 initial x-ed digits
@@ -180,6 +180,7 @@ Parallelized.
                         {
                             if (startLeadBytes.Any(b => b == 2)) return true;
                             if (startLeadBytes.Any(b => b == 4)) return true;
+                            if (startLeadBytes.Any(b => b == 6)) return true;
                             if (startLeadBytes.Any(b => b == 8)) return true;
                         }
                     }
@@ -222,15 +223,15 @@ Parallelized.
         }
         private void PeriodicallyPruneStringBuilder()
         {
-            int maxBuffer = 3000;
+            int maxBuffer = 4000;
             while (ThreadContinueFlag)
             {
-                lock(stringBuilder)
+                lock (stringBuilder)
                 {
                     var trimmedString = stringBuilder.ToString().Take(maxBuffer).ToArray();
                     stringBuilder.Clear().Append(new String(trimmedString));
                 }
-                Task.Delay(TimeSpan.FromMinutes(2)).Wait();
+                Task.Delay(TimeSpan.FromMinutes(1)).Wait();
             }
         }
 
@@ -263,6 +264,7 @@ Parallelized.
             {
                 if (bytes.Any(b => b == 2)) return 10;
                 if (bytes.Any(b => b == 4)) return 10;
+                if (bytes.Any(b => b == 6)) return 10;
                 if (bytes.Any(b => b == 8)) return 10;
             }
             #endregion
