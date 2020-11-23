@@ -27,8 +27,8 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 281391713998683; //<current max (program still running)
-        UInt64 maxChecked = 281391713998683;
+        UInt64 bigInteger = 281470800025045; //<current max (program still running)
+        UInt64 maxChecked = 281470800025045;
         UInt64 batchSize  =        21000007;  //1 processing chunk for output thread
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
@@ -229,8 +229,7 @@ Parallelized.
                 if (stringBuilder.Length > maxBuffer)
                     lock (stringBuilder)
                     {
-                        var trimmedString = stringBuilder.ToString().Take(maxBuffer).ToArray();
-                        stringBuilder.Clear().Append(new String(trimmedString));
+                        stringBuilder.Length = maxBuffer;
                     }
                 Task.Delay(TimeSpan.FromMinutes(1)).Wait();
             }
