@@ -226,11 +226,12 @@ Parallelized.
             int maxBuffer = 4000;
             while (ThreadContinueFlag)
             {
-                lock (stringBuilder)
-                {
-                    var trimmedString = stringBuilder.ToString().Take(maxBuffer).ToArray();
-                    stringBuilder.Clear().Append(new String(trimmedString));
-                }
+                if (stringBuilder.Length > maxBuffer)
+                    lock (stringBuilder)
+                    {
+                        var trimmedString = stringBuilder.ToString().Take(maxBuffer).ToArray();
+                        stringBuilder.Clear().Append(new String(trimmedString));
+                    }
                 Task.Delay(TimeSpan.FromMinutes(1)).Wait();
             }
         }
