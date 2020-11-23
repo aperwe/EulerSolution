@@ -27,8 +27,8 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 279362819322387; //<current max (program still running)
-        UInt64 maxChecked = 279362819322387;
+        UInt64 bigInteger = 281391713998683; //<current max (program still running)
+        UInt64 maxChecked = 281391713998683;
         UInt64 batchSize  =        21000007;  //1 processing chunk for output thread
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
