@@ -43,7 +43,6 @@ Parallelized.
             UpdateProgress($"Solution not created yet...");
 
             int persistence = 0;
-            int maxPersistence = 0;
 
             #region Create input generator task
             var inputTask = Task.Run(InputGenerator);
@@ -225,10 +224,7 @@ Parallelized.
             while (ThreadContinueFlag)
             {
                 if (stringBuilder.Length > maxBuffer)
-                    lock (stringBuilder)
-                    {
-                        stringBuilder.Length = maxBuffer;
-                    }
+                    lock (stringBuilder) stringBuilder.Length = maxBuffer; //Reduce buffer periodically not to exceed 4k bytes
                 Task.Delay(TimeSpan.FromMinutes(1)).Wait();
             }
         }
