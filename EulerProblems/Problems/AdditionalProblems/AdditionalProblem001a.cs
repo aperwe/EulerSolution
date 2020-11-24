@@ -27,8 +27,8 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 281470800025045; //<current max (program still running)
-        UInt64 maxChecked = 281470800025045;
+        UInt64 bigInteger = 282692055432129; //<current max (program still running)
+        UInt64 maxChecked = 282692055432129;
         UInt64 batchSize  =        21000007;  //1 processing chunk for output thread
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
@@ -115,9 +115,7 @@ Parallelized.
                     #region Optimization
                     //Take number e.g.: 278,615,911,271,111. Note size of a batch - Processing 2mil takes ~1 second
                     //So movement 100 times takes 1 minute: 278,615,9xx,xxx,xxx
-                    //            Whole range moves here             40,000,000 - about 20 secs of execution
-                    //                                               10,000,000
-                    //                                               21,000,007
+                    //            Whole range moves here             21,000,007 - batch size
                     //So an whole range can be checked for optimization by checking lead digits above x:
                     //                                      278,61x,xxx,xxx,xxx
                     //Step 1: Take lead digits (non-x) skipping 8 initial x-ed digits
@@ -135,7 +133,7 @@ Parallelized.
                         skipWholeSequenceFlag |= CheckRangeIfCanBeSkipped(startLeadBytes.Skip(1), endLeadBytes.Skip(1));
                     if (skipWholeSequenceFlag)
                     {
-                        AddStatusThreadsafe($"Skipped whole [{rangeStart} ... {rangeEnd}] (optimized). Elapsed time: {ElapsedTime}");
+                        if (VerboseLogging) AddStatusThreadsafe($"Skipped whole [{rangeStart} ... {rangeEnd}] (optimized). Elapsed time: {ElapsedTime}");
                         continue; //Get out of the while loop and take the next work item.
                     }
                     #endregion
