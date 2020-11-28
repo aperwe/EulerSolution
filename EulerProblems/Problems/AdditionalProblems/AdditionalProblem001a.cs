@@ -27,9 +27,9 @@ Parallelized.
 ")]
     public class AdditionalProblem001a : AbstractEulerProblem
     {
-        UInt64 bigInteger = 282692055432129; //<current max (program still running)
-        UInt64 maxChecked = 282692055432129;
-        UInt64 batchSize  =        21000007;  //1 processing chunk for output thread
+        UInt64 bigInteger = 288211681561201; //<current max checked as of 2020-11-28
+        UInt64 maxChecked = 288211681561201; //Still max MNP found is 11 at 277777788888899
+        UInt64 batchSize =     198763;  //1 processing chunk for output thread
         object Locker = new object();
         bool ThreadContinueFlag = true; //Set to false to stop parallel tasks.
         StringBuilder stringBuilder = new StringBuilder(); //Status message.
@@ -40,27 +40,17 @@ Parallelized.
         protected override void Solve(out string answer)
         {
             answer = "";
-            UpdateProgress($"Solution not created yet...");
-
-            int persistence = 0;
-
-            #region Create input generator task
-            var inputTask = Task.Run(InputGenerator);
-            #endregion
+            var inputTask = Task.Run(InputGenerator); //Create input generator task
 
             #region Create output processing tasks
             List<Task> outputTasks = new List<Task>();
-            //We have x cores to execute, leave 1 for other tasks.
-            foreach (int i in Enumerable.Range(1, Math.Max(Environment.ProcessorCount - 1, 1))) outputTasks.Add(Task.Run(OutputGenerator));
+            //We have x cores to execute, leave 1-4 for other tasks.
+            var outputThreads = Math.Max(1, Environment.ProcessorCount - 4);
+            foreach (int i in Enumerable.Range(1, outputThreads)) outputTasks.Add(Task.Run(OutputGenerator));
             #endregion
 
-            #region Create sorting task
-            var sortingTask = Task.Run(AnalyzeMaxCandidatesAndRemoveLesserCandidates);
-            #endregion
-
-            #region Create string trimming task
-            var trimmingTask = Task.Run(PeriodicallyPruneStringBuilder);
-            #endregion
+            var sortingTask = Task.Run(AnalyzeMaxCandidatesAndRemoveLesserCandidates); //Create sorting task
+            var trimmingTask = Task.Run(PeriodicallyPruneStringBuilder); //Create string trimming task
 
             #region Wait for all work to finish (now - it will finish never, unless you kill the application)
             inputTask.Wait();
@@ -68,19 +58,20 @@ Parallelized.
             sortingTask.Wait();
             trimmingTask.Wait();
             #endregion
-
-            UpdateProgress($"Multiplication number persistence of ({bigInteger}) = {persistence}.");
         }
 
         /// <summary>Thread1: Makes sure that queue is filled with at least 100 units of computation</summary>
         private void InputGenerator()
         {
+            var inputMax = 30000; //Desired input queue size
+            var inputThreshold = inputMax * 0.8; //Minimum before we should refill
+
             while (ThreadContinueFlag)
             {
                 int newBatches = 0;
-                if (inputBatches.Count < 100) //If length of input queue is shorter than target, populate it to 300
+                if (inputBatches.Count < inputThreshold) //If length of input queue is shorter than target, populate it to 3000
                 {
-                    foreach (int i in Enumerable.Range(1, 300 - inputBatches.Count))
+                    foreach (int i in Enumerable.Range(1, inputMax - inputBatches.Count))
                     {
                         var tnew = Enumerable64.Range(bigInteger, batchSize);
                         bigInteger += batchSize;
@@ -100,6 +91,7 @@ Parallelized.
         /// <summary>Thread2-n: Makes sure the queue is depleted.</summary>
         private void OutputGenerator()
         {
+            int xedDigits = batchSize.ToString().Length; //Calculate mask size (least significant digits)
             while (ThreadContinueFlag)
             {
                 IEnumerable<ulong> workItem; //Item take off the queue
@@ -118,7 +110,6 @@ Parallelized.
                     //So an whole range can be checked for optimization by checking lead digits above x:
                     //                                      278,61x,xxx,xxx,xxx
                     //Step 1: Take lead digits (non-x) skipping 8 initial x-ed digits
-                    int xedDigits = 8;
                     //Step 2: Check if start and end of range have the same lead digits
                     // - If not, check whole range (optimization is not safe)
                     //Step 3: If yes, check for 0, 5+{2,4,8}
