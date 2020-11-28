@@ -31,7 +31,44 @@ Find the first four consecutive integers to have four distinct prime factors eac
         protected override void Solve(out string answer)
         {
             answer = $"Solution not created yet...";
+            int start = 644 - 1;
+            bool failure = true; //Flag to continue searching
+            var current = start;
+            while (failure)
+            {
+                current++;
+                var first = current;
+                var firstFactors = GetAllFactors(first);
+                if (!AllPrime(firstFactors)) continue;
+
+                var second = first + 1;
+                var secondFactors = GetAllFactors(second);
+                if (!AllPrime(secondFactors)) continue;
+
+                var third = second + 1;
+                var thirdFactors = GetAllFactors(third);
+                if (!AllPrime(thirdFactors)) continue;
+
+                var fourth = third + 1;
+                var fourthFactors = GetAllFactors(fourth);
+                if (!AllPrime(fourthFactors)) continue;
+                UpdateProgress($"Current: ({current}).");
+            }
+
+        }
+        /// <summary>Gets a list of all factors of specified numbers.</summary>
+        /// <param name="number"></param>
+        private IEnumerable<long> GetAllFactors(long number)
+        {
+            QBits.Intuition.Mathematics.Primes.PrimeSolver primeSolver = new PrimeSolver();
+            return primeSolver.GetDivisors(number);
+        }
+        /// <summary>Checks if all numbers in the list are primes</summary>
+        /// <param name="firstFactors"></param>
+        /// <returns></returns>
+        private bool AllPrime(IEnumerable<long> thirdFactors)
+        {
+            throw new NotImplementedException();
         }
     }
-
 }
