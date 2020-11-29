@@ -82,7 +82,7 @@ Find the first four consecutive integers to have four distinct prime factors eac
                 var mul = primeDivisors.Aggregate((x, mult) => x * mult); //Multiply all found primes
 
                 long temp = inputNumber / mul;
-                if ((temp > 1))
+                if (temp > 1)
                 {
                     currentlyAnalysedNumber = temp;
                 }
