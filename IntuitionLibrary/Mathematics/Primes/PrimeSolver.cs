@@ -52,9 +52,7 @@ namespace QBits.Intuition.Mathematics.Primes
             return false;
         }
 
-        /// <summary>
-        /// Calculates and returns the number of divisors of <paramref name="testedInteger"/>.
-        /// </summary>
+        /// <summary>Calculates and returns the number of divisors of <paramref name="testedInteger"/>.</summary>
         /// <param name="testedInteger">Positive number to be tested.</param>
         /// <returns>Number of divisors of <paramref name="testedInteger"/></returns>
         public int CalculateDivisors(long testedInteger)

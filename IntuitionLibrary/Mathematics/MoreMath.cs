@@ -29,10 +29,8 @@ namespace QBits.Intuition.Mathematics
             //Now we have performed the checks
             return retVal;
         }
-        /// <summary>
-        /// Calculates largest common divisor of the two values.
-        /// <para/>Both values have to be positive integers.
-        /// </summary>
+        /// <summary>Calculates largest common divisor of the two values.
+        /// <para/>Both values have to be positive integers.</summary>
         /// <param name="value1">First of the values to find divisor for</param>
         /// <param name="value2">Second of the values to find divisor for</param>
         /// <returns>Largest common denominator</returns>
@@ -53,10 +51,8 @@ namespace QBits.Intuition.Mathematics
             } while (remainder != 0);
             return greater;
         }
-        /// <summary>
-        /// Calculates largest common divisor of the two values.
-        /// <para/>Both values have to be positive integers.
-        /// </summary>
+        /// <summary>Calculates largest common divisor of the two values.
+        /// <para/>Both values have to be positive integers.</summary>
         /// <param name="value1">First of the values to find divisor for</param>
         /// <param name="value2">Second of the values to find divisor for</param>
         /// <returns>Largest common denominator</returns>
@@ -77,10 +73,7 @@ namespace QBits.Intuition.Mathematics
             } while (remainder != 0);
             return greater;
         }
-
-        /// <summary>
-        /// If the value is too close to 0, returns 0. Otherwise the same value is returned.
-        /// </summary>
+        /// <summary>If the value is too close to 0, returns 0. Otherwise the same value is returned.</summary>
         /// <param name="nearity">Margin value. Smaller values are interpreted as 0.</param>
         /// <param name="roundedOffValue">Value to round-off.</param>
         public static double RoundoffNearZero(double roundedOffValue, double nearity = 0.01)
@@ -88,19 +81,14 @@ namespace QBits.Intuition.Mathematics
             if (Math.Abs(roundedOffValue) < nearity) return 0;
             return roundedOffValue;
         }
-
-        /// <summary>
-        /// Returns true if the specified input param is even. False otherwise.
-        /// </summary>
+        /// <summary>Returns true if the specified input param is even. False otherwise.</summary>
         /// <param name="value"></param>
         /// <returns>True/False</returns>
         public static bool IsEven(Int64 value)
         {
             return (value % 2) == 0;
         }
-        /// <summary>
-        /// Produces a factorial for the specified number.
-        /// </summary>
+        /// <summary>Produces a factorial for the specified number.</summary>
         /// <param name="number">Number to calculate factorial of.</param>
         /// <returns>Factorial</returns>
         public static int Factorial(int number)
@@ -114,9 +102,7 @@ namespace QBits.Intuition.Mathematics
             while (number > 1) retVal *= number--;
             return retVal;
         }
-        /// <summary>
-        /// Returns a number constructed from array of digits representing that int.
-        /// </summary>
+        /// <summary>Returns a number constructed from array of digits representing that int.</summary>
         /// <param name="digits">Array of digits</param>
         /// <returns>Int value</returns>
         public static long IntFromDigits(IEnumerable<int> digits)
@@ -129,9 +115,7 @@ namespace QBits.Intuition.Mathematics
             }
             return retVal;
         }
-        /// <summary>
-        /// Returns a number constructed from array of digit chars representing that int.
-        /// </summary>
+        /// <summary>Returns a number constructed from array of digit chars representing that int.</summary>
         /// <param name="digits">Array of digit chars. Note, '0' = 48, '1' = 49, '2' = 50, ...</param>
         /// <returns>Int value</returns>
         public static long IntFromDigits(IEnumerable<char> digits)

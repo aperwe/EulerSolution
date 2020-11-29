@@ -28,47 +28,71 @@ The first three consecutive numbers to have three distinct prime factors are:
 Find the first four consecutive integers to have four distinct prime factors each. What is the first of these numbers?")]
     public class EulerProblem47 : AbstractEulerProblem
     {
+        PrimeSolver primeSolver = new PrimeSolver();
         protected override void Solve(out string answer)
         {
             answer = $"Solution not created yet...";
-            int start = 644 - 1;
+            int start = 3 - 2;
             bool failure = true; //Flag to continue searching
             var current = start;
             while (failure)
             {
                 current++;
                 var first = current;
-                var firstFactors = GetAllFactors(first);
-                if (!AllPrime(firstFactors)) continue;
+                var firstFactors = GetAllPrimeFactors(first);
+                if (firstFactors.Distinct().Count() < 4) continue;
 
                 var second = first + 1;
-                var secondFactors = GetAllFactors(second);
-                if (!AllPrime(secondFactors)) continue;
+                var secondFactors = GetAllPrimeFactors(second);
+                if (secondFactors.Distinct().Count() < 4) continue;
 
                 var third = second + 1;
-                var thirdFactors = GetAllFactors(third);
-                if (!AllPrime(thirdFactors)) continue;
+                var thirdFactors = GetAllPrimeFactors(third);
+                if (thirdFactors.Distinct().Count() < 4) continue;
 
                 var fourth = third + 1;
-                var fourthFactors = GetAllFactors(fourth);
-                if (!AllPrime(fourthFactors)) continue;
-                UpdateProgress($"Current: ({current}).");
+                var fourthFactors = GetAllPrimeFactors(fourth);
+                if (fourthFactors.Distinct().Count() < 4) continue;
+                //Found a quad of four consecutive numbers with prime factors.
+                UpdateProgress($"Found: ({first}).");
+                answer = $"Found: ({first}).";
+                failure = false;
             }
 
         }
+
         /// <summary>Gets a list of all factors of specified numbers.</summary>
-        /// <param name="number"></param>
-        private IEnumerable<long> GetAllFactors(long number)
+        /// <param name="inputNumber"></param>
+        private IEnumerable<long> GetAllPrimeFactors(long inputNumber)
         {
-            QBits.Intuition.Mathematics.Primes.PrimeSolver primeSolver = new PrimeSolver();
-            return primeSolver.GetDivisors(number);
-        }
-        /// <summary>Checks if all numbers in the list are primes</summary>
-        /// <param name="firstFactors"></param>
-        /// <returns></returns>
-        private bool AllPrime(IEnumerable<long> thirdFactors)
-        {
-            throw new NotImplementedException();
+            var primeDivisors = new List<long>(); //The return value
+            var currentlyAnalysedNumber = inputNumber;
+            bool exitflag = true;
+
+            while (exitflag)
+            {
+                var allFactors = primeSolver.GetDivisors(currentlyAnalysedNumber);
+
+                var onlyPrimeFactors = from x in allFactors
+                                       where primeSolver.IsPrime(x)
+                                       select x;
+
+                primeDivisors.AddRange(onlyPrimeFactors);
+
+                var mul = primeDivisors.Aggregate((x, mult) => x * mult); //Multiply all found primes
+
+                long temp = inputNumber / mul;
+                if ((temp > 1))
+                {
+                    currentlyAnalysedNumber = temp;
+                }
+                else //If remainder is 1 (or less - unlikely) break the loop;
+                {
+                    exitflag = false;
+                }
+                // || (mul == inputNumber)
+            }
+            return primeDivisors;
         }
     }
 }
