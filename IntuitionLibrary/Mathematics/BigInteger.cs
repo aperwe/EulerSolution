@@ -83,8 +83,6 @@ namespace QBits.Intuition.Mathematics
     ///
     /// 4) August 9, 2002 (Version 1.0)
     ///    - Initial Release.
-    /// 5) Nov 30, 2020 (Version 1.04)
-    ///    - Moved implementation from 32-bit to 64-bit values
     ///
     /// References
     /// [1] D. E. Knuth, "Seminumerical Algorithms", The Art of Computer Programming Vol. 2, 3rd Edition, Addison-Wesley, 1998.
@@ -104,8 +102,8 @@ namespace QBits.Intuition.Mathematics
         /// Maximum length of the BigInteger in uint (4 bytes). Change this to suit the required level of precision.
         /// Note that the larger the size, the more memory footprint and the slower the performance.
         /// </summary>
-        /// <remarks>Max length of 320 uints needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
-        private const int maxLength = 160; //120
+        /// <remarks>Max length of 320 needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
+        private const int maxLength = 320;
         /// <summary>
         /// Index to last uint in the BigInteger array.
         /// </summary>
@@ -113,15 +111,11 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Mask used to check for sign of BigInteger.
         /// </summary>
-        private const UInt64 signMask    = 0x8000000000000000;
-        private const UInt64 allBitsMask = 0xFFFFFFFFFFFFFFFF;
-        /// <summary>Length of the underlying data field (UInt64) in bits</summary>
-        private const int bitShift = 64;
-        private const int halfBitShift = bitShift / 2;
+        private const uint signMask = 0x80000000;
         /// <summary>
-        /// Primes smaller than 2000 to test the generated prime number
+        /// primes smaller than 2000 to test the generated prime number
         /// </summary>
-        public static readonly Int64[] primesBelow2000 = {        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
+        public static readonly int[] primesBelow2000 = {        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
             47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157,
             163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271,
             277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401,
@@ -139,32 +133,30 @@ namespace QBits.Intuition.Mathematics
             1879, 1889, 1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999 };
 
         /// <summary>Stores bytes from the Big Integer</summary>
-        private UInt64[] data = null;
+        private uint[] data = null;
         /// <summary>Number of actual chars used</summary>
         private int dataLength;
         /// <summary>Constructor (Default value for BigInteger is 0)</summary>
         public BigInteger()
         {
-            ResetData();
+            data = new uint[maxLength];
             dataLength = 1;
         }
-        /// <summary>Boilerplate code used in constructors. Extracted as method for consistent usage.</summary>
-        private void ResetData() => data = new UInt64[maxLength];
 
         /// <summary>
         /// Constructor (Default value provided by long)
         /// </summary>
         public BigInteger(long value)
         {
-            ResetData();
+            data = new uint[maxLength];
             long tempVal = value;
 
             // copy bytes from long to BigInteger without any assumption of the length of the long datatype
             dataLength = 0;
             while (value != 0 && dataLength < maxLength)
             {
-                data[dataLength] = ((UInt64)value) & allBitsMask;
-                value = value >> halfBitShift >> halfBitShift;  //Need to shift twice. Shifting in 1 step leaves the value unchanged :)
+                data[dataLength] = (uint)(value & 0xFFFFFFFF);
+                value >>= 32;
                 dataLength++;
             }
 
@@ -185,14 +177,14 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public BigInteger(ulong value)
         {
-            ResetData();
+            data = new uint[maxLength];
 
             // copy bytes from ulong to BigInteger without any assumption of the length of the ulong datatype
             dataLength = 0;
             while (value != 0 && dataLength < maxLength)
             {
-                data[dataLength] = (UInt64)(value & allBitsMask);
-                value >>= bitShift;
+                data[dataLength] = (uint)(value & 0xFFFFFFFF);
+                value >>= 32;
                 dataLength++;
             }
 
@@ -206,7 +198,7 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public BigInteger(BigInteger bi)
         {
-            ResetData();
+            data = new uint[maxLength];
             dataLength = bi.dataLength;
 
             for (int i = 0; i < dataLength; i++)
@@ -260,10 +252,10 @@ namespace QBits.Intuition.Mathematics
                     if (value[0] == '-')
                         posVal = -posVal;
 
-                    result += (multiplier * posVal);
+                    result = result + (multiplier * posVal);
 
                     if ((i - 1) >= limit)
-                        multiplier *= radix;
+                        multiplier = multiplier * radix;
                 }
             }
 
@@ -278,7 +270,7 @@ namespace QBits.Intuition.Mathematics
                     throw (new ArithmeticException("Positive overflow in constructor."));
             }
 
-            ResetData();
+            data = new uint[maxLength];
             for (int i = 0; i < result.dataLength; i++)
                 data[i] = result.data[i];
 
@@ -299,49 +291,30 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public BigInteger(byte[] inData)
         {
-            #region 32-bit code (replaced below by 64-bit)
-            //dataLength = inData.Length >> 2; //If underlying data field (uint) is 32-bit (4 bytes) -> shift by 2 bits (=> divide length by 4)
+            dataLength = inData.Length >> 2;
 
-            //int leftOver = inData.Length & 0x3;
-            #endregion
-
-            #region 64-bit code
-            dataLength = inData.Length >> 3; //If underlying data field (UInt64) is 64-bit (8 bytes) -> shift by 3 bits (=> divide length by 8)
-
-            int leftOver = inData.Length & 0x7;
-            #endregion
-
-            if (leftOver != 0)         // length not multiples of 8
+            int leftOver = inData.Length & 0x3;
+            if (leftOver != 0)         // length not multiples of 4
                 dataLength++;
 
 
             if (dataLength > maxLength)
                 throw (new ArithmeticException("Byte overflow in constructor."));
 
-            ResetData();
+            data = new uint[maxLength];
 
-            #region 32-bit code
-            //for (int i = inData.Length - 1, j = 0; i >= 3; i -= 4, j++) //32-bit version
-            #endregion
-            for (int i = inData.Length - 1, j = 0; i >= 7; i -= 8, j++)
+            for (int i = inData.Length - 1, j = 0; i >= 3; i -= 4, j++)
             {
-                data[j] = (UInt64)((inData[i - 7] << 56)
-                                 + (inData[i - 6] << 48)
-                                 + (inData[i - 5] << 40)
-                                 + (inData[i - 4] << 32)
-                                 + (inData[i - 3] << 24)
-                                 + (inData[i - 2] << 16)
-                                 + (inData[i - 1] << 8)
-                                 + inData[i]);
+                data[j] = (uint)((inData[i - 3] << 24) + (inData[i - 2] << 16) +
+                                 (inData[i - 1] << 8) + inData[i]);
             }
 
-            if      (leftOver == 1) data[dataLength - 1] = (UInt64)inData[0];
-            else if (leftOver == 2) data[dataLength - 1] = (UInt64)((inData[0] << 8) + inData[1]);
-            else if (leftOver == 3) data[dataLength - 1] = (UInt64)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
-            else if (leftOver == 4) data[dataLength - 1] = (UInt64)((inData[0] << 24) + (inData[1] << 16) + (inData[2] << 8) + inData[3]);
-            else if (leftOver == 5) data[dataLength - 1] = (UInt64)((inData[0] << 32) + (inData[1] << 24) + (inData[2] << 16) + (inData[3] << 8) + inData[4]);
-            else if (leftOver == 6) data[dataLength - 1] = (UInt64)((inData[0] << 40) + (inData[1] << 32) + (inData[2] << 24) + (inData[3] << 16) + (inData[4] << 8) + inData[5]);
-            else if (leftOver == 7) data[dataLength - 1] = (UInt64)((inData[0] << 48) + (inData[1] << 40) + (inData[2] << 32) + (inData[3] << 24) + (inData[4] << 16) + (inData[5] << 8) + inData[6]);
+            if (leftOver == 1)
+                data[dataLength - 1] = (uint)inData[0];
+            else if (leftOver == 2)
+                data[dataLength - 1] = (uint)((inData[0] << 8) + inData[1]);
+            else if (leftOver == 3)
+                data[dataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
 
             FixDataLength();
         }
@@ -350,47 +323,29 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public BigInteger(byte[] inData, int inLen)
         {
-            #region 32-bit code (replaced below by 64-bit)
-            //dataLength = inLen >> 2;
+            dataLength = inLen >> 2;
 
-            //int leftOver = inLen & 0x3;
-            #endregion
-
-            #region 64-bit code
-            dataLength = inLen >> 3;
-
-            int leftOver = inLen & 0x7;
-            #endregion
-
-            if (leftOver != 0)         // length not multiples of 8
+            int leftOver = inLen & 0x3;
+            if (leftOver != 0)         // length not multiples of 4
                 dataLength++;
 
             if (dataLength > maxLength || inLen > inData.Length)
                 throw (new ArithmeticException("Byte overflow in constructor."));
 
-            ResetData();
-            #region 32-bit code
-            //for (int i = inLen - 1, j = 0; i >= 3; i -= 4, j++)
-            #endregion
-            for (int i = inLen - 1, j = 0; i >= 7; i -= 8, j++)
+            data = new uint[maxLength];
+
+            for (int i = inLen - 1, j = 0; i >= 3; i -= 4, j++)
             {
-                data[j] = (UInt64)((inData[i - 7] << 56)
-                                 + (inData[i - 6] << 48)
-                                 + (inData[i - 5] << 40)
-                                 + (inData[i - 4] << 32)
-                                 + (inData[i - 3] << 24)
-                                 + (inData[i - 2] << 16)
-                                 + (inData[i - 1] << 8)
-                                 + inData[i]);
+                data[j] = (uint)((inData[i - 3] << 24) + (inData[i - 2] << 16) +
+                                 (inData[i - 1] << 8) + inData[i]);
             }
 
-            if (leftOver == 1) data[dataLength - 1] = (UInt64)inData[0];
-            else if (leftOver == 2) data[dataLength - 1] = (UInt64)((inData[0] << 8) + inData[1]);
-            else if (leftOver == 3) data[dataLength - 1] = (UInt64)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
-            else if (leftOver == 4) data[dataLength - 1] = (UInt64)((inData[0] << 24) + (inData[1] << 16) + (inData[2] << 8) + inData[3]);
-            else if (leftOver == 5) data[dataLength - 1] = (UInt64)((inData[0] << 32) + (inData[1] << 24) + (inData[2] << 16) + (inData[3] << 8) + inData[4]);
-            else if (leftOver == 6) data[dataLength - 1] = (UInt64)((inData[0] << 40) + (inData[1] << 32) + (inData[2] << 24) + (inData[3] << 16) + (inData[4] << 8) + inData[5]);
-            else if (leftOver == 7) data[dataLength - 1] = (UInt64)((inData[0] << 48) + (inData[1] << 40) + (inData[2] << 32) + (inData[3] << 24) + (inData[4] << 16) + (inData[5] << 8) + inData[6]);
+            if (leftOver == 1)
+                data[dataLength - 1] = (uint)inData[0];
+            else if (leftOver == 2)
+                data[dataLength - 1] = (uint)((inData[0] << 8) + inData[1]);
+            else if (leftOver == 3)
+                data[dataLength - 1] = (uint)((inData[0] << 16) + (inData[1] << 8) + inData[2]);
 
             if (dataLength == 0)
                 dataLength = 1;
@@ -399,14 +354,14 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Constructor (Default value provided by an array of unsigned integers)
         /// </summary>
-        public BigInteger(UInt64[] inData)
+        public BigInteger(uint[] inData)
         {
             dataLength = inData.Length;
 
             if (dataLength > maxLength)
                 throw (new ArithmeticException("Byte overflow in constructor."));
 
-            ResetData();
+            data = new uint[maxLength];
 
             for (int i = dataLength - 1, j = 0; i >= 0; i--, j++)
                 data[j] = inData[i];
@@ -416,19 +371,19 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(long value) => new BigInteger(value);
+        public static implicit operator BigInteger(long value) => (new BigInteger(value));
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(ulong value) => new BigInteger(value);
+        public static implicit operator BigInteger(ulong value) => (new BigInteger(value));
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(int value) => new BigInteger((long)value);
+        public static implicit operator BigInteger(int value) => (new BigInteger((long)value));
         /// <summary>
         /// Overloading of the typecast operator. For BigInteger bi = 10;
         /// </summary>
-        public static implicit operator BigInteger(uint value) => new BigInteger((ulong)value);
+        public static implicit operator BigInteger(uint value) => (new BigInteger((ulong)value));
         /// <summary>
         /// Overloading of addition operator
         /// </summary>
@@ -439,24 +394,25 @@ namespace QBits.Intuition.Mathematics
                 dataLength = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength
             };
 
-            UInt64 carry = 0;
+            long carry = 0;
             for (int i = 0; i < result.dataLength; i++)
             {
-                UInt64 sum = bi1.data[i] + bi2.data[i] + carry;
-                carry = sum >> halfBitShift >> halfBitShift;
-                result.data[i] = (sum & allBitsMask);
+                long sum = (long)bi1.data[i] + (long)bi2.data[i] + carry;
+                carry = sum >> 32;
+                result.data[i] = (uint)(sum & 0xFFFFFFFF);
             }
 
             if (carry != 0 && result.dataLength < maxLength)
             {
-                result.data[result.dataLength] = carry;
+                result.data[result.dataLength] = (uint)(carry);
                 result.dataLength++;
             }
 
             result.FixDataLength();
 
             // overflow check
-            if (bi1.Sign == bi2.Sign && result.Sign != bi1.Sign)
+            if (bi1.Sign == bi2.Sign &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException());
             }
@@ -469,16 +425,16 @@ namespace QBits.Intuition.Mathematics
         {
             BigInteger result = new BigInteger(bi1);
 
-            UInt64 val, carry = 1;
+            long val, carry = 1;
             int index = 0;
 
             while (carry != 0 && index < maxLength)
             {
-                val = result.data[index];
+                val = (long)(result.data[index]);
                 val++;
 
-                result.data[index] = (val & allBitsMask);
-                carry = val >> bitShift;
+                result.data[index] = (uint)(val & 0xFFFFFFFF);
+                carry = val >> 32;
 
                 index++;
             }
@@ -491,7 +447,8 @@ namespace QBits.Intuition.Mathematics
             }
 
             // overflow if initial value was +ve but ++ caused a sign change to negative.
-            if (bi1.IsPositive && result.Sign != bi1.Sign)
+            if (bi1.IsPositive &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException("Overflow in ++."));
             }
@@ -507,13 +464,13 @@ namespace QBits.Intuition.Mathematics
                 dataLength = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength
             };
 
-            UInt64 carryIn = 0;
+            long carryIn = 0;
             for (int i = 0; i < result.dataLength; i++)
             {
-                UInt64 diff;
+                long diff;
 
-                diff = bi1.data[i] - bi2.data[i] - carryIn;
-                result.data[i] = diff & allBitsMask;
+                diff = (long)bi1.data[i] - (long)bi2.data[i] - carryIn;
+                result.data[i] = (uint)(diff & 0xFFFFFFFF);
 
                 if (diff < 0)
                     carryIn = 1;
@@ -525,7 +482,7 @@ namespace QBits.Intuition.Mathematics
             if (carryIn != 0)
             {
                 for (int i = result.dataLength; i < maxLength; i++)
-                    result.data[i] = allBitsMask;
+                    result.data[i] = 0xFFFFFFFF;
                 result.dataLength = maxLength;
             }
 
@@ -533,7 +490,8 @@ namespace QBits.Intuition.Mathematics
             result.FixDataLength();
 
             // overflow check
-            if (bi1.Sign != bi2.Sign && result.Sign != bi1.Sign)
+            if (bi1.Sign != bi2.Sign &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException());
             }
@@ -546,16 +504,16 @@ namespace QBits.Intuition.Mathematics
         {
             BigInteger result = new BigInteger(bi1);
 
-            UInt64 val;
+            long val;
             bool carryIn = true;
             int index = 0;
 
             while (carryIn && index < maxLength)
             {
-                val = result.data[index];
+                val = (long)(result.data[index]);
                 val--;
 
-                result.data[index] = val & allBitsMask;
+                result.data[index] = (uint)(val & 0xFFFFFFFF);
 
                 if (val >= 0)
                     carryIn = false;
@@ -569,7 +527,8 @@ namespace QBits.Intuition.Mathematics
             result.FixDataLength();
 
             // overflow if initial value was -ve but -- caused a sign change to positive.
-            if (bi1.IsNegative && result.Sign != bi1.Sign)
+            if (bi1.IsNegative &&
+                result.Sign != bi1.Sign)
             {
                 throw (new ArithmeticException("Underflow in --."));
             }
@@ -606,19 +565,19 @@ namespace QBits.Intuition.Mathematics
                 {
                     if (bi1.data[i] == 0) continue;
 
-                    UInt64 mcarry = 0;
+                    ulong mcarry = 0;
                     for (int j = 0, k = i; j < bi2.dataLength; j++, k++)
                     {
                         // k = i + j
-                        UInt64 val = (bi1.data[i] * bi2.data[j]) +
-                                     result.data[k] + mcarry;
+                        ulong val = ((ulong)bi1.data[i] * (ulong)bi2.data[j]) +
+                                     (ulong)result.data[k] + mcarry;
 
-                        result.data[k] = val & allBitsMask;
-                        mcarry = val >> bitShift;
+                        result.data[k] = (uint)(val & 0xFFFFFFFF);
+                        mcarry = (val >> 32);
                     }
 
                     if (mcarry != 0)
-                        result.data[i + bi2.dataLength] = mcarry;
+                        result.data[i + bi2.dataLength] = (uint)mcarry;
                 }
             }
             catch (Exception)
@@ -635,7 +594,7 @@ namespace QBits.Intuition.Mathematics
             // overflow check (result is -ve)
             if (result.IsNegative)
             {
-                if (bi1Neg != bi2Neg && result.data[lastPos] == signMask)    // different sign
+                if (bi1Neg != bi2Neg && result.data[lastPos] == 0x80000000)    // different sign
                 {
                     // handle the special case where multiplication produces a max negative number in 2's complement.
                     if (result.dataLength == 1)
@@ -675,10 +634,9 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// least significant bits at lower part of buffer
         /// </summary>
-        private static int ShiftLeft(UInt64[] buffer, int shiftVal)
+        private static int ShiftLeft(uint[] buffer, int shiftVal)
         {
-            //int shiftAmount = 32; //What's this? Bitsize of int?
-            int shiftAmount = bitShift;
+            int shiftAmount = 32;
             int bufLen = buffer.Length;
 
             while (bufLen > 1 && buffer[bufLen - 1] == 0)
@@ -692,18 +650,18 @@ namespace QBits.Intuition.Mathematics
                 ulong carry = 0;
                 for (int i = 0; i < bufLen; i++)
                 {
-                    ulong val = buffer[i] << shiftAmount;
+                    ulong val = ((ulong)buffer[i]) << shiftAmount;
                     val |= carry;
 
-                    buffer[i] = val & allBitsMask;
-                    carry = val >> bitShift;
+                    buffer[i] = (uint)(val & 0xFFFFFFFF);
+                    carry = val >> 32;
                 }
 
                 if (carry != 0)
                 {
                     if (bufLen + 1 <= buffer.Length)
                     {
-                        buffer[bufLen] = carry;
+                        buffer[bufLen] = (uint)carry;
                         bufLen++;
                     }
                 }
@@ -722,10 +680,10 @@ namespace QBits.Intuition.Mathematics
             if (bi1.IsNegative)
             {
                 for (int i = maxIndex; i >= result.dataLength; i--)
-                    result.data[i] = allBitsMask;
+                    result.data[i] = 0xFFFFFFFF;
 
-                UInt64 mask = signMask;
-                for (int i = 0; i < bitShift; i++)
+                uint mask = 0x80000000;
+                for (int i = 0; i < 32; i++)
                 {
                     if ((result.data[result.dataLength - 1] & mask) != 0)
                         break;
@@ -740,9 +698,9 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// least significant bits at lower part of buffer
         /// </summary>
-        private static int ShiftRight(UInt64[] buffer, int shiftVal)
+        private static int ShiftRight(uint[] buffer, int shiftVal)
         {
-            int shiftAmount = bitShift;
+            int shiftAmount = 32;
             int invShift = 0;
             int bufLen = buffer.Length;
 
@@ -754,17 +712,17 @@ namespace QBits.Intuition.Mathematics
                 if (count < shiftAmount)
                 {
                     shiftAmount = count;
-                    invShift = bitShift - shiftAmount;
+                    invShift = 32 - shiftAmount;
                 }
 
                 ulong carry = 0;
                 for (int i = bufLen - 1; i >= 0; i--)
                 {
-                    UInt64 val = buffer[i] >> shiftAmount;
+                    ulong val = ((ulong)buffer[i]) >> shiftAmount;
                     val |= carry;
 
-                    carry = buffer[i] << invShift;
-                    buffer[i] = val;
+                    carry = ((ulong)buffer[i]) << invShift;
+                    buffer[i] = (uint)(val);
                 }
 
                 count -= shiftAmount;
@@ -782,7 +740,7 @@ namespace QBits.Intuition.Mathematics
             BigInteger result = new BigInteger(bi1);
 
             for (int i = 0; i < maxLength; i++)
-                result.data[i] = ~(bi1.data[i]);
+                result.data[i] = (uint)(~(bi1.data[i]));
 
             result.dataLength = maxLength;
             result.FixDataLength();
@@ -798,8 +756,7 @@ namespace QBits.Intuition.Mathematics
                 return (new BigInteger());
 
             //2's complement = 1's complement + 1
-            var retVal = (~bi1) + 1;
-            return retVal;
+            return (~bi1) + 1;
         }
         /// <summary>
         /// Overloading of equality operator
@@ -816,6 +773,7 @@ namespace QBits.Intuition.Mathematics
         {
             if (o == null) return false;
             BigInteger bi = (BigInteger)o;
+
 
             if (this.dataLength != bi.dataLength)
                 return false;
@@ -892,19 +850,18 @@ namespace QBits.Intuition.Mathematics
         /// <param name="outRemainder"></param>
         private static void MultiByteDivide(BigInteger bi1, BigInteger bi2, BigInteger outQuotient, BigInteger outRemainder)
         {
-            UInt64[] result = new UInt64[maxLength];
+            uint[] result = new uint[maxLength];
 
             int remainderLen = bi1.dataLength + 1;
-            UInt64[] remainder = new UInt64[remainderLen];
+            uint[] remainder = new uint[remainderLen];
 
-            UInt64 mask = signMask;
-            UInt64 val = bi2.data[bi2.dataLength - 1];
+            uint mask = 0x80000000;
+            uint val = bi2.data[bi2.dataLength - 1];
             int shift = 0, resultPos = 0;
 
             while (mask != 0 && (val & mask) == 0)
             {
-                shift++;
-                mask >>= 1;
+                shift++; mask >>= 1;
             }
 
             for (int i = 0; i < bi1.dataLength; i++)
@@ -919,27 +876,27 @@ namespace QBits.Intuition.Mathematics
             ulong secondDivisorByte = bi2.data[bi2.dataLength - 2];
 
             int divisorLen = bi2.dataLength + 1;
-            UInt64[] dividendPart = new UInt64[divisorLen];
+            uint[] dividendPart = new uint[divisorLen];
 
             while (j > 0)
             {
-                UInt64 dividend = (remainder[pos] << bitShift) + remainder[pos - 1];
+                ulong dividend = ((ulong)remainder[pos] << 32) + (ulong)remainder[pos - 1];
 
-                UInt64 q_hat = dividend / firstDivisorByte;
-                UInt64 r_hat = dividend % firstDivisorByte;
+                ulong q_hat = dividend / firstDivisorByte;
+                ulong r_hat = dividend % firstDivisorByte;
 
                 bool done = false;
                 while (!done)
                 {
                     done = true;
 
-                    if (q_hat == 0x100000000 || //TODO: How to handle masks greater than 64-bit
-                       (q_hat * secondDivisorByte) > ((r_hat << bitShift) + remainder[pos - 2]))
+                    if (q_hat == 0x100000000 ||
+                       (q_hat * secondDivisorByte) > ((r_hat << 32) + remainder[pos - 2]))
                     {
                         q_hat--;
                         r_hat += firstDivisorByte;
 
-                        if (r_hat < 0x100000000) //TODO: How to handle masks greater than 64-bit
+                        if (r_hat < 0x100000000)
                             done = false;
                     }
                 }
@@ -992,10 +949,12 @@ namespace QBits.Intuition.Mathematics
         /// <param name="bi2"></param>
         /// <param name="outQuotient"></param>
         /// <param name="outRemainder"></param>
-        private static void SingleByteDivide(BigInteger bi1, BigInteger bi2, BigInteger outQuotient, BigInteger outRemainder)
+        private static void SingleByteDivide(BigInteger bi1, BigInteger bi2,
+                                             BigInteger outQuotient, BigInteger outRemainder)
         {
-            UInt64[] result = new UInt64[maxLength];
+            uint[] result = new uint[maxLength];
             int resultPos = 0;
+
             // copy dividend to remainder
             for (int i = 0; i < maxLength; i++)
                 outRemainder.data[i] = bi1.data[i];
@@ -1003,28 +962,27 @@ namespace QBits.Intuition.Mathematics
 
             outRemainder.FixDataLength();
 
-            UInt64 divisor = bi2.data[0];
+            ulong divisor = (ulong)bi2.data[0];
             int pos = outRemainder.dataLength - 1;
-            UInt64 dividend = outRemainder.data[pos];
-            //TODO: Dependency on 64-bit masks
+            ulong dividend = (ulong)outRemainder.data[pos];
 
             if (dividend >= divisor)
             {
-                UInt64 quotient = dividend / divisor;
-                result[resultPos++] = quotient;
+                ulong quotient = dividend / divisor;
+                result[resultPos++] = (uint)quotient;
 
-                outRemainder.data[pos] = (UInt64)(dividend % divisor);
+                outRemainder.data[pos] = (uint)(dividend % divisor);
             }
             pos--;
 
             while (pos >= 0)
             {
-                dividend = (outRemainder.data[pos + 1] << bitShift) + outRemainder.data[pos];
+                dividend = ((ulong)outRemainder.data[pos + 1] << 32) + (ulong)outRemainder.data[pos];
                 ulong quotient = dividend / divisor;
-                result[resultPos++] = quotient;            //TODO: Dependency on 64-bit masks
+                result[resultPos++] = (uint)quotient;
 
                 outRemainder.data[pos + 1] = 0;
-                outRemainder.data[pos--] = (UInt64)(dividend % divisor); //TODO: Dependency on 64-bit masks
+                outRemainder.data[pos--] = (uint)(dividend % divisor);
             }
 
             outQuotient.dataLength = resultPos;
@@ -1126,7 +1084,7 @@ namespace QBits.Intuition.Mathematics
 
             for (int i = 0; i < len; i++)
             {
-                UInt64 sum = bi1.data[i] & bi2.data[i]; //TODO: Dependency on 64-bit masks
+                uint sum = (uint)(bi1.data[i] & bi2.data[i]);
                 result.data[i] = sum;
             }
 
@@ -1166,7 +1124,7 @@ namespace QBits.Intuition.Mathematics
 
             for (int i = 0; i < len; i++)
             {
-                UInt64 sum = (bi1.data[i] ^ bi2.data[i]); //TODO: Dependency on 64-bit masks
+                uint sum = (uint)(bi1.data[i] ^ bi2.data[i]);
                 result.data[i] = sum;
             }
 
@@ -1317,9 +1275,9 @@ namespace QBits.Intuition.Mathematics
             // perform squaring and multiply exponentiation
             for (int pos = 0; pos < exp.dataLength; pos++)
             {
-                UInt64 mask = 0x01;
+                uint mask = 0x01;
 
-                for (int index = 0; index < bitShift; index++)
+                for (int index = 0; index < 32; index++)
                 {
                     if ((exp.data[pos] & mask) != 0)
                         resultNum = BarrettReduction(resultNum * tempNum, n, constant);
@@ -1401,15 +1359,15 @@ namespace QBits.Intuition.Mathematics
                 for (int j = 0; j < n.dataLength && t < kPlusOne; j++, t++)
                 {
                     // t = i + j
-                    ulong val = (q3.data[i] * n.data[j]) +
-                                 r2.data[t] + mcarry;
+                    ulong val = ((ulong)q3.data[i] * (ulong)n.data[j]) +
+                                 (ulong)r2.data[t] + mcarry;
 
-                    r2.data[t] = val & allBitsMask;  //TODO: Dependency on 64-bit masks
+                    r2.data[t] = (uint)(val & 0xFFFFFFFF);
                     mcarry = (val >> 32);
                 }
 
                 if (t < kPlusOne)
-                    r2.data[t] = mcarry;
+                    r2.data[t] = (uint)mcarry;
             }
             r2.dataLength = kPlusOne;
             r2.FixDataLength();
@@ -1466,15 +1424,15 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Property that returns true if the number is negative. False if positive.
         /// </summary>
-        public bool IsNegative => Sign != 0;
+        public bool IsNegative => ((data[maxIndex] & signMask) != 0);
         /// <summary>
         /// Property that returns true if the number is positive. False if negative.
         /// </summary>
-        public bool IsPositive => Sign == 0;
+        public bool IsPositive => ((data[maxIndex] & signMask) == 0);
         /// <summary>
         /// Property that returns sign of the number. Can be used to compare if 2 numbers have the same or different sign.
         /// </summary>
-        public UInt64 Sign => (data[maxIndex] & signMask);
+        public uint Sign => (data[maxIndex] & signMask);
         /// <summary>
         /// Property that returns true if the number is even. False if odd.
         /// </summary>
@@ -1498,8 +1456,8 @@ namespace QBits.Intuition.Mathematics
         /// <param name="rand"></param>
         public void GenRandomBits(int bits, Random rand)
         {
-            int dwords = bits >> 6;
-            int remBits = bits & 0x3F;
+            int dwords = bits >> 5;
+            int remBits = bits & 0x1F;
 
             if (remBits != 0)
                 dwords++;
@@ -1508,21 +1466,21 @@ namespace QBits.Intuition.Mathematics
                 throw (new ArithmeticException("Number of required bits > maxLength."));
 
             for (int i = 0; i < dwords; i++)
-                data[i] = (UInt64)(rand.NextDouble() * allBitsMask); //TODO: Dependency on 64-bit masks
+                data[i] = (uint)(rand.NextDouble() * 0x100000000);
 
             for (int i = dwords; i < maxLength; i++)
                 data[i] = 0;
 
             if (remBits != 0)
             {
-                UInt64 mask = (UInt64)(0x01 << (remBits - 1));
+                uint mask = (uint)(0x01 << (remBits - 1));
                 data[dwords - 1] |= mask;
 
-                mask = allBitsMask >> (bitShift - remBits);
+                mask = (uint)(0xFFFFFFFF >> (32 - remBits));
                 data[dwords - 1] &= mask;
             }
             else
-                data[dwords - 1] |= signMask;
+                data[dwords - 1] |= 0x80000000;
 
             dataLength = dwords;
 
@@ -1541,9 +1499,9 @@ namespace QBits.Intuition.Mathematics
         {
             FixDataLength();
 
-            UInt64 value = data[dataLength - 1];
-            UInt64 mask = signMask;
-            int bits = bitShift;
+            uint value = data[dataLength - 1];
+            uint mask = 0x80000000;
+            int bits = 32;
 
             while (bits > 0 && (value & mask) == 0)
             {
@@ -1589,7 +1547,7 @@ namespace QBits.Intuition.Mathematics
 
             int bits = thisVal.BitCount();
             BigInteger a = new BigInteger();
-            BigInteger p_sub1 = thisVal - 1;
+            BigInteger p_sub1 = thisVal - (new BigInteger(1));
             Random rand = new Random();
 
             for (int round = 0; round < confidence; round++)
@@ -1658,14 +1616,14 @@ namespace QBits.Intuition.Mathematics
             if (thisVal.IsEven) return false;
 
             // calculate values of s and t
-            BigInteger p_sub1 = thisVal - 1;
+            BigInteger p_sub1 = thisVal - (new BigInteger(1));
             int s = 0;
 
             for (int index = 0; index < p_sub1.dataLength; index++)
             {
-                UInt64 mask = 0x01;
+                uint mask = 0x01;
 
-                for (int i = 0; i < bitShift; i++)
+                for (int i = 0; i < 32; i++)
                 {
                     if ((p_sub1.data[index] & mask) != 0)
                     {
@@ -1874,9 +1832,9 @@ namespace QBits.Intuition.Mathematics
 
             for (int index = 0; index < p_add1.dataLength; index++)
             {
-                UInt64 mask = 0x01;
+                uint mask = 0x01;
 
-                for (int i = 0; i < bitShift; i++)
+                for (int i = 0; i < 32; i++)
                 {
                     if ((p_add1.data[index] & mask) != 0)
                     {
@@ -2023,9 +1981,9 @@ namespace QBits.Intuition.Mathematics
 
             for (int index = 0; index < p_sub1.dataLength; index++)
             {
-                UInt64 mask = 0x01;
+                uint mask = 0x01;
 
-                for (int i = 0; i < bitShift; i++)
+                for (int i = 0; i < 32; i++)
                 {
                     if ((p_sub1.data[index] & mask) != 0)
                     {
@@ -2073,7 +2031,22 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Returns the lowest 8 bytes of the BigInteger as a long.
         /// </summary>
-        public long LongValue() => (Int64)data[0];
+        public long LongValue()
+        {
+            long val = 0;
+
+            val = (long)data[0];
+            try
+            {       // exception if maxLength = 1
+                val |= (long)data[1] << 32;
+            }
+            catch (Exception)
+            {
+                if (IsNegative)
+                    val = (int)data[0];
+            }
+            return val;
+        }
         /// <summary>
         /// Computes the Jacobi Symbol for a and b. Algorithm adapted from [3] and [4] with some optimizations.
         /// </summary>
@@ -2100,9 +2073,9 @@ namespace QBits.Intuition.Mathematics
             int e = 0;
             for (int index = 0; index < a.dataLength; index++)
             {
-                UInt64 mask = 0x01;
+                uint mask = 0x01;
 
-                for (int i = 0; i < bitShift; i++)
+                for (int i = 0; i < 32; i++)
                 {
                     if ((a.data[index] & mask) != 0)
                     {
@@ -2236,16 +2209,8 @@ namespace QBits.Intuition.Mathematics
             byte[] result = new byte[numBytes];
 
             int pos = 0;
-            UInt64 tempVal, val = data[dataLength - 1];
+            uint tempVal, val = data[dataLength - 1];
 
-            if ((tempVal = (val >> 56 & 0xFF)) != 0)
-                result[pos++] = (byte)tempVal;
-            if ((tempVal = (val >> 48 & 0xFF)) != 0)
-                result[pos++] = (byte)tempVal;
-            if ((tempVal = (val >> 40 & 0xFF)) != 0)
-                result[pos++] = (byte)tempVal;
-            if ((tempVal = (val >> 32 & 0xFF)) != 0)
-                result[pos++] = (byte)tempVal;
             if ((tempVal = (val >> 24 & 0xFF)) != 0)
                 result[pos++] = (byte)tempVal;
             if ((tempVal = (val >> 16 & 0xFF)) != 0)
@@ -2255,18 +2220,9 @@ namespace QBits.Intuition.Mathematics
             if ((tempVal = (val & 0xFF)) != 0)
                 result[pos++] = (byte)tempVal;
 
-            for (int i = dataLength - 2; i >= 0; i--, pos += 8)
+            for (int i = dataLength - 2; i >= 0; i--, pos += 4)
             {
                 val = data[i];
-
-                result[pos + 7] = (byte)(val & 0xFF);
-                val >>= 8;
-                result[pos + 6] = (byte)(val & 0xFF);
-                val >>= 8;
-                result[pos + 5] = (byte)(val & 0xFF);
-                val >>= 8;
-                result[pos + 4] = (byte)(val & 0xFF);
-                val >>= 8;
                 result[pos + 3] = (byte)(val & 0xFF);
                 val >>= 8;
                 result[pos + 2] = (byte)(val & 0xFF);
@@ -2284,7 +2240,7 @@ namespace QBits.Intuition.Mathematics
         /// <param name="bitNum"></param>
         public void SetBit(uint bitNum)
         {
-            uint bytePos = bitNum >> 5;             // divide by 32 //TODO: Finish transition to 64-bit here. Should it be divided by 64?
+            uint bytePos = bitNum >> 5;             // divide by 32
             byte bitPos = (byte)(bitNum & 0x1F);    // get the lowest 5 bits
 
             uint mask = (uint)1 << bitPos;
@@ -2299,7 +2255,7 @@ namespace QBits.Intuition.Mathematics
         /// <param name="bitNum"></param>
         public void UnsetBit(uint bitNum)
         {
-            uint bytePos = bitNum >> 5; //TODO: Finish transition to 64-bit here. Should it be divided by 64?
+            uint bytePos = bitNum >> 5;
 
             if (bytePos < this.dataLength)
             {
@@ -2320,7 +2276,6 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public BigInteger Sqrt()
         {
-            //TODO: Finish transition to 64-bit here
             uint numBits = (uint)this.BitCount();
 
             if ((numBits & 0x1) != 0)        // odd number of bits
@@ -2396,7 +2351,6 @@ namespace QBits.Intuition.Mathematics
         /// <returns></returns>
         public static BigInteger[] LucasSequence(BigInteger P, BigInteger Q, BigInteger k, BigInteger n)
         {
-            //TODO: Finish transition to 64-bit here
             if (k.dataLength == 1 && k.data[0] == 0)
             {
                 BigInteger[] result = new BigInteger[3];
@@ -2448,7 +2402,6 @@ namespace QBits.Intuition.Mathematics
         /// <returns></returns>
         private static BigInteger[] LucasSequenceHelper(BigInteger P, BigInteger Q, BigInteger k, BigInteger n, BigInteger constant, int s)
         {
-            //TODO: Finish transition to 64-bit here
             BigInteger[] result = new BigInteger[3];
 
             if (k.IsEven)
@@ -2548,7 +2501,6 @@ namespace QBits.Intuition.Mathematics
         /// <param name="rounds"></param>
         public static void MulDivTest(int rounds)
         {
-            //TODO: Finish transition to 64-bit here
             Random rand = new Random();
             byte[] val = new byte[64];
             byte[] val2 = new byte[64];
@@ -2629,7 +2581,6 @@ namespace QBits.Intuition.Mathematics
         /// <param name="rounds"></param>
         public static void RSATest(int rounds)
         {
-            //TODO: Finish transition to 64-bit here
             Random rand = new Random(1);
             byte[] val = new byte[64];
 
@@ -2692,7 +2643,6 @@ namespace QBits.Intuition.Mathematics
         /// <param name="rounds"></param>
         public static void RSATest2(int rounds)
         {
-            //TODO: Finish transition to 64-bit here
             Random rand = new Random();
             byte[] val = new byte[64];
 
@@ -2785,7 +2735,6 @@ namespace QBits.Intuition.Mathematics
         /// <param name="rounds"></param>
         public static void SqrtTest(int rounds)
         {
-            //TODO: Finish transition to 64-bit here
             Random rand = new Random();
             for (int count = 0; count < rounds; count++)
             {
@@ -2817,7 +2766,6 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public static void Main(string[] args)
         {
-            //TODO: Finish transition to 64-bit here
             // Known problem -> these two pseudoprimes passes my implementation of
             // primality test but failed in JDK's isProbablePrime test.
 
@@ -2890,7 +2838,6 @@ namespace QBits.Intuition.Mathematics
         /// <returns>a^b</returns>
         public BigInteger Power(BigInteger b)
         {
-            //TODO: Finish transition to 64-bit here
             BigInteger result = new BigInteger(1);
             if (b == 0) return 1; //Axiomatic value
             for (BigInteger iterator = 0; iterator < b; iterator++)
@@ -2907,7 +2854,6 @@ namespace QBits.Intuition.Mathematics
         /// <returns>0 if both values are equal. 1 if <paramref name="rightValue"/> > this. -1 if this > <paramref name="rightValue"/> </returns>
         int IComparable.CompareTo(object rightValue)
         {
-            //TODO: Finish transition to 64-bit here
             BigInteger right = rightValue as BigInteger;
             if (right == null) return 1;
             var retval = this > right;
