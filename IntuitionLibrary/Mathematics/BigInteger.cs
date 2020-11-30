@@ -40,8 +40,7 @@ namespace QBits.Intuition.Mathematics
     ///
     /// Known Problem
     /// -------------
-    /// This pseudoprime passes my implementation of
-    /// primality test but failed in JDK's isProbablePrime test.
+    /// This pseudoprime passes my implementation of primality test but failed in JDK's isProbablePrime test.
     ///
     ///       byte[] pseudoPrime1 = { (byte)0x00,
     ///             (byte)0x85, (byte)0x84, (byte)0x64, (byte)0xFD, (byte)0x70, (byte)0x6A,
@@ -65,8 +64,7 @@ namespace QBits.Intuition.Mathematics
     ///    - Added Strong Lucas Primality test.
     ///    - Added integer square root method.
     ///    - Added setBit/unsetBit methods.
-    ///    - New isProbablePrime() method which do not require the
-    ///      confident parameter.
+    ///    - New isProbablePrime() method which do not require the confident parameter.
     ///
     /// 2) August 29, 2002 (Version 1.02)
     ///    - Fixed bug in the exponentiation of negative numbers.
@@ -104,7 +102,8 @@ namespace QBits.Intuition.Mathematics
         /// Maximum length of the BigInteger in uint (4 bytes). Change this to suit the required level of precision.
         /// Note that the larger the size, the more memory footprint and the slower the performance.
         /// </summary>
-        private const int maxLength = 120;
+        /// <remarks>Max length of 320 needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
+        private const int maxLength = 320;
         /// <summary>
         /// Index to last uint in the BigInteger array.
         /// </summary>
@@ -133,14 +132,11 @@ namespace QBits.Intuition.Mathematics
             1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811, 1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877,
             1879, 1889, 1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999 };
 
-        private uint[] data = null;             // stores bytes from the Big Integer
-        /// <summary>
-        /// Number of actual chars used
-        /// </summary>
+        /// <summary>Stores bytes from the Big Integer</summary>
+        private uint[] data = null;
+        /// <summary>Number of actual chars used</summary>
         private int dataLength;
-        /// <summary>
-        /// Constructor (Default value for BigInteger is 0)
-        /// </summary>
+        /// <summary>Constructor (Default value for BigInteger is 0)</summary>
         public BigInteger()
         {
             data = new uint[maxLength];
