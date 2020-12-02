@@ -57,5 +57,22 @@ namespace QBits.Intuition.Mathematics.Tests
             Assert.IsTrue(bigInteger.IsEven);
             Assert.AreEqual("-14", bigInteger.ToString());
         }
+        [TestMethod("Test copy constructor")]
+        public void BigIntegerConstructorTest6()
+        {
+            BigInteger bigInteger = new BigInteger(1);
+            var copy = -bigInteger;
+            Assert.AreEqual(-1, copy);
+        }
+        [TestMethod("Test of negation operator")]
+        public void BigIntegerNegationOperatorTest()
+        {
+            BigInteger bigInteger = new BigInteger(7);
+            var negative = -bigInteger;
+            var str = negative.ToString();
+            Assert.AreEqual("-7", str);
+            BigInteger secondValue = -7;
+            Assert.AreEqual("-7", secondValue.ToString());
+        }
     }
 }

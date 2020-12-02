@@ -209,7 +209,7 @@ namespace QBits.Intuition.Mathematics
             ResetData();
             dataLength = bi.dataLength;
 
-            for (Int64 i = 0; i < dataLength; i++)
+            for (int i = 0; i < dataLength; i++)
                 data[i] = bi.data[i];
         }
         /// <summary>
@@ -443,7 +443,7 @@ namespace QBits.Intuition.Mathematics
             for (int i = 0; i < result.dataLength; i++)
             {
                 UInt64 sum = bi1.data[i] + bi2.data[i] + carry;
-                carry = sum >> bitShift;
+                carry = sum >> halfBitShift >> halfBitShift;
                 result.data[i] = (sum & allBitsMask);
             }
 
@@ -798,7 +798,8 @@ namespace QBits.Intuition.Mathematics
                 return (new BigInteger());
 
             //2's complement = 1's complement + 1
-            return (~bi1) + 1;
+            var retVal = (~bi1) + 1;
+            return retVal;
         }
         /// <summary>
         /// Overloading of equality operator
