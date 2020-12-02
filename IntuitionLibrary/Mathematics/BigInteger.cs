@@ -164,7 +164,7 @@ namespace QBits.Intuition.Mathematics
             while (value != 0 && dataLength < maxLength)
             {
                 data[dataLength] = ((UInt64)value) & allBitsMask;
-                value = value >> halfBitShift >> halfBitShift;  //Need to shift twice. Shifting in 1 step leaves the value unchanged :)
+                value >>= bitShift;
                 dataLength++;
             }
 
