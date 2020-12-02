@@ -157,28 +157,8 @@ namespace QBits.Intuition.Mathematics
         public BigInteger(long value)
         {
             ResetData();
-            long tempVal = value;
-
-            // copy bytes from long to BigInteger without any assumption of the length of the long datatype
-            dataLength = 0;
-            while (value != 0 && dataLength < maxLength)
-            {
-                data[dataLength] = ((UInt64)value) & allBitsMask;
-                value >>= bitShift;
-                dataLength++;
-            }
-
-            if (tempVal > 0)         // overflow check for +ve value
-            {
-                if (value != 0 || this.IsNegative)
-                    throw (new ArithmeticException("Positive overflow in constructor."));
-            }
-            else if (tempVal < 0)    // underflow check for -ve value
-            {
-                if (value != -1 || this.IsPositive)
-                    throw (new ArithmeticException("Negative underflow in constructor."));
-            }
-            if (dataLength == 0) dataLength = 1; //Min length must be 1
+            data[0] = (UInt64)value;
+            dataLength = 1;
         }
         /// <summary>
         /// Constructor (Default value provided by ulong)
