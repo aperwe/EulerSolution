@@ -104,8 +104,8 @@ namespace QBits.Intuition.Mathematics
         /// Maximum length of the BigInteger in uint (4 bytes). Change this to suit the required level of precision.
         /// Note that the larger the size, the more memory footprint and the slower the performance.
         /// </summary>
-        /// <remarks>Max length of 320 needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
-        private const int maxLength = 320; //120
+        /// <remarks>Max length of 320 uints needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
+        private const int maxLength = 160; //120
         /// <summary>
         /// Index to last uint in the BigInteger array.
         /// </summary>
@@ -117,6 +117,7 @@ namespace QBits.Intuition.Mathematics
         private const UInt64 allBitsMask = 0xFFFFFFFFFFFFFFFF;
         /// <summary>Length of the underlying data field (UInt64) in bits</summary>
         private const int bitShift = 64;
+        private const int halfBitShift = bitShift / 2;
         /// <summary>
         /// Primes smaller than 2000 to test the generated prime number
         /// </summary>
@@ -156,8 +157,28 @@ namespace QBits.Intuition.Mathematics
         public BigInteger(long value)
         {
             ResetData();
-            data[0] = (UInt64)value;
-            dataLength = 1;
+            long tempVal = value;
+
+            // copy bytes from long to BigInteger without any assumption of the length of the long datatype
+            dataLength = 0;
+            while (value != 0 && dataLength < maxLength)
+            {
+                data[dataLength] = ((UInt64)value) & allBitsMask;
+                value = value >> halfBitShift >> halfBitShift;  //Need to shift twice. Shifting in 1 step leaves the value unchanged :)
+                dataLength++;
+            }
+
+            if (tempVal > 0)         // overflow check for +ve value
+            {
+                if (value != 0 || this.IsNegative)
+                    throw (new ArithmeticException("Positive overflow in constructor."));
+            }
+            else if (tempVal < 0)    // underflow check for -ve value
+            {
+                if (value != -1 || this.IsPositive)
+                    throw (new ArithmeticException("Negative underflow in constructor."));
+            }
+            if (dataLength == 0) dataLength = 1; //Min length must be 1
         }
         /// <summary>
         /// Constructor (Default value provided by ulong)
