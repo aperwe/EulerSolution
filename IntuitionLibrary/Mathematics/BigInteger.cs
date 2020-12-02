@@ -156,28 +156,8 @@ namespace QBits.Intuition.Mathematics
         public BigInteger(long value)
         {
             ResetData();
-            long tempVal = value;
-
-            // copy bytes from long to BigInteger without any assumption of the length of the long datatype
-            dataLength = 0;
-            while (value != 0 && dataLength < maxLength)
-            {
-                data[dataLength] = ((UInt64)value) & allBitsMask;
-                value >>= bitShift;
-                dataLength++;
-            }
-
-            if (tempVal > 0)         // overflow check for +ve value
-            {
-                if (value != 0 || this.IsNegative)
-                    throw (new ArithmeticException("Positive overflow in constructor."));
-            }
-            else if (tempVal < 0)    // underflow check for -ve value
-            {
-                if (value != -1 || this.IsPositive)
-                    throw (new ArithmeticException("Negative underflow in constructor."));
-            }
-            if (dataLength == 0) dataLength = 1; //Min length must be 1
+            data[0] = (UInt64)value;
+            dataLength = 1;
         }
         /// <summary>
         /// Constructor (Default value provided by ulong)
@@ -1464,11 +1444,11 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Property that returns true if the number is negative. False if positive.
         /// </summary>
-        public bool IsNegative => ((data[maxIndex] & signMask) != 0);
+        public bool IsNegative => Sign != 0;
         /// <summary>
         /// Property that returns true if the number is positive. False if negative.
         /// </summary>
-        public bool IsPositive => ((data[maxIndex] & signMask) == 0);
+        public bool IsPositive => Sign == 0;
         /// <summary>
         /// Property that returns sign of the number. Can be used to compare if 2 numbers have the same or different sign.
         /// </summary>
