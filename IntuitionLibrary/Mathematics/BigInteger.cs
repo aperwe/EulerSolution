@@ -104,8 +104,8 @@ namespace QBits.Intuition.Mathematics
         /// Maximum length of the BigInteger in uint (4 bytes). Change this to suit the required level of precision.
         /// Note that the larger the size, the more memory footprint and the slower the performance.
         /// </summary>
-        /// <remarks>Max length of 320 needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
-        private const int maxLength = 320; //120
+        /// <remarks>Max length of 320 uints needed for Euler Problem 48 (to hold numbers of size up to 1000^1000)</remarks>
+        private const int maxLength = 160; //120
         /// <summary>
         /// Index to last uint in the BigInteger array.
         /// </summary>
@@ -117,6 +117,7 @@ namespace QBits.Intuition.Mathematics
         private const UInt64 allBitsMask = 0xFFFFFFFFFFFFFFFF;
         /// <summary>Length of the underlying data field (UInt64) in bits</summary>
         private const int bitShift = 64;
+        private const int halfBitShift = bitShift / 2;
         /// <summary>
         /// Primes smaller than 2000 to test the generated prime number
         /// </summary>
@@ -163,7 +164,7 @@ namespace QBits.Intuition.Mathematics
             while (value != 0 && dataLength < maxLength)
             {
                 data[dataLength] = ((UInt64)value) & allBitsMask;
-                value >>= bitShift;
+                value = value >> halfBitShift >> halfBitShift;  //Need to shift twice. Shifting in 1 step leaves the value unchanged :)
                 dataLength++;
             }
 
@@ -208,7 +209,7 @@ namespace QBits.Intuition.Mathematics
             ResetData();
             dataLength = bi.dataLength;
 
-            for (Int64 i = 0; i < dataLength; i++)
+            for (int i = 0; i < dataLength; i++)
                 data[i] = bi.data[i];
         }
         /// <summary>
@@ -442,7 +443,7 @@ namespace QBits.Intuition.Mathematics
             for (int i = 0; i < result.dataLength; i++)
             {
                 UInt64 sum = bi1.data[i] + bi2.data[i] + carry;
-                carry = sum >> bitShift;
+                carry = sum >> halfBitShift >> halfBitShift;
                 result.data[i] = (sum & allBitsMask);
             }
 
@@ -797,7 +798,8 @@ namespace QBits.Intuition.Mathematics
                 return (new BigInteger());
 
             //2's complement = 1's complement + 1
-            return (~bi1) + 1;
+            var retVal = (~bi1) + 1;
+            return retVal;
         }
         /// <summary>
         /// Overloading of equality operator
@@ -1464,11 +1466,11 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Property that returns true if the number is negative. False if positive.
         /// </summary>
-        public bool IsNegative => ((data[maxIndex] & signMask) != 0);
+        public bool IsNegative => Sign != 0;
         /// <summary>
         /// Property that returns true if the number is positive. False if negative.
         /// </summary>
-        public bool IsPositive => ((data[maxIndex] & signMask) == 0);
+        public bool IsPositive => Sign == 0;
         /// <summary>
         /// Property that returns sign of the number. Can be used to compare if 2 numbers have the same or different sign.
         /// </summary>
