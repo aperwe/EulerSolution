@@ -19,7 +19,6 @@ namespace EulerProblems.Problems.Problems40to49
 Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.")]
     public class EulerProblem48 : AbstractEulerProblem
     {
-        PrimeSolver primeSolver = new PrimeSolver();
         protected override void Solve(out string answer)
         {
             answer = $"Solution not created yet...";
