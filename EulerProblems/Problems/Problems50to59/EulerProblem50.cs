@@ -34,6 +34,7 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
             var upperBound1M = 1000 * 1000;
             //var upperBound1M = 100;
             long progress = 0; long updateCycle = 17;
+            long longestLength = 0;
 
             IEnumerable<long> allPrimesBelow1M = primeSolver.GetPrimesSmallerThan(upperBound1M);
             var LongSummedPrimes = new List<PrimeRep>();
@@ -42,6 +43,7 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
             //foreach (var lowerBound in allPrimesBelow1M)
             Parallel.ForEach(allPrimesBelow1M, lowerBound =>
             {
+                if (lowerBound * longestLength > upperBound1M) return; //Don't spend time if lowerbound is such that guarantees shorter result than the longest already found.
                 foreach (var upperBound in allPrimesBelow1M.Reverse())
                 {
                     if (lowerBound >= upperBound) continue;
@@ -64,6 +66,7 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
                 {
                     var sorted = LongSummedPrimes.OrderByDescending(x => x.Elements);
                     var longest = sorted.FirstOrDefault();
+                    longestLength = longest.Elements;
                     LongSummedPrimes = sorted.Where(x => x.Elements >= longest.Elements).Select(x => x).ToList();
                 }
                 progress++;
