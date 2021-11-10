@@ -32,27 +32,32 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
 
             //Step 1: Make list of all primes < 1M
             var upperBound1M = 1000 * 1000;
-            long progress = 0;
-            var allPrimesBelow1M = primeSolver.GetPrimesSmallerThan(upperBound1M);
+            //var upperBound1M = 100;
+            long progress = 0; long updateCycle = 17;
+
+            IEnumerable<long> allPrimesBelow1M = primeSolver.GetPrimesSmallerThan(upperBound1M);
             var LongSummedPrimes = new List<PrimeRep>();
 
             //Step 2: Of them, find sums of all consecutives
             //foreach (var lowerBound in allPrimesBelow1M)
             Parallel.ForEach(allPrimesBelow1M, lowerBound =>
             {
-                foreach (var upperBound in allPrimesBelow1M)
+                foreach (var upperBound in allPrimesBelow1M.Reverse())
                 {
                     if (lowerBound >= upperBound) continue;
                     var summedConsecutives = new PrimeRep();
-                    foreach (var prime in allPrimesBelow1M.Where(x => x >= lowerBound & x <= upperBound).Select(x => x))
+                    foreach (var prime in allPrimesBelow1M.Where(x => x >= lowerBound & x <= upperBound).Select(x => x)) //150% faster than SkipWhile/TakeWhile
+                    //foreach (var prime in allPrimesBelow1M.SkipWhile(x => x < lowerBound).TakeWhile(y => y <= upperBound))
                     {
                         summedConsecutives.Add(prime);
                         if (summedConsecutives.Sum > upperBound1M) break;
                     }
                     //Step 3: Find which ones sum up to a prime
-                    if (primeSolver.IsPrime(summedConsecutives.Sum))
+                    if (primeSolver.IsPrime(summedConsecutives.Sum) & summedConsecutives.Sum < upperBound1M)
                         lock (this)
                             LongSummedPrimes.Add(summedConsecutives);
+                    if (primeSolver.IsPrime(summedConsecutives.Sum) & summedConsecutives.Sum < upperBound1M) //If we found a prime sum under 1M, no need to search shorter sequences.
+                        break;
                 }
                 //Clear the list of elements whose sequences are short
                 lock (this)
@@ -62,7 +67,8 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
                     LongSummedPrimes = sorted.Where(x => x.Elements >= longest.Elements).Select(x => x).ToList();
                 }
                 progress++;
-                this.UpdateProgress($"Lowerbound {lowerBound}. Progress: {progress} ({progress * 100 / upperBound1M}%)");
+                if ((progress % updateCycle) == 0)
+                this.UpdateProgress($"Elapsed: {ElapsedTime}, Lowerbound {lowerBound}. Progress: {progress} ({progress * 100 / upperBound1M}%). Best: {LongSummedPrimes.FirstOrDefault().Elements} elements. Summed prime {LongSummedPrimes.FirstOrDefault().Sum}");
             });
 
             //Step 4: Identify such sequence that is the longest
@@ -74,13 +80,13 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
         /// </summary>
         internal class PrimeRep
         {
-            private List<long> Primes;
             private long SummedPrimes;
+            private long SummedCount;
 
             public PrimeRep()
             {
-                Primes = new List<long>();
                 SummedPrimes = 0;
+                SummedCount = 0;
             }
 
             public override string ToString()
@@ -90,13 +96,13 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
 
             internal void Add(long prime)
             {
-                Primes.Add(prime);
                 SummedPrimes += prime;
+                SummedCount++;
             }
             /// <summary>Returns the sum of summed primes</summary>
             internal long Sum => SummedPrimes;
             /// <summary>Returns the number of summed primes</summary>
-            internal long Elements => Primes.Count;
+            internal long Elements => SummedCount;
         }
     }
 }
