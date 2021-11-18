@@ -48,7 +48,32 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
                     {
                         foreach (var l4 in Enumerable.Range(0, 10))
                         {
-                            long candidatePrime = CheckPrimesByChanging1stDigit(l4, l3, l2, l1);
+                            long candidatePrime = 0;
+                            candidatePrime = CheckPrimesByChanging1stDigit(l4, l3, l2, l1);
+                            if (candidatePrime != 0)
+                            {
+                                if (smallestPrime == 0) smallestPrime = candidatePrime;
+                                else if (candidatePrime < smallestPrime) smallestPrime = candidatePrime;
+                            }
+                            candidatePrime = CheckPrimesByChanging2ndDigit(l4, l3, l2, l1);
+                            if (candidatePrime != 0)
+                            {
+                                if (smallestPrime == 0) smallestPrime = candidatePrime;
+                                else if (candidatePrime < smallestPrime) smallestPrime = candidatePrime;
+                            }
+                            candidatePrime = CheckPrimesByChanging3rdDigit(l4, l3, l2, l1);
+                            if (candidatePrime != 0)
+                            {
+                                if (smallestPrime == 0) smallestPrime = candidatePrime;
+                                else if (candidatePrime < smallestPrime) smallestPrime = candidatePrime;
+                            }
+                            candidatePrime = CheckPrimesByChanging4thDigit(l4, l3, l2, l1);
+                            if (candidatePrime != 0)
+                            {
+                                if (smallestPrime == 0) smallestPrime = candidatePrime;
+                                else if (candidatePrime < smallestPrime) smallestPrime = candidatePrime;
+                            }
+                            candidatePrime = CheckPrimesByChanging5thDigit(l4, l3, l2, l1);
                             if (candidatePrime != 0)
                             {
                                 if (smallestPrime == 0) smallestPrime = candidatePrime;
@@ -78,6 +103,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             seedNumber += l2 * multiplier; multiplier *= 10;
             seedNumber += l3 * multiplier; multiplier *= 10;
             seedNumber += l4 * multiplier; multiplier *= 10;
+            long replacingMultiplier = multiplier; multiplier *= 10; //largest number
 
             int howManyPrimes = 0;
             long smallestPrime = 0;
@@ -85,7 +111,175 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
 
             foreach (var replacingDigit in Enumerable.Range(0, 10))
             {
-                long testedNumber = replacingDigit * multiplier + seedNumber;
+                long testedNumber = replacingDigit * replacingMultiplier + seedNumber;
+                if (primeSolver.IsPrime(testedNumber))
+                {
+                    howManyPrimes++;
+                    if (!smallestSet)
+                    {
+                        smallestSet = true;
+                        smallestPrime = testedNumber;
+                    }
+                    else
+                    {
+                        if (testedNumber < smallestPrime) smallestPrime = testedNumber;
+                    }
+                }
+            }
+            return howManyPrimes == 8 ? smallestPrime : 0;
+        }
+        /// <summary>
+        /// Checks number of primes by adding first digit between all <paramref name="l1"/>, <paramref name="l2"/>, <paramref name="l3"/>, and <paramref name="l4"/>
+        /// Number is in the form of [l4] [*] [l3] [l2] [l1]
+        /// </summary>
+        /// <param name="l4">1000*x</param>
+        /// <param name="l3">100*x</param>
+        /// <param name="l2">10*x</param>
+        /// <param name="l1">1*x</param>
+        /// <returns>If 8 primes are found - smallest of them. Otherwise 0.</returns>
+        private long CheckPrimesByChanging2ndDigit(int l4, int l3, int l2, int l1)
+        {
+            long seedNumber = 0, multiplier = 1; //Initial
+
+            seedNumber += l1 * multiplier; multiplier *= 10;
+            seedNumber += l2 * multiplier; multiplier *= 10;
+            seedNumber += l3 * multiplier; multiplier *= 10;
+            long replacingMultiplier = multiplier; multiplier *= 10; //second largest number
+            seedNumber += l4 * multiplier; multiplier *= 10;
+
+            int howManyPrimes = 0;
+            long smallestPrime = 0;
+            bool smallestSet = false; //Set to true if smallest prime has been set
+
+            foreach (var replacingDigit in Enumerable.Range(0, 10))
+            {
+                long testedNumber = replacingDigit * replacingMultiplier + seedNumber;
+                if (primeSolver.IsPrime(testedNumber))
+                {
+                    howManyPrimes++;
+                    if (!smallestSet)
+                    {
+                        smallestSet = true;
+                        smallestPrime = testedNumber;
+                    }
+                    else
+                    {
+                        if (testedNumber < smallestPrime) smallestPrime = testedNumber;
+                    }
+                }
+            }
+            return howManyPrimes == 8 ? smallestPrime : 0;
+        }
+        /// <summary>
+        /// Checks number of primes by adding first digit between all <paramref name="l1"/>, <paramref name="l2"/>, <paramref name="l3"/>, and <paramref name="l4"/>
+        /// Number is in the form of [l4] [l3] [*] [l2] [l1]
+        /// </summary>
+        /// <param name="l4">1000*x</param>
+        /// <param name="l3">100*x</param>
+        /// <param name="l2">10*x</param>
+        /// <param name="l1">1*x</param>
+        /// <returns>If 8 primes are found - smallest of them. Otherwise 0.</returns>
+        private long CheckPrimesByChanging3rdDigit(int l4, int l3, int l2, int l1)
+        {
+            long seedNumber = 0, multiplier = 1; //Initial
+
+            seedNumber += l1 * multiplier; multiplier *= 10;
+            seedNumber += l2 * multiplier; multiplier *= 10;
+            long replacingMultiplier = multiplier; multiplier *= 10; //second largest number
+            seedNumber += l3 * multiplier; multiplier *= 10;
+            seedNumber += l4 * multiplier; multiplier *= 10;
+
+            int howManyPrimes = 0;
+            long smallestPrime = 0;
+            bool smallestSet = false; //Set to true if smallest prime has been set
+
+            foreach (var replacingDigit in Enumerable.Range(0, 10))
+            {
+                long testedNumber = replacingDigit * replacingMultiplier + seedNumber;
+                if (primeSolver.IsPrime(testedNumber))
+                {
+                    howManyPrimes++;
+                    if (!smallestSet)
+                    {
+                        smallestSet = true;
+                        smallestPrime = testedNumber;
+                    }
+                    else
+                    {
+                        if (testedNumber < smallestPrime) smallestPrime = testedNumber;
+                    }
+                }
+            }
+            return howManyPrimes == 8 ? smallestPrime : 0;
+        }
+        /// <summary>
+        /// Checks number of primes by adding first digit between all <paramref name="l1"/>, <paramref name="l2"/>, <paramref name="l3"/>, and <paramref name="l4"/>
+        /// Number is in the form of [l4] [l3] [*] [l2] [l1]
+        /// </summary>
+        /// <param name="l4">1000*x</param>
+        /// <param name="l3">100*x</param>
+        /// <param name="l2">10*x</param>
+        /// <param name="l1">1*x</param>
+        /// <returns>If 8 primes are found - smallest of them. Otherwise 0.</returns>
+        private long CheckPrimesByChanging4thDigit(int l4, int l3, int l2, int l1)
+        {
+            long seedNumber = 0, multiplier = 1; //Initial
+
+            seedNumber += l1 * multiplier; multiplier *= 10;
+            long replacingMultiplier = multiplier; multiplier *= 10; //first largest number
+            seedNumber += l2 * multiplier; multiplier *= 10;
+            seedNumber += l3 * multiplier; multiplier *= 10;
+            seedNumber += l4 * multiplier; multiplier *= 10;
+
+            int howManyPrimes = 0;
+            long smallestPrime = 0;
+            bool smallestSet = false; //Set to true if smallest prime has been set
+
+            foreach (var replacingDigit in Enumerable.Range(0, 10))
+            {
+                long testedNumber = replacingDigit * replacingMultiplier + seedNumber;
+                if (primeSolver.IsPrime(testedNumber))
+                {
+                    howManyPrimes++;
+                    if (!smallestSet)
+                    {
+                        smallestSet = true;
+                        smallestPrime = testedNumber;
+                    }
+                    else
+                    {
+                        if (testedNumber < smallestPrime) smallestPrime = testedNumber;
+                    }
+                }
+            }
+            return howManyPrimes == 8 ? smallestPrime : 0;
+        }
+        /// <summary>
+        /// Checks number of primes by adding first digit between all <paramref name="l1"/>, <paramref name="l2"/>, <paramref name="l3"/>, and <paramref name="l4"/>
+        /// Number is in the form of [l4] [l3] [*] [l2] [l1]
+        /// </summary>
+        /// <param name="l4">1000*x</param>
+        /// <param name="l3">100*x</param>
+        /// <param name="l2">10*x</param>
+        /// <param name="l1">1*x</param>
+        /// <returns>If 8 primes are found - smallest of them. Otherwise 0.</returns>
+        private long CheckPrimesByChanging5thDigit(int l4, int l3, int l2, int l1)
+        {
+            long seedNumber = 0, multiplier = 1; //Initial
+
+            long replacingMultiplier = multiplier; multiplier *= 10; //zeroth largest number
+            seedNumber += l1 * multiplier; multiplier *= 10;
+            seedNumber += l2 * multiplier; multiplier *= 10;
+            seedNumber += l3 * multiplier; multiplier *= 10;
+            seedNumber += l4 * multiplier; multiplier *= 10;
+
+            int howManyPrimes = 0;
+            long smallestPrime = 0;
+            bool smallestSet = false; //Set to true if smallest prime has been set
+
+            foreach (var replacingDigit in Enumerable.Range(0, 10))
+            {
+                long testedNumber = replacingDigit * replacingMultiplier + seedNumber;
                 if (primeSolver.IsPrime(testedNumber))
                 {
                     howManyPrimes++;
