@@ -26,7 +26,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
         PrimeSolver primeSolver = new PrimeSolver();
         object locker = new object();
         protected override void Solve(out string answer)
-        {
+        { 
             answer = $"Solution not created yet...";
             long smallestPrime = Check1DigitReplacement();
 

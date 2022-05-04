@@ -48,6 +48,7 @@
     <Compile Include="ProblemSolverAttribute.cs" />
     <Compile Include="Problems\AdditionalProblems\AdditionalProblem001a.cs" />
     <Compile Include="Problems\AdditionalProblems\AdditionalProblem001.cs" />
+    <Compile Include="Problems\AdditionalProblems\AdditionalProblem002.cs" />
     <Compile Include="Problems\Problems10to19\EulerProblem10.cs" />
     <Compile Include="Problems\Problems10to19\EulerProblem11.cs" />
     <Compile Include="Problems\Problems10to19\EulerProblem12.cs" />
