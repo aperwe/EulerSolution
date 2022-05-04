@@ -22,13 +22,14 @@ namespace EulerProblems.Problems.AdditionalProblems
         protected override void Solve(out string answer)
         { 
             answer = $"Solution not created yet...";
-            long previousPrime = 0, nextPrime = 0, lastPairLow = 0;
+            long lastChecked = 275239967; //Last checked from previous program run.
+            long previousPrime = 0, nextPrime = 0, lastPairLow = lastChecked;
             long pairCount = 0;
             long sumDistance = 0;
             long screenUpdateInterval = 1000; //Update screen every 1000 pairs found
 
             ///Main petla
-            for (long testedPrime = 3; ; testedPrime += 2)
+            for (long testedPrime = lastPairLow + 2; ; testedPrime += 2)
             {
                 if (primeSolver.IsPrime(testedPrime))
                 {
