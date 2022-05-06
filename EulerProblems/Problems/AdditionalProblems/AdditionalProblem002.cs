@@ -22,7 +22,7 @@ namespace EulerProblems.Problems.AdditionalProblems
         protected override void Solve(out string answer)
         { 
             answer = $"Solution not created yet...";
-            long lastChecked = 275239967; //Last checked from previous program run.
+            long lastChecked = 1568543357; //Last checked from previous program run.
             long previousPrime = 0, nextPrime = 0, lastPairLow = lastChecked;
             long pairCount = 0;
             long sumDistance = 0;
