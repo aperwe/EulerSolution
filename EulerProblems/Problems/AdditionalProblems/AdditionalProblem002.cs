@@ -22,7 +22,10 @@ namespace EulerProblems.Problems.AdditionalProblems
         protected override void Solve(out string answer)
         { 
             answer = $"Solution not created yet...";
-            long lastChecked = 4980994451; //Last checked from previous program run.
+            long lastChecked = 7842611669; //Last checked from previous program run.
+            string lastCheckedString = "8,531,517,077"; //Here you paste the last run result from github
+            try { lastChecked = long.Parse(lastCheckedString, System.Globalization.NumberStyles.AllowThousands); } catch (Exception ex) { };
+
             long previousPrime = 0, nextPrime = 0, lastPairLow = lastChecked;
             long pairCount = 0;
             long sumDistance = 0;
