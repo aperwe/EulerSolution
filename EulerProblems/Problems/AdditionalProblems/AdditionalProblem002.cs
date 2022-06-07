@@ -23,7 +23,7 @@ namespace EulerProblems.Problems.AdditionalProblems
         { 
             answer = $"Solution not created yet...";
             long lastChecked = 7842611669; //Last checked from previous program run.
-            string lastCheckedString = "10,334,495,441"; //Here you paste the last run result from github
+            string lastCheckedString = "11,324,001,761"; //Here you paste the last run result from github
             try { lastChecked = long.Parse(lastCheckedString, System.Globalization.NumberStyles.AllowThousands); } catch (Exception ex) { };
 
             long previousPrime = 0, nextPrime = 0, lastPairLow = lastChecked;
