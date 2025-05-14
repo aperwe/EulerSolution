@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Windows.Media;
 
@@ -18,7 +17,7 @@ namespace QBits.Intuition.UI
         /// </summary>
         /// <param name="me">DispatcherObject that has a dispatcher.</param>
         /// <param name="method">Piece of code to be executed on UI thread.</param>
-        public static void InvokeOnUIThread(this DispatcherObject me, MethodInvoker method)
+        public static void InvokeOnUIThread(this DispatcherObject me, Action method)
         {
             me.Dispatcher.Invoke(method);
         }
