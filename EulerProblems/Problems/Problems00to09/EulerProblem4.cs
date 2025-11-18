@@ -17,20 +17,19 @@ Find the largest palindrome made from the product of two 3-digit numbers.")]
             //Start with largest numbers to smallest.
             var left = Enumerable.Range(100, 900).Reverse().AsParallel();
             var right = Enumerable.Range(100, 900).Reverse();
-            var palindromeCandidates = new SortedSet<NumericPalindrome>();
             PalindromeManipulator palindromeManipulator = new PalindromeManipulator();
 
+            var bag = new System.Collections.Concurrent.ConcurrentBag<int>();
             left.ForAll(a =>
             {
-                //foreach (var a in left)
-                //{
                 foreach (var b in right)
                 {
-                    var candidate = new NumericPalindrome(a * b);
-                    if (palindromeManipulator.IsPalindrome(candidate._numberString)) palindromeCandidates.Add(candidate);
+                    var num = a * b;
+                    if (palindromeManipulator.IsPalindrome(num.ToString()))
+                        bag.Add(num);
                 }
             });
-            var result = palindromeCandidates.Last().Number;
+            var result = bag.DefaultIfEmpty(0).Max();
             answer = string.Format("The largest palindrome made from the product of two 3-digit numbers is: {0}.", result);
         }
     }
