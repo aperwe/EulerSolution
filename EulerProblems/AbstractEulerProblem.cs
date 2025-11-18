@@ -26,7 +26,7 @@ namespace EulerProblems
         }
         /// <summary>Returns currently elapsed time of solver execution</summary>
         protected TimeSpan ElapsedTime => DateTime.Now - start;
-        public event EventHandler<AnswerAgr> AnswerAvailableEventHandler;
+        public event EventHandler<AnswerAgr>? AnswerAvailableEventHandler;
 
         /// <summary>
         /// Call this method to start finding solution and get the answer.
@@ -55,6 +55,6 @@ namespace EulerProblems
 
     public class AnswerAgr : EventArgs
     {
-        public string Answer { get; internal set; }
+        public required string Answer { get; set; }
     }
 }

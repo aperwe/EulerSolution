@@ -58,7 +58,7 @@ How many such routes are there through a 20×20 grid?"
         }
         private class LagrangeManipulator
         {
-            List<Lagrange> previousRow;
+            List<Lagrange>? previousRow;
             List<Lagrange> newRow;
             List<List<Lagrange>> allRows = new List<List<Lagrange>>();
             internal void CalculateNewRow()
@@ -85,13 +85,13 @@ How many such routes are there through a 20×20 grid?"
 
             private long GetLeftOf(int iterator)
             {
-                if (iterator == 0) return 0;
+                if (previousRow == null || iterator == 0) return 0;
                 return previousRow[iterator - 1].combinations;
             }
 
             private long GetRightOf(int iterator)
             {
-                if (iterator >= GetPreviousRowSize()) return 0;
+                if (previousRow == null || iterator >= GetPreviousRowSize()) return 0;
                 return previousRow[iterator].combinations;
             }
 

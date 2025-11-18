@@ -37,16 +37,26 @@ namespace EulerStarter
 
         private void GenericClickHandler(object sender, RoutedEventArgs e)
         {
-            var si = (sender as Button).Tag as SolverInfo;
+            var si = ((Button)sender).Tag as SolverInfo;
+            if (si == null || si.TypeInfo == null)
+            {
+                MessageBox.Show("Solver information is missing or incomplete.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw new InvalidOperationException("Solver information is missing or incomplete.");
+            }
             var problemType = si.TypeInfo;
             this.textBoxProblemDefinition.Text = "[MOVE TO RESOURCE FILE] Problem definition (if provided) will be displayed here.";
             if (!string.IsNullOrEmpty(si.ProblemDescription)) { this.textBoxProblemDefinition.Text = si.ProblemDescription; }
             var problem = Activator.CreateInstance(problemType) as AbstractEulerProblem;
+            if (problem == null)
+            {
+                MessageBox.Show("Failed to create problem instance.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw new InvalidOperationException("Failed to create problem instance.");
+            }
             problem.AnswerAvailableEventHandler += UpdateAnswerUI;
             Task result = Task.Run(() => problem.StartSolving());
         }
 
-        private void UpdateAnswerUI(object sender, AnswerAgr e)
+        private void UpdateAnswerUI(object? sender, AnswerAgr e)
         {
             this.InvokeOnUIThread(() => textBoxAnswer.Text = e.Answer);
         }

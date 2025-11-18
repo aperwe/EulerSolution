@@ -119,9 +119,9 @@ However, Problem 67, is the same challenge with a triangle containing one-hundre
             private bool subTotalCalculated = false;
             private Tree tree;
 
-            public TreeElement Parent { get; internal set; }
-            public TreeElement LeftChild { get; internal set; }
-            public TreeElement RightChild { get; internal set; }
+            public TreeElement? Parent { get; internal set; }
+            public TreeElement? LeftChild { get; internal set; }
+            public TreeElement? RightChild { get; internal set; }
 
             public int MaximumSubTotal
             {

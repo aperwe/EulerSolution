@@ -50,8 +50,9 @@ Find the largest palindrome made from the product of two 3-digit numbers.")]
             _numberString = number.ToString();
         }
 
-        public int CompareTo(NumericPalindrome right)
+        public int CompareTo(NumericPalindrome? right)
         {
+            if (right is null) return 1;
             return this.Number.CompareTo(right.Number);
         }
 
