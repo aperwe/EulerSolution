@@ -10,11 +10,11 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <WrapPanel Grid.Row="0" x:Name="buttonsPanel" Grid.ColumnSpan="2" Margin="0,0,0,41" Grid.RowSpan="2">
+        <WrapPanel Grid.Row="0" x:Name="buttonsPanel" Grid.ColumnSpan="2">
             <WrapPanel.Resources>
                 <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}" x:Key="problemButton">
                     <Setter Property="Margin" Value="2 2"/>
@@ -31,14 +31,13 @@
             </WrapPanel.Resources>
             <!--Buttons will be created dynamically and will go into this panel.-->
         </WrapPanel>
-        <GroupBox Grid.Row="1" Header="Problem definition" Grid.ColumnSpan="2" Margin="0,0,0,611" Grid.RowSpan="2">
+        <GroupBox Grid.Row="1" Header="Problem definition" Grid.ColumnSpan="2">
             <TextBox x:Name="textBoxProblemDefinition" TextWrapping="Wrap" Text="Problem definition (if provided) will be displayed here." IsReadOnly="True"/>
         </GroupBox>
         <GroupBox Grid.Row="2" Header="Answer box" Grid.ColumnSpan="2">
             <TextBox x:Name="textBoxAnswer" TextWrapping="Wrap" Text="Solution answer will go here." IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
-
         </GroupBox>
-        <StackPanel Grid.Row="2" HorizontalAlignment="Left" Grid.Column="1" Margin="431,611,0,0" Grid.RowSpan="2">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Right" Grid.Column="1">
             <Button Content="Exit" Margin="2" Padding="4,1" Click="ButtonExit_Click">
                 <Button.Background>
                     <RadialGradientBrush>
@@ -48,7 +47,6 @@
                     </RadialGradientBrush>
                 </Button.Background>
             </Button>
-
         </StackPanel>
     </Grid>
 </Window>
