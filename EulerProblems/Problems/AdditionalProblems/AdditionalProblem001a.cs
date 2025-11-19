@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace EulerProblems.Problems.AdditionalProblems
 {
     /// <summary/>
-    [ProblemSolver("Persistence problem", "Additional 001a",
+    [ProblemSolver("Persistence problem", "Additional 001a[*]",
 @"Multiplication number persistence (MNP)
 Based on Numberfile article on number persistence: https://www.youtube.com/watch?v=Wim9WJeDTHQ&ab_channel=Numberphile
 for number n calculate how many steps before it reaches 0 or single digit following this 
