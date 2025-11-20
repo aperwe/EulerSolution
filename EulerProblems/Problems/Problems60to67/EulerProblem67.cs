@@ -19,6 +19,7 @@ namespace EulerProblems.Problems.Problems60to69
             while (!fileStream.EndOfStream)
             {
                 var singleLineOfText = fileStream.ReadLine();
+                if (singleLineOfText == null) continue;
                 linesOfText.Add(singleLineOfText);
             }
             fileStream.Close();
