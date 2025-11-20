@@ -66,8 +66,11 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
                 {
                     var sorted = LongSummedPrimes.OrderByDescending(x => x.Elements);
                     var longest = sorted.FirstOrDefault();
-                    longestLength = longest.Elements;
-                    LongSummedPrimes = sorted.Where(x => x.Elements >= longest.Elements).Select(x => x).ToList();
+                    if (longest != null)
+                    {
+                        longestLength = longest.Elements;
+                        LongSummedPrimes = sorted.Where(x => x.Elements >= longest.Elements).Select(x => x).ToList();
+                    }
                 }
                 progress++;
                 if ((progress % updateCycle) == 0)

@@ -33,7 +33,7 @@ namespace EulerProblems.Problems.Problems00to09
     {
         protected override void Solve(out string answer)
         {
-            AnswerContainer largestAnswer = new AnswerContainer();
+            AnswerContainer largestAnswer = new();
             string thousandDigitsNumber = "73167176531330624919225119674426574742355349194934" +
                                         "96983520312774506326239578318016984801869478851843" +
                                         "85861560789112949495459501737958331952853208805511" +
@@ -59,25 +59,27 @@ namespace EulerProblems.Problems.Problems00to09
             var maxSkip = thousandDigitsNumber.Length - adjacentLength;
             foreach (int skip in Enumerable.Range(0, maxSkip))
             {
-                AnswerContainer currentAnswer = new AnswerContainer();
-                currentAnswer.thirteenChars = thousandDigitsNumber.Skip(skip).Take(adjacentLength).Select(a => long.Parse(char.ToString(a)));
+                AnswerContainer currentAnswer = new()
+                {
+                    ThirteenChars = thousandDigitsNumber.Skip(skip).Take(adjacentLength).Select(a => long.Parse(char.ToString(a)))
+                };
                 if (currentAnswer.Product > largestAnswer.Product) largestAnswer = currentAnswer;
             }
             answer = string.Format("Thirteen adjacent digits with the greatest product are: {0}. The value of the product is: {1} = {2}",
-                string.Concat(largestAnswer.thirteenChars),
-                string.Join(" * ", largestAnswer.thirteenChars),
+                string.Concat(largestAnswer.ThirteenChars),
+                string.Join(" * ", largestAnswer.ThirteenChars),
                 largestAnswer.Product);
         }
         internal class AnswerContainer
         {
-            public IEnumerable<long> thirteenChars { get; internal set; }
+            public  IEnumerable<long>? ThirteenChars { get; internal set; }
             public long Product
             {
                 get
                 {
-                    if (thirteenChars == null) return 0;
+                    if (ThirteenChars == null) return 0;
                     //We make a quiet assumption that thirteenChars is always 13 chars. We don't verify its length for speed.
-                    return thirteenChars.Aggregate((a, b) => a * b); //Return the result of multiplication of all 13 digits.
+                    return ThirteenChars.Aggregate((a, b) => a * b); //Return the result of multiplication of all 13 digits.
                 }
             }
         }
