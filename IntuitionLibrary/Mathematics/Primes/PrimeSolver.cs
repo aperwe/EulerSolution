@@ -52,6 +52,15 @@ namespace QBits.Intuition.Mathematics.Primes
             return false;
         }
 
+        /// <summary>
+        /// Determines whether the specified integer is not a prime number.
+        /// </summary>
+        /// <remarks>This method evaluates the primality of the given integer and returns the negated result.
+        /// </remarks>
+        /// <param name="testInteger">The integer to test for primality.</param>
+        /// <returns><see langword="true"/> if the specified integer is not a prime number; otherwise, <see langword="false"/>.</returns>
+        public bool IsNotPrime(long testInteger) => !IsPrime(testInteger);
+
         /// <summary>Calculates and returns the number of divisors of <paramref name="testedInteger"/>.</summary>
         /// <param name="testedInteger">Positive number to be tested.</param>
         /// <returns>Number of divisors of <paramref name="testedInteger"/></returns>
