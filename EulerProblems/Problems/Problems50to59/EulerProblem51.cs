@@ -31,7 +31,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
         protected override void Solve(out string answer)
         {
             int result1 = VerifyStep1();
-            answer = $"Step 1 complete. Result: {result1}. Expected: 6";
+            answer = $"Step 1 complete. Result: {result1}. Expected: 6"; answer += Environment.NewLine;
             UpdateProgress(answer);
             var result2 = VerifyStep2("56**3");
             //Create string representation of result2, comma-separated
@@ -149,18 +149,25 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             //We will iterate through all primes with the given number of digits
             var minNumber = (long)Math.Pow(10, numLength - 1);
             var maxNumber = (long)Math.Pow(10, numLength) - 1;
+            var rangeSize = maxNumber - minNumber + 1;
             var primesInRange = new ConcurrentBag<long>();
-            var rangeToTest = Enumerable64.Range(minNumber, maxNumber - minNumber + 1);
+            var rangeToTest = Enumerable64.Range(minNumber, rangeSize);
 
             //Divide the range to test into 8 bags to test parallel on different CPUs
             var resultCollection = new ConcurrentBag<long>();
             var digits = "0123456789".ToCharArray();
+            //Collections: for each digit we should create a separate bag collecting in parallel (using parallel-CPUs power) numbers that would be having the required octa-prime property
+            ///First, create an array of collections for each digit
+            ///TODO: How to create an array that for each digit in digits var it holds reference to a list of primes?
+            //Create a map from a digit to a list
             long skipped = 0;
 
 
-            //TODO: Implement the actual logic to find the smallest prime which is part of an eight prime value family by replacing digits. This route should be more efficient (by digit vs going by the whole range) -> more efficent to parallelize.
+            //TODO: Implement the actual logic to find the smallest prime which is part of an eight prime value family by replacing digits.
+            //      This route should be more efficient (by digit vs going by the whole range) -> more efficent to parallelize.
             Parallel.ForEach(digits, digit =>
             {
+                
             });
 
 
