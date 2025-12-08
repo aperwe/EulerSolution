@@ -1,8 +1,4 @@
 ﻿using QBits.Intuition.Mathematics.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Media.Media3D;
 
 namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
 {
