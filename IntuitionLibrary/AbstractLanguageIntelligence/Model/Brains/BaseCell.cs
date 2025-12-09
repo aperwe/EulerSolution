@@ -8,7 +8,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
     /// </summary>
     public abstract class BaseCell
     {
-        private static Random randomGenerator;
+        private static Random? randomGenerator;
 
         /// <summary>
         /// Random generator used for randomness.

@@ -23,12 +23,12 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
         /// <summary>
         /// Target for the signal from this axon.
         /// </summary>
-        public Dendrite SignalTarget { get; internal set; }
+        public Dendrite? SignalTarget { get; internal set; }
 
         /// <summary>
         /// Event that is raised when this axon gets excited.
         /// </summary>
-        public static event EventHandler AxonExcited;
+        public static event EventHandler? AxonExcited;
         #endregion
 
         #region Public API
@@ -58,6 +58,11 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
         public void Excite(double signal)
         {
             OnAxonExcited();
+
+            if (SignalTarget == null)
+            {
+                throw new InvalidOperationException("SignalTarget is null. Cannot excite a null target.");
+            }
             SignalTarget.Excite(signal);
         }
         #endregion

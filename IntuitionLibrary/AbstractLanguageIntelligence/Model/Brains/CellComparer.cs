@@ -10,14 +10,18 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
     {
         #region IEqualityComparer<BaseCell> Members
 
-        bool IEqualityComparer<BaseCell>.Equals(BaseCell x, BaseCell y)
+        public bool Equals(BaseCell? x, BaseCell? y)
         {
+            if (ReferenceEquals(x, y))
+                return true;
+            if (x is null || y is null)
+                return false;
             return x.UniqueID == y.UniqueID;
         }
 
-        int IEqualityComparer<BaseCell>.GetHashCode(BaseCell theCell)
+        public int GetHashCode(BaseCell obj)
         {
-            return theCell.UniqueID.GetHashCode();
+            return obj.UniqueID.GetHashCode();
         }
 
         #endregion

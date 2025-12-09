@@ -7,7 +7,6 @@
     <RootNamespace>EulerStarter</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>AnyCPU</Platforms>
     <StartupObject>EulerStarter.App</StartupObject>
     <ApplicationIcon>Resources\Furl.ico</ApplicationIcon>
   </PropertyGroup>

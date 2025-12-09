@@ -2,11 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <OutputType>Library</OutputType>
     <RootNamespace>EulerProblems</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

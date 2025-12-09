@@ -18,7 +18,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model
             retVal.context = new Context();
             return retVal;
         }
-        Context context = null;
+        Context? context = null;
         /// <summary>
         /// Method called to register default (built-in) model types.
         /// </summary>
