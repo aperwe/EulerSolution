@@ -26,7 +26,8 @@ namespace QBits.Intuition.Crosswords
         {
             get
             {
-                return null;
+                // Return a default delegate or throw NotImplementedException to avoid null reference return.
+                throw new NotImplementedException("Factory constructor is not implemented.");
             }
         }
         #region Implementors should contain this section
@@ -54,7 +55,7 @@ namespace QBits.Intuition.Crosswords
         /// <summary>
         /// The parent control, where we can draw.
         /// </summary>
-        protected Control _parent = null;
+        protected Control? _parent = null;
         /// <summary>
         /// Sets dimensions for the crossword.
         /// </summary>
@@ -92,6 +93,10 @@ namespace QBits.Intuition.Crosswords
         /// </summary>
         public void CreateLetters()
         {
+            if (_parent == null)
+            {
+                throw new InvalidOperationException("Parent control must be set before creating letters.");
+            }
             for (int column = 0; column < _columns; column++)
             {
                 for (int row = 0; row < _rows; row++)
@@ -100,6 +105,7 @@ namespace QBits.Intuition.Crosswords
                 }
             }
         }
+
         /// <summary>
         /// Replaces and redraws the element at the specified location.
         /// </summary>
@@ -118,6 +124,7 @@ namespace QBits.Intuition.Crosswords
                 bce.Draw(_parent.DisplayRectangle.Left + column * letterWidth, _parent.DisplayRectangle.Top + row * letterHeight, _parent);
             }
         }
+
         /// <summary>
         /// Removes all GUI controls representing the crossword.
         /// </summary>
@@ -127,7 +134,10 @@ namespace QBits.Intuition.Crosswords
             {
                 for (int row = 0; row < _rows; row++)
                 {
-                    _letters[column, row].RemoveWindowsControl();
+                    if (_letters[column, row] != null)
+                    {
+                        _letters[column, row].RemoveWindowsControl();
+                    }
                 }
             }
         }

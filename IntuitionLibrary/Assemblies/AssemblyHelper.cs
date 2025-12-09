@@ -20,7 +20,8 @@ namespace QBits.Intuition.Assemblies
                 case WhichAssembly.ThisAssembly: assembly = Assembly.GetCallingAssembly(); break;
             }
 
-            return assembly.GetName().Version.ToString(4);
+            // Fix: Check for null before dereferencing
+            return assembly?.GetName().Version?.ToString(4) ?? string.Empty;
         }
     }
 
