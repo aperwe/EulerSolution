@@ -44,7 +44,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
         /// <summary>
         /// Event that is raised when this dendrite gets excited.
         /// </summary>
-        public static event EventHandler DendriteExcited;
+        public static event EventHandler? DendriteExcited;
 
         #endregion
 

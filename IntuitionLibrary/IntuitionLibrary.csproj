@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     
@@ -8,9 +8,9 @@
 
 
     <!-- To enable WPF support, uncomment the following line: -->
-    <!-- <UseWPF>true</UseWPF> -->
+    <UseWPF>true</UseWPF>
     <!-- To enable Windows Forms support, uncomment the following line: -->
-    <!-- <UseWindowsForms>true</UseWindowsForms> -->
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
