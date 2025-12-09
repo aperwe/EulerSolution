@@ -31,15 +31,15 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
         protected override void Solve(out string answer)
         {
             int result1 = VerifyStep1();
-            answer = $"Step 1 complete. Result: {result1}. Expected: 6"; answer += Environment.NewLine;
+            answer = $"Step 1 complete. Result: {result1}. Expected: 6.{Environment.NewLine}";
             UpdateProgress(answer);
             var result2 = VerifyStep2("56**3");
             //Create string representation of result2, comma-separated
             var result2String = string.Join(", ", result2);
-            answer += $"Step 2 complete. Result: {result2.Count()}; {result2String}. Expected: 7. Smallest: {result2.First()}";
+            answer += $"Step 2 complete. Result: {result2.Count()}; {result2String}. Expected: 7. Smallest: {result2.First()}.{Environment.NewLine}";
             UpdateProgress(answer);
             var result3 = VerifyStep3(8);
-            answer += $"Step 2 complete. Result: {result3};";
+            answer += $"Step 3 complete. Result: {result3};";
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             ///First, create an array of collections for each digit
             ///TODO: How to create an array that for each digit in digits var it holds reference to a list of primes?
             //Create a map from a digit to a list
-            long skipped = 0;
+            long skippedPrimes = 0;
 
 
             //TODO: Implement the actual logic to find the smallest prime which is part of an eight prime value family by replacing digits.
@@ -168,6 +168,78 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             Parallel.ForEach(digits, digit =>
             {
                 
+            });
+
+            var someBag = new ConcurrentBag<NumberRep>();
+
+            Parallel.ForEach(rangeToTest, item =>
+            {
+                lock (primeSolver)
+                    if (primeSolver.IsNotPrime(item)) return;
+                //Here we only collect primes for further processing
+
+                var stringRep = item.ToString().ToArray();
+                //We don't test more than 3-digit replacements, because all 3- or more patterns will be contained within 3-digit patterns
+                //So we test only 3-digit replacement patterns
+                //Identify triples of digits in stringRep
+                Parallel.ForEach(digits, digit =>
+                {
+                    var count = stringRep.Count(c => c == digit);
+                    var testPattern = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                    var testPatternString = new string(testPattern);
+
+
+                    if (count < 3)
+                    {
+                        lock (this) skippedPrimes++;
+                    }
+                    else
+                    {
+
+                        NumberRep numberRep = new NumberRep{ Pattern = testPatternString, Count = count, Item = item, Digit = digit };
+                        someBag.Add(numberRep);
+                        lock (this)
+                            primesInRange.Add(item);
+
+                        if (primesInRange.Count % 100000 == 0)
+                        {
+                            lock (this)
+                                UpdateProgress($"Collected {primesInRange.Count} primes so far... Current item: {item}. Skipped: {skippedPrimes}. Range: {minNumber} - {maxNumber}");
+                        }
+                    }
+                });
+            });
+            //Now we have all primes that have at least 3 occurrences of any digit in the range
+            //Next step: for each digit, create patterns and check how many primes fit each pattern
+            var patternGroups = someBag.GroupBy(nr => nr.Pattern);
+            return -1;
+        }
+        private long VerifyStep3BruteForce(int numLength)
+        {
+            if (numLength != 8)
+                throw new ArgumentException("This function currently only supports searching for 8-prime families.");
+            //We will iterate through all primes with the given number of digits
+            var minNumber = (long)Math.Pow(10, numLength - 1);
+            var maxNumber = (long)Math.Pow(10, numLength) - 1;
+            var rangeSize = maxNumber - minNumber + 1;
+            var primesInRange = new ConcurrentBag<long>();
+            var rangeToTest = Enumerable64.Range(minNumber, rangeSize);
+
+            //Divide the range to test into 8 bags to test parallel on different CPUs
+            var resultCollection = new ConcurrentBag<long>();
+            var digits = "0123456789".ToCharArray();
+            //Collections: for each digit we should create a separate bag collecting in parallel (using parallel-CPUs power) numbers that would be having the required octa-prime property
+            ///First, create an array of collections for each digit
+            ///TODO: How to create an array that for each digit in digits var it holds reference to a list of primes?
+            //Create a map from a digit to a list
+            long skipped = 0;
+
+
+            //TODO: Implement the actual logic to find the smallest prime which is part of an eight prime value family by replacing digits.
+            //      This route should be more efficient (by digit vs going by the whole range) -> more efficent to parallelize.
+            Parallel.ForEach(digits, digit =>
+            {
+
             });
 
 
@@ -182,6 +254,61 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
                 foreach (var digit in digits)
                 {
                     var count = stringRep.Count(c => c == digit);
+                    switch (count)
+                    {
+                        case 0:
+                        case 1:
+                            break; //No point in testing single or zero occurrences
+
+                        case 2:
+                            //We have exactly 2 occurrences of the digit
+                            var testPattern = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString = new string(testPattern);
+                            break;
+
+                        case 3:
+                            //We have exactly 3 occurrences of the digit
+                            //Create a test pattern with 3 asterisks
+                            var testPattern3 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString3 = new string(testPattern3);
+                            break;
+                        case 4:
+                            //We have exactly 4 occurrences of the digit
+                            //Create a test pattern with 4 asterisks
+                            var testPattern4 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString4 = new string(testPattern4);
+                            break;
+                        case 5:
+                            //We have exactly 5 occurrences of the digit
+                            //Create a test pattern with 5 asterisks
+                            var testPattern5 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString5 = new string(testPattern5);
+                            break;
+                        case 6:
+                            //We have exactly 6 occurrences of the digit
+                            //Create a test pattern with 6 asterisks
+                            var testPattern6 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString6 = new string(testPattern6);
+                            break;
+                        case 7:
+                            //We have exactly 7 occurrences of the digit
+                            //Create a test pattern with 7 asterisks
+                            var testPattern7 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString7 = new string(testPattern7);
+                            break;
+                        case 8:
+                            //We have exactly 8 occurrences of the digit
+                            //Create a test pattern with 8 asterisks
+                            var testPattern8 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString8 = new string(testPattern8);
+                            break;
+                        default:
+                            //We have exactly 9 or more occurrences of the digit (quite impossible in a number of limited length)
+                            //Create a test pattern with 8 asterisks
+                            var testPattern9 = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                            var testPatternString9 = new string(testPattern9);
+                            break;
+                    }
                     if (count < 2)
                     {
                         lock (this) skipped++;
@@ -192,7 +319,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
                     if (primesInRange.Count % 100000 == 0)
                     {
                         lock (this)
-                            UpdateProgress($"Collected {primesInRange.Count} primes so far... Current item: {item}. Skipped: {skipped}.");
+                            UpdateProgress($"Collected {primesInRange.Count} primes so far... Current item: {item}. Skipped: {skipped}. Range: {minNumber} - {maxNumber}");
                     }
                 }
             });
@@ -200,5 +327,13 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             return -1;
         }
 
+    }
+
+    internal class NumberRep
+    {
+        public string Pattern { get; set; }
+        public int Count { get; set; }
+        public long Item { get; set; }
+        public char Digit { get; set; }
     }
 }

@@ -20,9 +20,13 @@ namespace EulerProblems
                 }
             }
         }
-        protected void UpdateProgress(string progressMessage)
+        protected void UpdateProgressObsolete(string progressMessage)
         {
             Answer = progressMessage;
+        }
+        protected void UpdateProgress(string progressMessage)
+        {
+            Answer = $"Elapsed time: {ElapsedTime}: {progressMessage}";
         }
         /// <summary>Returns currently elapsed time of solver execution</summary>
         protected TimeSpan ElapsedTime => DateTime.Now - start;
