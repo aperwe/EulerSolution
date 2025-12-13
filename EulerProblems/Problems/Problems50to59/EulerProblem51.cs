@@ -150,7 +150,6 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             var minNumber = (long)Math.Pow(10, numLength - 1);
             var maxNumber = (long)Math.Pow(10, numLength) - 1;
             var rangeSize = maxNumber - minNumber + 1;
-            var primesInRange = new ConcurrentBag<long>();
             var rangeToTest = Enumerable64.Range(minNumber, rangeSize);
 
             //Divide the range to test into 8 bags to test parallel on different CPUs
@@ -167,10 +166,10 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
             //      This route should be more efficient (by digit vs going by the whole range) -> more efficent to parallelize.
             Parallel.ForEach(digits, digit =>
             {
-                
+
             });
 
-            var someBag = new ConcurrentBag<NumberRep>();
+            var patternedPrimesBag = new ConcurrentBag<PatternedPrimeRepresentation>();
 
             Parallel.ForEach(rangeToTest, item =>
             {
@@ -184,34 +183,53 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
                 //Identify triples of digits in stringRep
                 Parallel.ForEach(digits, digit =>
                 {
-                    var count = stringRep.Count(c => c == digit);
-                    var testPattern = stringRep.Select(c => c == digit ? '*' : c).ToArray();
-                    var testPatternString = new string(testPattern);
+                    var sameDigitCount = stringRep.Count(c => c == digit);
 
-
-                    if (count < 3)
+                    if (sameDigitCount < 3)
                     {
                         lock (this) skippedPrimes++;
+                        //Parallel loop ends here.
                     }
                     else
+                    //Here we scan only those that have a pattern of 3 (minimum) or more
                     {
+                        var testPattern = stringRep.Select(c => c == digit ? '*' : c).ToArray();
+                        var testPatternString = new string(testPattern);
 
-                        NumberRep numberRep = new NumberRep{ Pattern = testPatternString, Count = count, Item = item, Digit = digit };
-                        someBag.Add(numberRep);
-                        lock (this)
-                            primesInRange.Add(item);
+                        PatternedPrimeRepresentation representation = new PatternedPrimeRepresentation { StarPattern = testPatternString, SameDigitCount = sameDigitCount, PrimeNumber = item, RepeatedDigit = digit };
+                        patternedPrimesBag.Add(representation);
 
-                        if (primesInRange.Count % 100000 == 0)
+                        if (patternedPrimesBag.Count % 10000 == 0)
                         {
                             lock (this)
-                                UpdateProgress($"Collected {primesInRange.Count} primes so far... Current item: {item}. Skipped: {skippedPrimes}. Range: {minNumber} - {maxNumber}");
+                                UpdateProgress($"Collected {patternedPrimesBag.Count} primes so far... Current item: {item}. Skipped: {skippedPrimes}. Range: {minNumber} - {maxNumber}");
                         }
                     }
                 });
             });
             //Now we have all primes that have at least 3 occurrences of any digit in the range
             //Next step: for each digit, create patterns and check how many primes fit each pattern
-            var patternGroups = someBag.GroupBy(nr => nr.Pattern);
+            UpdateProgress($"Calculated all primes between {minNumber} and {maxNumber}. Collected {patternedPrimesBag.Count}.");
+            var digitGroups = patternedPrimesBag.GroupBy(nr => nr.RepeatedDigit);
+            foreach (var group in digitGroups)
+            {
+                var repeatedDigit = group.Key;
+                var patternsForDigit = group.GroupBy(nr => nr.StarPattern);
+                foreach (var patternGroup in patternsForDigit)
+                {
+                    var pattern = patternGroup.Key;
+                    var itemsInPattern = patternGroup.Select(nr => nr.PrimeNumber).ToList();
+                    if (itemsInPattern.Count !=8)
+                    {
+                        UpdateProgress($"Found pattern {pattern} for digit {repeatedDigit} with {itemsInPattern.Count} items: {string.Join(", ", itemsInPattern)}");
+                    } else
+                    if (itemsInPattern.Count >= 8)
+                    {
+                        UpdateProgress($"Found pattern {pattern} for digit {repeatedDigit} with {itemsInPattern.Count} items: {string.Join(", ", itemsInPattern)}");
+                        return itemsInPattern.Min();
+                    }
+                }
+            }
             return -1;
         }
         private long VerifyStep3BruteForce(int numLength)
@@ -329,11 +347,23 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
 
     }
 
-    internal class NumberRep
+    internal struct PatternedPrimeRepresentation
     {
-        public string Pattern { get; set; }
-        public int Count { get; set; }
-        public long Item { get; set; }
-        public char Digit { get; set; }
+        /// <summary>
+        /// Pattern representation of the number, with asterisks in place of replaced digit, e.g. "56**3*9"
+        /// </summary>
+        public string StarPattern { get; set; }
+        /// <summary>
+        /// Number of occurrences of the replaced digit in the number, e.g. 3 or more.
+        /// </summary>
+        public int SameDigitCount { get; set; }
+        /// <summary>
+        /// The actual prime number represented, e.g. 5600309
+        /// </summary>
+        public long PrimeNumber { get; set; }
+        /// <summary>
+        /// The digit that is replaced in the pattern, e.g. '0'
+        /// </summary>
+        public char RepeatedDigit { get; set; }
     }
 }
