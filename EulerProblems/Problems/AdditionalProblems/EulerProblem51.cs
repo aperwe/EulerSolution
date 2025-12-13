@@ -26,6 +26,11 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
     {
         protected override void Solve(out string answer)
         {
+            //Test Int128 operations for speed
+            SolveInt128(out answer);
+        }
+        protected void SolveInt128(out string answer)
+        {
             int n = 0; //Starting index of the exponent of 2^10^n => so 2^10^0 = 2^1 = 2
             Int128 value = 2; //Starting value = 2^1 = 2
             //Calculate starting value of 10^n = 10^0 = 1
@@ -36,11 +41,11 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
             //Limits
             var truncateLimit = Int128.MaxValue / 2;
             //We need to establish a 10-base value, whose most significant digit is the same as truncateLimit, and the rest are zeros
-                        var truncateLimitStr = truncateLimit.ToString();
+            var truncateLimitStr = truncateLimit.ToString();
             truncateLimitStr = truncateLimitStr[0] + new string('0', truncateLimitStr.Length - 1);
             truncateLimit = Int128.Parse(truncateLimitStr);
             var lengthToKeep = truncateLimitStr.Length - 1;
-            var multiplicator = 1024;
+            var multiplicator = 2;
             // Create an Enumerable lambda expression that assumes multiplicator is a power of 2 and returns backwards what the power of 2 it was. For example, for multiplicator = 1024 it returns 10, for multiplicator = 2048 it returns 11, etc.
             var powerOfTwoFromMultiplicator = new Func<Int128, int>((mul) =>
             {
