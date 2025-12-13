@@ -1,19 +1,4 @@
-﻿using QBits.Intuition.Collections;
-using QBits.Intuition.Mathematics;
-using QBits.Intuition.Mathematics.Primes;
-using QBits.Intuition.Text;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
-using System.Data.Odbc;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace EulerProblems.Problems.AdditionalProblems
 {
@@ -29,7 +14,9 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
             //Test Int128 operations for speed
             //SolveInt128(out answer);
             //Test Int128 operations for speed
-            SolveInt64(out answer);
+            //SolveInt64(out answer);
+            //Test BigInteger operations for speed
+            SolveBigInteger(out answer);
         }
         protected void SolveInt64(out string answer)
         {
@@ -38,7 +25,7 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
             //Calculate starting value of 10^n = 10^0 = 1
             Int64 tenToN = (Int64)Math.Pow(10, (double)n);
 
-            answer = $"Starting Int64"; UpdateProgress(answer);
+            answer = $"Starting Int64{Environment.NewLine}"; UpdateProgress(answer);
 
             //Limits
             var truncateLimit = Int64.MaxValue / 2;
@@ -99,7 +86,7 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
             //Calculate starting value of 10^n = 10^0 = 1
             Int64 tenToN = (Int64)Math.Pow(10, (double)n);
 
-            answer = $"Starting Int128"; UpdateProgress(answer);
+            answer = $"Starting Int128{Environment.NewLine}"; UpdateProgress(answer);
 
             //Limits
             var truncateLimit = Int128.MaxValue / 2;
@@ -150,6 +137,34 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
                     value -= truncateLimit;
                 }
 
+            }
+
+        }
+        protected void SolveBigInteger(out string answer)
+        {
+            int initialN = 0;
+            BigInteger currentValue = BigInteger.One; //Starting value = 2^0 = 1
+                                                      //Number of least-significant digits to keep
+            int digitCount = 40;
+            BigInteger modulus = BigInteger.Pow(10, digitCount);
+
+            answer = $"Starting BigInteger {Environment.NewLine}"; UpdateProgress(answer);
+
+            //Limits: With BigInteger we can go as high as we want, there are no limits
+
+            for (int theN = initialN; ; theN++)
+            {
+                //Calculate next value of 10^n = 10^0 = 1
+                int tenToN = ((int)BigInteger.Pow(10, theN));
+
+                currentValue = BigInteger.One << tenToN; //Calculate 2^10^n
+                var lastDigitsWord = currentValue % modulus;
+
+                var lastWordAsArray = lastDigitsWord.ToString().TakeLast(40).ToArray();
+                //Convert dupa to string
+                var lastWordAsString = new string(lastWordAsArray);
+                answer += $"2^10^{theN} = 2^{tenToN} = {lastWordAsString}.{Environment.NewLine}";
+                UpdateProgress(answer);
             }
 
         }
