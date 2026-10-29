@@ -1,7 +1,7 @@
 namespace EulerProblems.Problems.AdditionalProblems;
 
 /// <summary>Sequential, finite baseline for AdditionalProblem001.</summary>
-public static class MultiplicativePersistenceSearch
+public static partial class MultiplicativePersistenceSearch
 {
     /// <summary>
     /// Searches finite, distinct chunks in parallel. Each window contains at most
@@ -11,25 +11,7 @@ public static class MultiplicativePersistenceSearch
     public static PersistenceSearchResult SearchParallel(
         ulong start, ulong count, int workerCount, ulong chunkSize)
     {
-        if (workerCount < 1) throw new ArgumentOutOfRangeException(nameof(workerCount));
-        if (chunkSize == 0) throw new ArgumentOutOfRangeException(nameof(chunkSize));
-        if (count != 0 && count - 1 > ulong.MaxValue - start)
-            throw new ArgumentOutOfRangeException(nameof(count), "The range exceeds ulong.MaxValue.");
-
-        var completed = new PersistenceCompletionTracker();
-        ulong allocated = 0;
-        while (allocated < count)
-        {
-            var window = AllocateWindow(start, count, workerCount, chunkSize, ref allocated);
-
-            Parallel.ForEach(window, new ParallelOptions { MaxDegreeOfParallelism = workerCount }, chunk =>
-            {
-                // Calculation and local aggregation need no shared lock.
-                var result = Search(chunk.Start, chunk.Count);
-                completed.Complete(chunk, result);
-            });
-        }
-        return completed.Snapshot().Overall;
+        return SearchParallelAsync(start, count, workerCount, chunkSize).GetAwaiter().GetResult();
     }
 
     // Called serially by the coordinator, after the previous window has finished.
