@@ -37,7 +37,11 @@
         <GroupBox Grid.Row="2" Header="Answer box" Grid.ColumnSpan="2">
             <TextBox x:Name="textBoxAnswer" TextWrapping="Wrap" Text="Solution answer will go here." IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
         </GroupBox>
-        <StackPanel Grid.Row="3" HorizontalAlignment="Right" Grid.Column="1">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Right" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <CheckBox x:Name="boundedCheck" Content="Bounded run" IsEnabled="False" VerticalAlignment="Center" Margin="4"/>
+            <Button x:Name="runButton" Content="Run" Click="Run_Click" IsEnabled="False" Margin="2" Padding="4,1"/>
+            <Button x:Name="freshStartButton" Content="Fresh start" Click="FreshStart_Click" IsEnabled="False" Margin="2" Padding="4,1"/>
+            <Button x:Name="stopButton" Content="Stop" Click="Stop_Click" IsEnabled="False" Margin="2" Padding="4,1"/>
             <Button Content="Exit" Margin="2" Padding="4,1" Click="ButtonExit_Click">
                 <Button.Background>
                     <RadialGradientBrush>

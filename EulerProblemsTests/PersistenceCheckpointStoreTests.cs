@@ -1,4 +1,5 @@
 using System.Text.Json;
+using EulerProblems.Storage;
 using EulerProblems.Problems.AdditionalProblems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -32,53 +33,50 @@ public class PersistenceCheckpointStoreTests
         var second = Checkpoint(20);
         store.Save(second);
         Assert.AreEqual(new PersistenceCheckpointLoad(second, false), store.Load());
-        Assert.AreEqual(first, JsonSerializer.Deserialize<PersistenceCheckpoint>(File.ReadAllText(store.BackupPath)));
+        Assert.AreEqual(first, ReadPayload(store.BackupPath));
         Assert.AreEqual(0, Directory.GetFiles(directory, "*.tmp").Length);
     }
 
+
+    private static PersistenceCheckpoint? ReadPayload(string path) => JsonDocument.Parse(File.ReadAllText(path))
+        .RootElement.GetProperty("records").GetProperty(PersistenceCheckpointStore.NormalKey)
+        .GetProperty("data").Deserialize<PersistenceCheckpoint>();
+
     [TestMethod]
-    public void RecoveryPreservesGoodBackupDuringNextSave()
+    public void CorruptionRequiresExplicitWholeFileRecovery()
     {
-        using var store = new PersistenceCheckpointStore(directory);
         var first = Checkpoint();
-        store.Save(first);
-        store.Save(Checkpoint(20));
-        File.WriteAllText(store.CheckpointPath, "broken");
-        Assert.AreEqual(new PersistenceCheckpointLoad(first, true), store.Load());
-        store.Save(Checkpoint(30));
-        Assert.AreEqual(first, JsonSerializer.Deserialize<PersistenceCheckpoint>(File.ReadAllText(store.BackupPath)));
-        Assert.IsFalse(store.Load()!.RecoveredFromBackup);
+        using (var store = new PersistenceCheckpointStore(directory))
+        {
+            store.Save(first);
+            store.Save(Checkpoint(20));
+            File.WriteAllText(store.CheckpointPath, "broken");
+            Assert.ThrowsException<CheckpointRecoveryRequiredException>(() => store.Load());
+            Assert.ThrowsException<CheckpointRecoveryRequiredException>(() => store.Save(Checkpoint(30)));
+            Assert.ThrowsException<IOException>(() => CheckpointRecordStore.RestoreBackup(directory, true));
+        }
+        Assert.ThrowsException<InvalidOperationException>(() => CheckpointRecordStore.RestoreBackup(directory, false));
+        CheckpointRecordStore.RestoreBackup(directory, true);
+        using var recovered = new PersistenceCheckpointStore(directory);
+        Assert.AreEqual(first, recovered.Load()!.Checkpoint);
+        Assert.AreEqual(1, Directory.GetFiles(directory, "before-recovery-*.json").Length);
     }
 
     [TestMethod]
-    public void MissingPrimaryRecoversBackup()
+    public void MissingPrimaryDoesNotSilentlyReset()
     {
         using var store = new PersistenceCheckpointStore(directory);
         store.Save(Checkpoint());
         store.Save(Checkpoint(20));
         File.Delete(store.CheckpointPath);
-        Assert.IsTrue(store.Load()!.RecoveredFromBackup);
+        Assert.ThrowsException<CheckpointRecoveryRequiredException>(() => store.Load());
     }
 
     [TestMethod]
-    public void CorruptionIsNotSilentlyReset()
+    public void UnsupportedDocumentVersionIsRejected()
     {
         using var store = new PersistenceCheckpointStore(directory);
-        File.WriteAllText(store.CheckpointPath, "{}");
-        Assert.ThrowsException<InvalidDataException>(() => store.Load());
-        Assert.ThrowsException<InvalidDataException>(() => store.Save(Checkpoint()));
-        File.WriteAllText(store.BackupPath, "null");
-        Assert.ThrowsException<InvalidDataException>(() => store.Load());
-        Assert.AreEqual("{}", File.ReadAllText(store.CheckpointPath));
-    }
-
-    [TestMethod]
-    public void UnsupportedVersionDoesNotFallBackToOlderBackup()
-    {
-        using var store = new PersistenceCheckpointStore(directory);
-        store.Save(Checkpoint());
-        store.Save(Checkpoint(20));
-        File.WriteAllText(store.CheckpointPath, JsonSerializer.Serialize(Checkpoint() with { FormatVersion = 99 }));
+        File.WriteAllText(store.CheckpointPath, """{"formatVersion":99,"records":{}}""");
         Assert.ThrowsException<NotSupportedException>(() => store.Load());
     }
 

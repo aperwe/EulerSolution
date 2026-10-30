@@ -1,4 +1,4 @@
-﻿using QBits.Intuition.Collections;
+using QBits.Intuition.Collections;
 using QBits.Intuition.Mathematics;
 using QBits.Intuition.Mathematics.Primes;
 using System;
@@ -23,43 +23,63 @@ Step2: n = pers(n) => 3 * 6 * 0 => 0
 END
 return number of steps(2).
 ")]
-    public class AdditionalProblem001 : AbstractEulerProblem
+    public class AdditionalProblem001 : AbstractEulerProblem, IManagedProblem
     {
-        protected override void Solve(out string answer)
+        private readonly string? checkpointDirectory;
+        public AdditionalProblem001() { }
+        internal AdditionalProblem001(string checkpointDirectory) => this.checkpointDirectory = checkpointDirectory;
+
+        private static string KeyFor(bool boundedRun) => boundedRun
+            ? PersistenceCheckpointStore.BoundedKey : PersistenceCheckpointStore.NormalKey;
+
+        Task IManagedProblem.RunAsync(bool boundedRun, CancellationToken cancellationToken)
+            => RunAsync(cancellationToken, checkpointDirectory, count: boundedRun ? 1000UL : DefaultCount,
+                recordKey: KeyFor(boundedRun));
+
+        public Task<string> ArchiveProgressAsync(bool boundedRun) => Task.Run(() =>
         {
-            UpdateProgress($"Solution not created yet...");
+            using var store = new PersistenceCheckpointStore(checkpointDirectory, KeyFor(boundedRun));
+            string archive = store.ArchiveForFreshStart();
+            return $"Old checkpoints archived to {archive}. The next run starts at {DefaultStart}.";
+        });
 
+        public const ulong DefaultStart = 277857000000000;
+        public const ulong DefaultCount = ulong.MaxValue - DefaultStart + 1;
 
-            StringBuilder stringBuilder = new StringBuilder();
-            //BigInteger bigInteger = 277777788888899;
-            //UInt64 bigInteger =     277777788888899; checked already 11 is max
-            //UInt64 bigInteger =     277778163000000; checked already 11 is max
-            //UInt64 bigInteger =     277783080000000; checked already 11 is max
-            //UInt64 bigInteger =     277816000000000; checked already 11 is max
-            //UInt64 bigInteger   =   277820000000000; checked already 11 is max
-            UInt64 bigInteger   =     277857000000000; //<current max (program running)
-            int persistence = 0;
-            int maxPersistence = 0;
-
-            while (true)
-            {
-                persistence = MultiplicativePersistenceSearch.Calculate(bigInteger);
-                if (persistence > maxPersistence)
-                {
-                    stringBuilder.Insert(0, $"Multiplication number persistence of ({bigInteger}) = {persistence}. Elapsed time: {ElapsedTime}\n");
-                    UpdateProgress(stringBuilder.ToString());
-                    maxPersistence = persistence;
-                }
-                if (bigInteger % 1000000000 == 0)
-                {
-                    stringBuilder.Insert(0, $"Current ({bigInteger}) = {persistence}. Elapsed time: {ElapsedTime}\n");
-                    UpdateProgress(stringBuilder.ToString());
-                }
-                bigInteger++;
-            }
-
-            answer += $"Multiplication number persistence of ({bigInteger}) = {persistence}.";
+        public Task<PersistenceSearchResult> RunAsync(CancellationToken cancellationToken,
+            string? directory = null, ulong start = DefaultStart, ulong count = DefaultCount,
+            int? workerCount = null, string recordKey = PersistenceCheckpointStore.NormalKey)
+        {
+            int workers = workerCount ?? Math.Max(1, Environment.ProcessorCount - 1);
+            Answer = $"Long-running persistence search starting at {start}. Loading checkpoint...";
+            return MultiplicativePersistenceSearch.SearchResumableAsync(start, count, workers, 1_000_000,
+                progress => Answer = FormatProgress(progress, start, workers), cancellationToken, directory,
+                recordKey: recordKey);
         }
 
+        public static string FormatProgress(ResumablePersistenceProgress progress, ulong start, int workers)
+        {
+            var live = progress.Live;
+            var saved = progress.Saved;
+            string savedThrough = saved == null || saved.Completed.EvaluatedCount == 0
+                ? "none" : (saved.Start + (saved.Completed.EvaluatedCount - 1)).ToString();
+            static string Best(PersistenceSearchResult? result) => result?.BestNumber is ulong number
+                ? $"{number} (persistence {result.BestPersistence})" : "none";
+            return $"{live.State} — long-running persistence search; workers: {workers}\n" +
+                $"Verified coverage begins at {start}; earlier numbers are outside this run.\n" +
+                $"Elapsed: {live.Elapsed}\nLargest evaluated: {live.LargestEvaluated?.ToString() ?? "none"}\n" +
+                $"Completed through: {live.CompletedThrough?.ToString() ?? "none"}\nSaved through: {savedThrough}\n" +
+                $"Live best (completed chunks): {Best(live.CompletedChunks)}\nSaved best: {Best(saved?.Completed)}\n" +
+                $"Last successful save (UTC): {saved?.SavedAtUtc.ToString("u") ?? "none"}\n" +
+                $"Checkpoint: {progress.CheckpointPath}\n" +
+                (progress.RecoveredFromBackup ? "Recovered from backup; some work may be repeated.\n" : "") +
+                "Progress and saves occur approximately every 60 seconds. Stop saves completed coverage.";
+        }
+
+        protected override void Solve(out string answer)
+        {
+            var result = RunAsync(CancellationToken.None).GetAwaiter().GetResult();
+            answer = $"Search complete. Best: {result.BestNumber}, persistence: {result.BestPersistence}.";
+        }
     }
 }

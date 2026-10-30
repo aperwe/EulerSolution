@@ -1,4 +1,5 @@
 using System.Text.Json;
+using EulerProblems.Storage;
 using EulerProblems.Problems.AdditionalProblems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -84,7 +85,7 @@ public class ResumablePersistenceSearchTests
         using var stop = new CancellationTokenSource();
         await Assert.ThrowsExceptionAsync<IOException>(() => Run(0, 10, n => {
             // A directory at the destination prevents checkpoint replacement.
-            Directory.CreateDirectory(Path.Combine(directory, "checkpoint.json"));
+            Directory.CreateDirectory(Path.Combine(directory, "checkpoints.json"));
             stop.Cancel();
             return 0;
         }, stop.Token));
@@ -97,7 +98,7 @@ public class ResumablePersistenceSearchTests
     {
         using var release = new ManualResetEventSlim();
         int runningReports = 0;
-        string path = Path.Combine(directory, "checkpoint.json");
+        string path = Path.Combine(directory, "checkpoints.json");
         var result = await MultiplicativePersistenceSearch.RunResumableAsync(0, 10, 1, 5,
             p => { if (p.Live.State == PersistenceRunState.Running) runningReports++; }, default,
             directory, TimeSpan.FromHours(1), TimeSpan.FromMilliseconds(10), n => {
@@ -106,7 +107,7 @@ public class ResumablePersistenceSearchTests
             }, async (interval, token) => {
                 if (File.Exists(path))
                 {
-                    var saved = JsonSerializer.Deserialize<PersistenceCheckpoint>(File.ReadAllText(path));
+                    var saved = JsonDocument.Parse(File.ReadAllText(path)).RootElement.GetProperty("records").GetProperty(PersistenceCheckpointStore.NormalKey).GetProperty("data").Deserialize<PersistenceCheckpoint>();
                     if (saved!.Completed.EvaluatedCount == 5) release.Set();
                 }
                 await Task.Delay(interval, token);
@@ -130,8 +131,9 @@ public class ResumablePersistenceSearchTests
             File.WriteAllText(store.CheckpointPath, "broken");
         }
         var reports = new List<ResumablePersistenceProgress>();
+        CheckpointRecordStore.RestoreBackup(directory, true);
         var result = await Run(0, 20, MultiplicativePersistenceSearch.Calculate, report: reports.Add);
-        Assert.IsTrue(reports[0].RecoveredFromBackup);
+        Assert.IsFalse(reports[0].RecoveredFromBackup);
         Assert.AreEqual(5UL, reports[0].Saved!.Completed.EvaluatedCount);
         Assert.AreEqual(MultiplicativePersistenceSearch.Search(0, 20), result);
     }

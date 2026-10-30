@@ -1,118 +1,67 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using EulerProblems.Storage;
 
 namespace EulerProblems.Problems.AdditionalProblems;
 
-/// <summary>
-/// Single-owner checkpoint storage for AdditionalProblem001. No search or UI work
-/// is performed here. Keep this store open for the entire run to retain ownership.
-/// </summary>
+/// <summary>Solver-specific validation over the shared, solver-agnostic record store.</summary>
 public sealed class PersistenceCheckpointStore : IDisposable
 {
-    private readonly FileStream ownership;
-    private readonly object gate = new();
-    private bool disposed;
-    public string CheckpointPath { get; }
-    public string BackupPath => CheckpointPath + ".bak";
-    public static string DefaultDirectory => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "EulerSolution", "AdditionalProblem001");
+    public const string NormalKey = "additional-001/normal";
+    public const string BoundedKey = "additional-001/bounded";
+    private readonly CheckpointRecordStore records;
+    public string CheckpointPath => records.FilePath;
+    public string BackupPath => records.BackupPath;
+    public static string DefaultDirectory => CheckpointRecordStore.DefaultDirectory;
 
-    public PersistenceCheckpointStore(string? directory = null)
-    {
-        directory = Path.GetFullPath(directory ?? DefaultDirectory);
-        Directory.CreateDirectory(directory);
-        CheckpointPath = Path.Combine(directory, "checkpoint.json");
-        // The lock file is deliberately retained: deleting it could race another owner.
-        ownership = new FileStream(CheckpointPath + ".lock", FileMode.OpenOrCreate,
-            FileAccess.ReadWrite, FileShare.None);
-    }
+    public PersistenceCheckpointStore(string? directory = null, string recordKey = NormalKey)
+        => records = new CheckpointRecordStore(recordKey, directory);
 
     public PersistenceCheckpointLoad? Load()
     {
-        lock (gate)
-        {
-            ObjectDisposedException.ThrowIf(disposed, this);
-            try
-            {
-                var primary = Read(CheckpointPath);
-                if (primary != null) return new(primary, false);
-            }
-            catch (InvalidDataException primaryError)
-            {
-                try
-                {
-                    var backup = Read(BackupPath);
-                    if (backup != null) return new(backup, true);
-                }
-                catch (InvalidDataException backupError)
-                {
-                    throw new InvalidDataException("Both checkpoint and backup are invalid.",
-                        new AggregateException(primaryError, backupError));
-                }
-                throw;
-            }
-            var fallback = Read(BackupPath);
-            return fallback == null ? null : new(fallback, true);
-        }
+        var node = records.Read();
+        return node == null ? null : new(Decode(node), false);
     }
 
     public void Save(PersistenceCheckpoint checkpoint)
     {
-        lock (gate)
+        ArgumentNullException.ThrowIfNull(checkpoint);
+        checkpoint.Validate();
+        records.Update(node =>
         {
-            ObjectDisposedException.ThrowIf(disposed, this);
-            ArgumentNullException.ThrowIfNull(checkpoint);
-            checkpoint.Validate();
-            var previous = Load(); // Never silently overwrite invalid/incompatible state.
-            if (previous is not null &&
-                (previous.Checkpoint.Start != checkpoint.Start || previous.Checkpoint.Count != checkpoint.Count ||
-                 previous.Checkpoint.Completed.EvaluatedCount > checkpoint.Completed.EvaluatedCount))
-                throw new InvalidDataException("Checkpoint range changed or completed coverage moved backwards.");
-
-            string temporary = CheckpointPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
-            try
+            if (node != null)
             {
-                using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-                {
-                    JsonSerializer.Serialize(stream, checkpoint);
-                    stream.Flush(flushToDisk: true);
-                }
-                if (File.Exists(CheckpointPath))
-                {
-                    // Do not replace the good backup with the corrupt primary after recovery.
-                    File.Replace(temporary, CheckpointPath,
-                        previous?.RecoveredFromBackup == true ? null : BackupPath);
-                }
-                else File.Move(temporary, CheckpointPath);
+                var previous = Decode(node);
+                if (previous.Start != checkpoint.Start || previous.Count != checkpoint.Count ||
+                    previous.Completed.EvaluatedCount > checkpoint.Completed.EvaluatedCount)
+                    throw new InvalidDataException("Checkpoint range changed or completed coverage moved backwards.");
             }
-            finally
-            {
-                if (File.Exists(temporary)) File.Delete(temporary);
-            }
-        }
+            return Encode(checkpoint);
+        });
     }
 
-    private static PersistenceCheckpoint? Read(string path)
+    public string ArchiveForFreshStart() => records.ArchiveAndReset();
+
+    private static JsonNode Encode(PersistenceCheckpoint checkpoint) => new JsonObject {
+        ["payloadVersion"] = 1,
+        ["savedAtUtc"] = JsonSerializer.SerializeToNode(checkpoint.SavedAtUtc),
+        ["data"] = JsonSerializer.SerializeToNode(checkpoint)
+    };
+
+    private static PersistenceCheckpoint Decode(JsonNode node)
     {
         try
         {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var checkpoint = JsonSerializer.Deserialize<PersistenceCheckpoint>(stream)
-                ?? throw new InvalidDataException("Checkpoint contains null.");
+            if (node is not JsonObject record || record["payloadVersion"] is not JsonValue value ||
+                !value.TryGetValue<int>(out int version)) throw new InvalidDataException("Missing payload version.");
+            if (version != 1) throw new NotSupportedException("Unsupported persistence payload version.");
+            var checkpoint = record["data"]?.Deserialize<PersistenceCheckpoint>()
+                ?? throw new InvalidDataException("Missing persistence payload.");
             checkpoint.Validate();
             return checkpoint;
         }
-        catch (FileNotFoundException) { return null; }
-        catch (JsonException error) { throw new InvalidDataException("Malformed checkpoint JSON.", error); }
+        catch (JsonException error) { throw new InvalidDataException("Invalid persistence payload.", error); }
     }
 
-    public void Dispose()
-    {
-        lock (gate)
-        {
-            if (disposed) return;
-            ownership.Dispose();
-            disposed = true;
-        }
-    }
+    public void Dispose() => records.Dispose();
 }

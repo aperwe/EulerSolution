@@ -18,16 +18,18 @@ public static partial class MultiplicativePersistenceSearch
         ulong start, ulong count, int workerCount, ulong chunkSize,
         Action<ResumablePersistenceProgress>? report = null,
         CancellationToken cancellationToken = default, string? directory = null,
-        TimeSpan? reportInterval = null, TimeSpan? saveInterval = null)
+        TimeSpan? reportInterval = null, TimeSpan? saveInterval = null,
+        string recordKey = PersistenceCheckpointStore.NormalKey)
         => RunResumableAsync(start, count, workerCount, chunkSize, report, cancellationToken,
             directory, reportInterval ?? TimeSpan.FromSeconds(60),
-            saveInterval ?? TimeSpan.FromSeconds(60), Calculate, Task.Delay);
+            saveInterval ?? TimeSpan.FromSeconds(60), Calculate, Task.Delay, recordKey);
 
     internal static Task<PersistenceSearchResult> RunResumableAsync(
         ulong start, ulong count, int workerCount, ulong chunkSize,
         Action<ResumablePersistenceProgress>? report, CancellationToken cancellationToken,
         string? directory, TimeSpan reportInterval, TimeSpan saveInterval,
-        Func<ulong, int> calculate, Func<TimeSpan, CancellationToken, Task> delay)
+        Func<ulong, int> calculate, Func<TimeSpan, CancellationToken, Task> delay,
+        string recordKey = PersistenceCheckpointStore.NormalKey)
     {
         if (workerCount < 1) throw new ArgumentOutOfRangeException(nameof(workerCount));
         if (chunkSize == 0) throw new ArgumentOutOfRangeException(nameof(chunkSize));
@@ -40,7 +42,7 @@ public static partial class MultiplicativePersistenceSearch
         // File access and the initial callback also stay off the caller's UI thread.
         return Task.Run(async () =>
         {
-            using var store = new PersistenceCheckpointStore(directory);
+            using var store = new PersistenceCheckpointStore(directory, recordKey);
             var loaded = store.Load();
             var saved = loaded?.Checkpoint;
             if (saved != null && (saved.Start != start || saved.Count != count))

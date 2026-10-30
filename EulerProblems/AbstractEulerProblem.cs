@@ -36,7 +36,7 @@ namespace EulerProblems
         /// Call this method to start finding solution and get the answer.
         /// After solution is found <see cref="Answer"/> string will be set by the problem solver implementation.
         /// </summary>
-        public async void StartSolving()
+        public void StartSolving()
         {
             start = DateTime.Now;
             Solve(out string tempAnswer);
