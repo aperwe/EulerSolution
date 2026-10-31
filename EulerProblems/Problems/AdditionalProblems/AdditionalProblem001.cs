@@ -45,6 +45,7 @@ return number of steps(2).
 
         public const ulong DefaultStart = 277857000000000;
         public const ulong DefaultCount = ulong.MaxValue - DefaultStart + 1;
+        public const ulong DefaultChunkSize = 200_000;
 
         public Task<PersistenceSearchResult> RunAsync(CancellationToken cancellationToken,
             string? directory = null, ulong start = DefaultStart, ulong count = DefaultCount,
@@ -52,7 +53,7 @@ return number of steps(2).
         {
             int workers = workerCount ?? Math.Max(1, Environment.ProcessorCount - 1);
             Answer = $"Long-running persistence search starting at {start}. Loading checkpoint...";
-            return MultiplicativePersistenceSearch.SearchResumableAsync(start, count, workers, 1_000_000,
+            return MultiplicativePersistenceSearch.SearchResumableAsync(start, count, workers, DefaultChunkSize,
                 progress => Answer = FormatProgress(progress, start, workers), cancellationToken, directory,
                 recordKey: recordKey);
         }
