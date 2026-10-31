@@ -1,0 +1,192 @@
+{
+  "CapturedAtUtc": "2026-10-31T18:22:42.0507471+00:00",
+  "Runtime": ".NET 8.0.33",
+  "OS": "Microsoft Windows 10.0.26300",
+  "LogicalProcessors": 32,
+  "ServerGC": false,
+  "ChunkSize": 200000,
+  "Repetitions": 3,
+  "Notes": "Workers=0 denotes the original sequential calculation. No UI, checkpoint I/O, or forced garbage collection. Full-range warmup per configuration; rotated measured order.",
+  "Measurements": [
+    {
+      "Start": 0,
+      "Count": 32000000,
+      "Workers": 0,
+      "Seconds": [
+        3.5753854,
+        3.5760653,
+        3.5520361
+      ],
+      "MedianSeconds": 3.5753854,
+      "CandidatesPerSecond": 8950084.09443077,
+      "Speedup": 1,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 26888999,
+        "BestPersistence": 9
+      }
+    },
+    {
+      "Start": 0,
+      "Count": 32000000,
+      "Workers": 1,
+      "Seconds": [
+        3.7852333,
+        3.8294045,
+        3.7789766
+      ],
+      "MedianSeconds": 3.7852333,
+      "CandidatesPerSecond": 8453904.28114431,
+      "Speedup": 0.9445614356187768,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 26888999,
+        "BestPersistence": 9
+      }
+    },
+    {
+      "Start": 0,
+      "Count": 32000000,
+      "Workers": 4,
+      "Seconds": [
+        1.5543701,
+        1.5237761,
+        1.4721453
+      ],
+      "MedianSeconds": 1.5237761,
+      "CandidatesPerSecond": 21000460.631978672,
+      "Speedup": 2.346398135526604,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 26888999,
+        "BestPersistence": 9
+      }
+    },
+    {
+      "Start": 0,
+      "Count": 32000000,
+      "Workers": 16,
+      "Seconds": [
+        0.7891215,
+        0.7682281,
+        0.7797204
+      ],
+      "MedianSeconds": 0.7797204,
+      "CandidatesPerSecond": 41040352.41350617,
+      "Speedup": 4.585471150940774,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 26888999,
+        "BestPersistence": 9
+      }
+    },
+    {
+      "Start": 0,
+      "Count": 32000000,
+      "Workers": 31,
+      "Seconds": [
+        0.948859,
+        0.9445242,
+        0.9485686
+      ],
+      "MedianSeconds": 0.9485686,
+      "CandidatesPerSecond": 33735040.35448781,
+      "Speedup": 3.769242835995204,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 26888999,
+        "BestPersistence": 9
+      }
+    },
+    {
+      "Start": 277857000000000,
+      "Count": 32000000,
+      "Workers": 0,
+      "Seconds": [
+        2.4369567,
+        2.4504852,
+        2.4412095
+      ],
+      "MedianSeconds": 2.4412095,
+      "CandidatesPerSecond": 13108256.378651649,
+      "Speedup": 1,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 277857000000000,
+        "BestPersistence": 1
+      }
+    },
+    {
+      "Start": 277857000000000,
+      "Count": 32000000,
+      "Workers": 1,
+      "Seconds": [
+        2.7586109,
+        2.7523477,
+        2.7679217
+      ],
+      "MedianSeconds": 2.7586109,
+      "CandidatesPerSecond": 11600041.165646087,
+      "Speedup": 0.8849415841864469,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 277857000000000,
+        "BestPersistence": 1
+      }
+    },
+    {
+      "Start": 277857000000000,
+      "Count": 32000000,
+      "Workers": 4,
+      "Seconds": [
+        1.0476506,
+        1.1670954,
+        1.2118709
+      ],
+      "MedianSeconds": 1.1670954,
+      "CandidatesPerSecond": 27418495.52315946,
+      "Speedup": 2.0916966170888855,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 277857000000000,
+        "BestPersistence": 1
+      }
+    },
+    {
+      "Start": 277857000000000,
+      "Count": 32000000,
+      "Workers": 16,
+      "Seconds": [
+        0.6370945,
+        0.6414396,
+        0.6392219
+      ],
+      "MedianSeconds": 0.6392219,
+      "CandidatesPerSecond": 50060863.058665544,
+      "Speedup": 3.8190329524066677,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 277857000000000,
+        "BestPersistence": 1
+      }
+    },
+    {
+      "Start": 277857000000000,
+      "Count": 32000000,
+      "Workers": 31,
+      "Seconds": [
+        0.7132389,
+        0.7149369,
+        0.7093469
+      ],
+      "MedianSeconds": 0.7132389,
+      "CandidatesPerSecond": 44865752.554999456,
+      "Speedup": 3.4227094175598105,
+      "Result": {
+        "EvaluatedCount": 32000000,
+        "BestNumber": 277857000000000,
+        "BestPersistence": 1
+      }
+    }
+  ]
+}
