@@ -36,14 +36,12 @@ Evaluate the sum of all the amicable numbers under 10000."
             //mapOfNumbersToDivisors.Add(220, d(220));
             //mapOfNumbersToDivisors.Add(284, d(284));
 
-            List<long> amicableNumbers = new List<long>();
+            HashSet<long> amicableNumbers = new HashSet<long>(); // A set makes sure we do not count the same amicable number twice.
 
             // Find the amicable numbers
             mapOfNumbersToDivisors.AsParallel().ForAll(mapEntry =>
             {
                 long key = mapEntry.Key;
-                if (amicableNumbers.Contains(key)) return; // Make sure we do not count the same amicable number twice.
-
                 long value = mapEntry.Value;
 
                 try
@@ -53,8 +51,11 @@ Evaluate the sum of all the amicable numbers under 10000."
                     {
                         if (key != value) //amicability requires that d(a) = b and d(b) = a, where a != b
                         {
-                            amicableNumbers.Add(key);
-                            amicableNumbers.Add(value);
+                            lock (amicableNumbers)
+                            {
+                                amicableNumbers.Add(key);
+                                amicableNumbers.Add(value);
+                            }
                         }
                     }
 

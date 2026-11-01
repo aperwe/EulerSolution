@@ -19,14 +19,16 @@ namespace QBits.Intuition.Mathematics.Primes
         {
             get
             {
-                return knownPrimes.AsEnumerable();
+                lock (knownPrimes)
+                    return knownPrimes.ToArray();
             }
         }
 
         /// <returns>Count of known primes.</returns>
         public override string ToString()
         {
-            return string.Format("Known primes: {0}", knownPrimes.Count);
+            lock (knownPrimes)
+                return string.Format("Known primes: {0}", knownPrimes.Count);
         }
 
         /// <summary>
@@ -43,13 +45,18 @@ namespace QBits.Intuition.Mathematics.Primes
             #endregion
 
             #region Check cache
-            if (knownPrimes.Contains(testedInteger)) return true;
+            if (IsKnownPrime(testedInteger)) return true;
             #endregion
 
             MakeTest(testedInteger);
-            if (knownPrimes.Contains(testedInteger)) return true;
+            return IsKnownPrime(testedInteger);
+        }
 
-            return false;
+        /// <returns>True if <paramref name="testedInteger"/> is already in the set of known primes.</returns>
+        private bool IsKnownPrime(long testedInteger)
+        {
+            lock (knownPrimes)
+                return knownPrimes.Contains(testedInteger);
         }
 
         /// <summary>
@@ -160,7 +167,8 @@ namespace QBits.Intuition.Mathematics.Primes
             #region Special cases
             if (testedInteger == 2)
             {
-                knownPrimes.Add(testedInteger);
+                lock (knownPrimes)
+                    knownPrimes.Add(testedInteger);
                 return;
             }
             #endregion
