@@ -9,6 +9,9 @@ Described here:
 https://www.youtube.com/shorts/X4C3Sz-10eA")]
     public class PowersOf2To10ToN : AbstractEulerProblem
     {
+        /// <summary>Lets a caller stop this otherwise endless solver. By default it never stops.</summary>
+        internal CancellationToken StopToken { get; init; }
+
         protected override void Solve(out string answer)
         {
             //Test Int128 operations for speed
@@ -49,6 +52,8 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
 
             for (Int64 exponent = 0; ; exponent += 1 * speedFactor) //Twice as fast
             {
+                StopToken.ThrowIfCancellationRequested();
+
                 //Check if exponent is a power of 10
                 if (exponent >= tenToN)
                 {

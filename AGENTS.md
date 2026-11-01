@@ -23,6 +23,19 @@
 - Run the relevant build and tests where possible. Report the results and any checks that could not be completed.
 - Do not commit, push, or merge unless the user explicitly requests those actions.
 
+## Testing policy
+
+These rules apply to local work and to any CI/CD pipeline. CI work is tracked in #117.
+
+- Every solver must have an automated test. `SolverAnswerTests.EverySolverHasATest` fails if a solver has none.
+- Run the whole test suite for every commit. Do not filter out, skip, or ignore solver tests to save time. The `Slow` test category is not a reason to leave tests out.
+- A solver's time limit is a maximum, and it must be at least 3 minutes. A solver that finishes sooner ends its test sooner.
+- Let a solver that never finishes on its own run for 3 minutes, then force-stop it and check its progress and saved results.
+- Tests must not read or change real user data, such as persistence checkpoints. Use temporary folders.
+- Check the number of tests that ran, not only the exit code. `dotnet test` can exit with 0 when no tests ran.
+- Known exception: Windows Smart App Control can block `IntuitionLibraryTests.dll` on the development machine, so its 8 tests do not run. The cause is unknown. Until there is a solution, this does not block other work. Retry those tests, report whether they ran, and do not work around the block. While it lasts, put tests for changes to library behaviour in `EulerProblemsTests`.
+- CI must run on a Windows runner, because the projects target `net8.0-windows`. Its job time limit must allow the full suite to finish.
+
 ## Learning support
 
 - The user is returning to C# development after several years.
