@@ -10,14 +10,14 @@ namespace EulerStarter
         /// <summary>
         /// This is a display name presented by the solver class.
         /// </summary>
-        public string DisplayName { get; internal set; }
+        public required string DisplayName { get; internal set; }
         /// <summary>
         /// Type information about the solver class, loaded from solver-containing assembly.
         /// </summary>
-        public Type TypeInfo { get; internal set; }
+        public required Type TypeInfo { get; internal set; }
         /// <summary>
         /// Description of the problem this solver is trying to solve. Provided by the solver class.
         /// </summary>
-        public string ProblemDescription { get; internal set; }
+        public required string ProblemDescription { get; internal set; }
     }
 }

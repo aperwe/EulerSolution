@@ -18,16 +18,15 @@ namespace EulerStarter
         /// <returns>List of problem constructors</returns>
         internal IEnumerable<SolverInfo> LoadProblemSolvers()
         {
-            Assembly problemAssembly = Assembly.GetAssembly(typeof(AbstractEulerProblem));
+            Assembly problemAssembly = typeof(AbstractEulerProblem).Assembly;
             var allTypes = problemAssembly.GetTypes();
             var infoList = new List<SolverInfo>();
             foreach (Type type in allTypes)
             {
                 foreach (var attrib in type.GetCustomAttributes(false))
                 {
-                    if (attrib is ProblemSolverAttribute)
+                    if (attrib is ProblemSolverAttribute psca)
                     {
-                        var psca = attrib as ProblemSolverAttribute;
                         SolverInfo solver = new SolverInfo
                         {
                             DisplayName = psca.displayName,
