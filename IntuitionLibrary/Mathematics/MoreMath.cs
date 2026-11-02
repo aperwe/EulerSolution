@@ -10,25 +10,6 @@ namespace QBits.Intuition.Mathematics
     /// </summary>
     public static class MoreMath
     {
-        /// <summary>
-        /// Calculates largest common divisor of the two values.
-        /// <para/>Both values have to be positive integers.
-        /// </summary>
-        /// <typeparam name="T">Can be int, long</typeparam>
-        /// <param name="value1">First of the values to find divisor for</param>
-        /// <param name="value2">Second of the values to find divisor for</param>
-        /// <returns>Largest common denominator</returns>
-        /// 
-        [Obsolete("Currently implementation not working. Do not use.")]
-        public static T NWD<T>(T value1, T value2)
-        {
-            T retVal = default(T);
-            if (value1.Equals(default(T))) return retVal;
-            if (value2.Equals(default(T))) return retVal;
-
-            //Now we have performed the checks
-            return retVal;
-        }
         /// <summary>Calculates largest common divisor of the two values.
         /// <para/>Both values have to be positive integers.</summary>
         /// <param name="value1">First of the values to find divisor for</param>

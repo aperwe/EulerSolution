@@ -29,7 +29,7 @@ namespace QBits.Intuition.Mathematics
         public bool Znajdź()
         {
             A = (int)Math.Floor(Pierwiastek);
-            ZnalezionaNastępnaLiczba(A);
+            ZnalezionaNastępnaLiczba?.Invoke(A);
             int maksymalnaLiczbaIteracji = 200;
             int bieżącaIteracja = 1;
             while (bieżącaIteracja++ < maksymalnaLiczbaIteracji)
@@ -93,7 +93,7 @@ namespace QBits.Intuition.Mathematics
         private void DodajNowyElementPalindromu(int newItem)
         {
             SekwencjaUłamkaCiągłego.Add(newItem);
-            ZnalezionaNastępnaLiczba(newItem);
+            ZnalezionaNastępnaLiczba?.Invoke(newItem);
         }
         List<int> SekwencjaUłamkaCiągłego;
         /// <summary>
@@ -171,7 +171,7 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Action that is executed every time a new sequence entry has been found.
         /// </summary>
-        public Action<int> ZnalezionaNastępnaLiczba;
+        public Action<int>? ZnalezionaNastępnaLiczba;
         /// <summary>
         /// First element in the continued fraction expression.
         /// </summary>
