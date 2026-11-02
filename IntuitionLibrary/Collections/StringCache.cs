@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -38,12 +39,13 @@ namespace QBits.Intuition.Collections
         /// Initializes the cache and also sets the cache capacity.
         /// </summary>
         /// <param name="capacity"></param>
+        [MemberNotNull(nameof(Cache), nameof(ReturnedCache))]
         protected void InitializeCache(int capacity)
         {
             Capacity = capacity;
             Cache = new HashSet<string>();
             CacheDirty = true;
-            ReturnedCache = null;
+            ReturnedCache = Array.Empty<string>();
         }
         /// <summary>
         /// Copy of the cache as Enumerable.

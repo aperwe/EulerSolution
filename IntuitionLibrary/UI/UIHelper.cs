@@ -22,7 +22,8 @@ namespace QBits.Intuition.UI
         public static void UpdateIcon(Form uiWindow, Assembly resourceAssembly, string resourceName)
         {
             //Get icon from assembly.
-            var resStream = resourceAssembly.GetManifestResourceStream(resourceName);
+            var resStream = resourceAssembly.GetManifestResourceStream(resourceName)
+                ?? throw new ArgumentNullException(nameof(resourceName), $"Resource '{resourceName}' was not found.");
             Icon resIcon = new Icon(resStream);
             uiWindow.Icon = resIcon;
         }

@@ -133,7 +133,7 @@ namespace QBits.Intuition.Mathematics
             1879, 1889, 1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999 };
 
         /// <summary>Stores bytes from the Big Integer</summary>
-        private uint[] data = null;
+        private uint[] data;
         /// <summary>Number of actual chars used</summary>
         private int dataLength;
         /// <summary>Constructor (Default value for BigInteger is 0)</summary>
@@ -761,18 +761,17 @@ namespace QBits.Intuition.Mathematics
         /// <summary>
         /// Overloading of equality operator
         /// </summary>
-        public static bool operator ==(BigInteger bi1, BigInteger bi2) => bi1.Equals(bi2);
+        public static bool operator ==(BigInteger? bi1, BigInteger? bi2) => bi1 is null ? bi2 is null : bi1.Equals(bi2);
         /// <summary>
         /// Overloading inequality operator
         /// </summary>
-        public static bool operator !=(BigInteger bi1, BigInteger bi2) => !(bi1.Equals(bi2));
+        public static bool operator !=(BigInteger? bi1, BigInteger? bi2) => !(bi1 == bi2);
         /// <summary>
         /// Overriding equality method
         /// </summary>
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
-            if (o == null) return false;
-            BigInteger bi = (BigInteger)o;
+            if (o is not BigInteger bi) return false;
 
 
             if (this.dataLength != bi.dataLength)
@@ -2852,10 +2851,9 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         /// <param name="rightValue">Object to compare to</param>
         /// <returns>0 if both values are equal. 1 if <paramref name="rightValue"/> > this. -1 if this > <paramref name="rightValue"/> </returns>
-        int IComparable.CompareTo(object rightValue)
+        int IComparable.CompareTo(object? rightValue)
         {
-            BigInteger right = rightValue as BigInteger;
-            if (right == null) return 1;
+            if (rightValue is not BigInteger right) return 1;
             var retval = this > right;
             if (retval) return 1;
             retval = this < right;

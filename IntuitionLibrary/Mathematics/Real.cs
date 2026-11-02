@@ -112,7 +112,7 @@ namespace QBits.Intuition.Mathematics
         /// Comparer method.
         /// </summary>
         /// <param name="other">Element to compare.</param>
-        public abstract int CompareTo(Real other);
+        public abstract int CompareTo(Real? other);
         #endregion
     }
     /// <summary>
@@ -141,19 +141,17 @@ namespace QBits.Intuition.Mathematics
         /// </summary>
         public override Real Add(Real other)
         {
-            if (other is RealDouble)
+            if (other is RealDouble real)
             {
-                var real = other as RealDouble;
                 return Real.CreateReal(ActualValue + real.ActualValue);
             }
             throw new System.NotImplementedException("Adding RealDouble with other Real type is not yet supported");
         }
         /// <summary>Comparison implementation.</summary>
-        public override int CompareTo(Real other)
+        public override int CompareTo(Real? other)
         {
-            if (other is RealDouble)
+            if (other is RealDouble real)
             {
-                var real = other as RealDouble;
                 return ActualValue.CompareTo(real.ActualValue);
             }
             throw new System.NotImplementedException("Comparing RealDouble to other types is not yet supported");

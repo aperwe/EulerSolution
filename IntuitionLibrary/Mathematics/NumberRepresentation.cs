@@ -9,7 +9,7 @@ namespace QBits.Intuition.Mathematics
     public class NumberRepresentation
     {
         private readonly long value;
-        private char[] _chars;
+        private char[]? _chars;
         /// <summary>Creates an instance with specified number value.</summary>
         /// <param name="value">Number value to be represented.</param>
         public NumberRepresentation(long value)

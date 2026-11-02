@@ -60,7 +60,8 @@ namespace QBits.Intuition.UI
         /// <returns>Reference to <paramref name="child"/>.</returns>
         public static T AddAndReference<T>(this UIElementCollection me, T child) where T : UIElement
         {
-            return me[me.Add(child)] as T;
+            me.Add(child);
+            return child;
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace QBits.Intuition.UI
         /// </summary>
         /// <typeparam name="T">Type of ancestor to look for.</typeparam>
         /// <returns>First ancestor with the specified type or null if no such ancestor exists.</returns>
-        public static T FindAncestor<T>(this DependencyObject current) where T : DependencyObject
+        public static T? FindAncestor<T>(this DependencyObject current) where T : DependencyObject
         {
             do
             {
