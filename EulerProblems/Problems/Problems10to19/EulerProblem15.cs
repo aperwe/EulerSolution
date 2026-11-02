@@ -59,7 +59,7 @@ How many such routes are there through a 20×20 grid?"
         private class LagrangeManipulator
         {
             List<Lagrange>? previousRow;
-            List<Lagrange> newRow;
+            List<Lagrange>? newRow;
             List<List<Lagrange>> allRows = new List<List<Lagrange>>();
             internal void CalculateNewRow()
             {

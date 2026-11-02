@@ -90,7 +90,7 @@ How many Sundays fell on the first of the month during the twentieth century (1 
         int Year;
         Month Month;
         internal int DayOfMonth;
-        Dictionary<Month, int> daysInMonth;
+        Dictionary<Month, int> daysInMonth = new Dictionary<Month, int>();
 
         public DateObject(int year, Month month, int dayOfMonth)
         {
@@ -102,7 +102,6 @@ How many Sundays fell on the first of the month during the twentieth century (1 
 
         private void ConstructDictionary()
         {
-            daysInMonth = new Dictionary<Month, int>();
             daysInMonth.Add(Month.January, 31);
             daysInMonth.Add(Month.February, 28);
             daysInMonth.Add(Month.March, 31);

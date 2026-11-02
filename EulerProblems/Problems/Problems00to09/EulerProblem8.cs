@@ -65,9 +65,10 @@ namespace EulerProblems.Problems.Problems00to09
                 };
                 if (currentAnswer.Product > largestAnswer.Product) largestAnswer = currentAnswer;
             }
+            var largestDigits = largestAnswer.ThirteenChars ?? Enumerable.Empty<long>();
             answer = string.Format("Thirteen adjacent digits with the greatest product are: {0}. The value of the product is: {1} = {2}",
-                string.Concat(largestAnswer.ThirteenChars),
-                string.Join(" * ", largestAnswer.ThirteenChars),
+                string.Concat(largestDigits),
+                string.Join(" * ", largestDigits),
                 largestAnswer.Product);
         }
         internal class AnswerContainer

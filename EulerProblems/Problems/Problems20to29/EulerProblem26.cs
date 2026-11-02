@@ -79,9 +79,9 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
     {
         private int nominator;
         private int denominator;
-        StringBuilder decimalRepresentation;
+        StringBuilder decimalRepresentation = new StringBuilder();
         int patternLength;
-        string pattern;
+        string pattern = "";
 
         /// <summary>
         /// String representation of this element.

@@ -43,7 +43,7 @@ Using words.txt (right click and 'Save Link/Target As...'), a 16K text file cont
     internal class WordRepresentation
     {
         private string fileName;
-        public string[] words { get; private set; }
+        public string[] words { get; private set; } = Array.Empty<string>();
 
         public WordRepresentation(string fileName)
         {

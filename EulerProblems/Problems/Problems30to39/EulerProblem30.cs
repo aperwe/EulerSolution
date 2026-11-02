@@ -73,8 +73,8 @@ Find the sum of all the numbers that can be written as the sum of fifth powers o
 
             public int Value { get; }
 
-            private BigInteger sumOfPowers;
-            internal BigInteger SumOfPowers => sumOfPowers;
+            private BigInteger? sumOfPowers;
+            internal BigInteger SumOfPowers => sumOfPowers ?? throw new InvalidOperationException("Call CalcPow first.");
 
             public Number(int hundredThousands, int tenThousands, int thousands, int hundreds, int tens, int ones)
             {

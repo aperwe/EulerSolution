@@ -74,11 +74,14 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
                 }
                 progress++;
                 if ((progress % updateCycle) == 0)
-                this.UpdateProgress($"Elapsed: {ElapsedTime}, Lowerbound {lowerBound}. Progress: {progress} ({progress * 100 / upperBound1M}%). Best: {LongSummedPrimes.FirstOrDefault().Elements} elements. Summed prime {LongSummedPrimes.FirstOrDefault().Sum}");
+                {
+                    var best = LongSummedPrimes.FirstOrDefault(); //The list is empty until the first result is found.
+                    this.UpdateProgress($"Elapsed: {ElapsedTime}, Lowerbound {lowerBound}. Progress: {progress} ({progress * 100 / upperBound1M}%). Best: {best?.Elements} elements. Summed prime {best?.Sum}");
+                }
             });
 
             //Step 4: Identify such sequence that is the longest
-            var theLongest = LongSummedPrimes.OrderByDescending(x => x.Elements).FirstOrDefault();
+            var theLongest = LongSummedPrimes.OrderByDescending(x => x.Elements).First();
             answer = $"The prime, which is the sum of the most consecutive primes under 1 million is: {theLongest.Sum}. Number of elements: {theLongest.Elements}.";
         }
         /// <summary>

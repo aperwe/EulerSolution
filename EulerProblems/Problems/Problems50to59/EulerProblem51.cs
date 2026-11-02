@@ -49,7 +49,6 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
         private int VerifyStep1()
         {
             // Step 1: Identify all 2-digit numbers ending with 3
-            var numLength = 2; // 2-digit number
             var fixedDigit = 3; // ends with 3
             var primesFound = new List<long>();
             for (int digit = 1; digit <= 9; digit++) // first digit cannot be 0
