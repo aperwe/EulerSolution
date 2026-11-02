@@ -112,7 +112,7 @@ However, Problem 67, is the same challenge with a triangle containing one-hundre
         {
             public override string ToString()
             {
-                return string.Format("Element: {0}. LeftChild = {1}. RightChild = {2}", elementValue, LeftChild.elementValue, RightChild.elementValue);
+                return string.Format("Element: {0}. LeftChild = {1}. RightChild = {2}", elementValue, LeftChild?.elementValue, RightChild?.elementValue);
             }
             private int elementValue;
             private int maximumSubtotal;
@@ -176,7 +176,7 @@ However, Problem 67, is the same challenge with a triangle containing one-hundre
 
             internal void FindChildren()
             {
-                List<TreeElement> previousRow = null;
+                List<TreeElement>? previousRow = null;
 
                 foreach (var rowData in treeRows)
                 {

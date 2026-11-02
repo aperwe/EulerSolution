@@ -66,7 +66,8 @@ Find the sum of all numbers, less than one million, which are palindromic in bas
             public NumberRepresentation(int value)
             {
                 Number = value;
-                ConvertToStrings();
+                DecimalString = Number.ToString(10);
+                BinaryString = Number.ToString(2);
                 manipulator = new PalindromeManipulator();
             }
 
@@ -75,11 +76,6 @@ Find the sum of all numbers, less than one million, which are palindromic in bas
             public bool IsPalindrome => manipulator.IsPalindrome(DecimalString) && manipulator.IsPalindrome(BinaryString);
             public int Value => Number.IntValue();
 
-            private void ConvertToStrings()
-            {
-                DecimalString = Number.ToString(10);
-                BinaryString = Number.ToString(2);
-            }
             public override string ToString()
             {
                 return $"{DecimalString} - {BinaryString}";

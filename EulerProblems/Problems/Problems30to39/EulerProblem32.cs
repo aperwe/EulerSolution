@@ -102,18 +102,5 @@ HINT: Some products can be obtained in more than one way so be sure to only incl
             var result = digits.All(digit => array.Contains(digit)); //Check that all digits 1-9 are contained within the array.
             return result;
         }
-        /// <summary>
-        /// Returns all digits as a sorted string.
-        /// </summary>
-        /// <returns></returns>
-        internal string AllDigitsSorted()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(Multiplicand);
-            sb.Append(Multiplier);
-            sb.Append(Product);
-            return sb.ToString().OrderBy(c => c).ToString();
-        }
-
     }
 }

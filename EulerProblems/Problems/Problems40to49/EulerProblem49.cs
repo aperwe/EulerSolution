@@ -78,8 +78,8 @@ What 12-digit number do you form by concatenating the three terms in this sequen
         {
             private readonly PrimeSolver primeSolver;
             private long Number;
-            private string NumberAsString;
-            private string OrderedPermutationAsString;
+            private string? NumberAsString;
+            private string? OrderedPermutationAsString;
 
             public PrimeRep(PrimeSolver primeSolver, long num)
             {
@@ -114,8 +114,9 @@ What 12-digit number do you form by concatenating the three terms in this sequen
             }
 
             #region IComparable interface
-            public int CompareTo(object obj)
+            public int CompareTo(object? obj)
             {
+                if (obj == null) return 1; //IComparable requires that any instance is greater than null.
                 return Number.CompareTo(((PrimeRep)obj).Number);
             }
             #endregion
@@ -129,9 +130,9 @@ What 12-digit number do you form by concatenating the three terms in this sequen
         /// </summary>
         private class PrimeTriplet
         {
-            internal PrimeRep First;
-            internal PrimeRep Second;
-            internal PrimeRep Third;
+            internal required PrimeRep First;
+            internal required PrimeRep Second;
+            internal required PrimeRep Third;
 
             public string TwelveDigitNumber => $"{First}{Second}{Third}";
 

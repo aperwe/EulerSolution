@@ -50,7 +50,7 @@ What is the total of all the name scores in the file?"
 
     internal class NameObject
     {
-        internal string Name { set; get; }
+        internal required string Name { set; get; }
         internal int AlphabeticalValue
         {
             get
