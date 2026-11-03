@@ -12,13 +12,13 @@ namespace QBits.Intuition.DesignPatterns.Factory
     /// </summary>
     /// <typeparam name="classKey"></typeparam>
     /// <typeparam name="classBase"></typeparam>
-    public class UniversalFactory<classKey, classBase>
+    public class UniversalFactory<classKey, classBase> where classKey : notnull
     {
         /// <summary>
         /// Signature of a method that can create instances of a specified object.
         /// </summary>
         /// <returns></returns>
-        public delegate classBase ctor();
+        public delegate classBase ObjectCreator();
         /// <summary>
         /// Singleton instance of <see cref="UniversalFactory{classKey, classBase}"/>
         /// </summary>
@@ -30,7 +30,7 @@ namespace QBits.Intuition.DesignPatterns.Factory
                 return _SAP;
             }
         }
-        static UniversalFactory<classKey, classBase> _SAP;
+        static UniversalFactory<classKey, classBase>? _SAP;
         /// <summary>
         /// Creates an instance of the specified class type.
         /// </summary>
@@ -45,12 +45,12 @@ namespace QBits.Intuition.DesignPatterns.Factory
         /// </summary>
         /// <param name="type">Type name this constructor creates.</param>
         /// <param name="constructor">Constructor method that can create a type instance.</param>
-        public void RegisterConstructor(classKey type, ctor constructor)
+        public void RegisterConstructor(classKey type, ObjectCreator constructor)
         {
             if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
             objectCreators.Add(type, constructor);
         }
         /// <summary>Dictionary of object creators.</summary>
-        protected Dictionary<classKey, ctor> objectCreators = new Dictionary<classKey, ctor>();
+        protected Dictionary<classKey, ObjectCreator> objectCreators = new Dictionary<classKey, ObjectCreator>();
     }
 }

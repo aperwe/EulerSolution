@@ -22,7 +22,7 @@ namespace QBits.Intuition.Crosswords
         protected Crossword()
         {
         }
-        internal static UniversalFactory<string, Crossword>.ctor ctor
+        internal static UniversalFactory<string, Crossword>.ObjectCreator ctor
         {
             get
             {

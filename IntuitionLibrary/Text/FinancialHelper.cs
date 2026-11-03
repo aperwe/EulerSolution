@@ -216,7 +216,7 @@ namespace QBits.Intuition.Text
         /// <summary>
         /// Backing field for CurrentPart property.
         /// </summary>
-        string currentPart;
+        string currentPart = string.Empty;
         /// <summary>
         /// Gets or sets currently processed string part of the quota.
         /// </summary>

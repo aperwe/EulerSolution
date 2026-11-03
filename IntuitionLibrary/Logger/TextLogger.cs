@@ -76,13 +76,12 @@ namespace QBits.Intuition.Logger
                     sw.Flush();
                     Thread.Sleep(TimeContants.InMiliseconds_10Miliseconds);
                 }
-                sw.Close();
             }
         }
 
         ThreadSafeObject<Queue<string>> logEntries = new Queue<string>();
         AutoResetEvent newLogEntryEvent = new AutoResetEvent(false);
-        EventWaitHandle exitEvent;
+        EventWaitHandle? exitEvent;
         #endregion
 
         #region ILogger Members

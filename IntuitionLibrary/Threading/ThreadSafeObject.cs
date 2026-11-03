@@ -9,11 +9,11 @@ namespace QBits.Intuition.Threading
     /// An object, access to which is safe between threads.
     /// </summary>
     /// <typeparam name="SafeObject">Object wrapped around by this ThreadSafeObject</typeparam>
-    public class ThreadSafeObject<SafeObject>
+    public class ThreadSafeObject<SafeObject> where SafeObject : notnull
     {
         #region Private members
         object _key = new object();
-        SafeObject theObject;
+        SafeObject theObject = default!; //Stays empty only if this object is created without a value to wrap.
         #endregion
         /// <summary>
         /// Converts implicitly thread-safe object into its contained type object.
@@ -42,7 +42,7 @@ namespace QBits.Intuition.Threading
         /// <summary>
         /// Returns string representation of this.
         /// </summary>
-        public override string ToString()
+        public override string? ToString()
         {
             return theObject.ToString();
         }

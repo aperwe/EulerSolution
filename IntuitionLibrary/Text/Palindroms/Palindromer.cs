@@ -12,7 +12,7 @@ namespace QBits.Intuition.Text.Palindroms
     /// </summary>
     public class Palindromer
     {
-        private static XElement sampleDictionary;
+        private static XElement? sampleDictionary;
         /// <summary>
         /// Reference to a sample dictionary that contains a few words and can process a few sample palindroms.
         /// </summary>

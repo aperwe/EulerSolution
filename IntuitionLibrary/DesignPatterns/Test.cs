@@ -10,11 +10,11 @@ namespace QBits.Intuition.DesignPatterns
     class Stack<T>
     {
         public class StackEventArgs : System.EventArgs { }
-        public event StackEventHandler<Stack<T>, StackEventArgs> stackEvent;
+        public event StackEventHandler<Stack<T>, StackEventArgs>? stackEvent;
 
         protected virtual void OnStackChanged(StackEventArgs a)
         {
-            stackEvent(this, a);
+            stackEvent?.Invoke(this, a);
         }
     }
 

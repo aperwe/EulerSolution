@@ -1,7 +1,17 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QBits.Intuition.Assemblies;
 using QBits.Intuition.Collections;
+using QBits.Intuition.Crosswords;
+using QBits.Intuition.Crosswords.Elements;
+using QBits.Intuition.DesignPatterns.Factory;
+using QBits.Intuition.Logger;
 using QBits.Intuition.Mathematics;
+using QBits.Intuition.Settings;
+using QBits.Intuition.Text;
+using QBits.Intuition.Text.Palindroms;
+using QBits.Intuition.Threading;
 using QBits.Intuition.UI;
+using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Windows.Controls;
@@ -265,6 +275,245 @@ public class LibraryBehaviorTests
         Assert.IsFalse(form.ShowInTaskbar);
         Assert.AreEqual(System.Windows.Forms.FormBorderStyle.FixedDialog, form.FormBorderStyle);
     });
+
+    [TestMethod]
+    public void AssemblyVersionFindsTheRequestedAssembly()
+    {
+        var thisAssembly = Assembly.GetExecutingAssembly().GetName().Version!.ToString(4);
+        var entryAssembly = Assembly.GetEntryAssembly()?.GetName().Version?.ToString(4) ?? string.Empty;
+        Assert.AreEqual(thisAssembly, AssemblyHelper.AssemblyVersion(WhichAssembly.ThisAssembly));
+        Assert.AreEqual(entryAssembly, AssemblyHelper.AssemblyVersion(WhichAssembly.EntryAssembly));
+        Assert.AreEqual(string.Empty, AssemblyHelper.AssemblyVersion((WhichAssembly)99));
+    }
+
+    [TestMethod]
+    public void UniversalFactoryCreatesRegisteredTypes()
+    {
+        var factory = new UniversalFactory<string, object>();
+        factory.RegisterConstructor("text", () => "created");
+        Assert.AreEqual("created", factory.CreateObject("text"));
+    }
+
+    [TestMethod]
+    public void UniversalFactoryRejectsDuplicateAndUnknownTypes()
+    {
+        var factory = new UniversalFactory<string, object>();
+        factory.RegisterConstructor("text", () => "created");
+        Assert.ThrowsException<ApplicationException>(() => factory.RegisterConstructor("text", () => "again"));
+        Assert.ThrowsException<KeyNotFoundException>(() => factory.CreateObject("unknown"));
+    }
+
+    [TestMethod]
+    public void UniversalFactoryHasOneSharedInstance()
+    {
+        Assert.AreSame(UniversalFactory<int, LibraryBehaviorTests>.SAP, UniversalFactory<int, LibraryBehaviorTests>.SAP);
+    }
+
+    [TestMethod]
+    public void CrosswordFactoriesCreateKnownTypes() => RunOnUIThread(() =>
+    {
+        CrosswordTypeRegistrar.RegisterKnownCrosswordTypes();
+        CrosswordTypeRegistrar.RegisterKnownElementTypes();
+
+        var crossword = UniversalFactory<string, Crossword>.SAP.CreateObject("Jolka");
+        Assert.AreEqual("Jolka", crossword.GetType().Name);
+        foreach (var type in new[] { "Letter", "EmptyElement" })
+        {
+            Assert.AreEqual(type, ElementsFactory.SAP.CreateObject(type, crossword, 1, 2).GetType().Name);
+        }
+
+        // Records existing faults: the factory reaches Definition, but its constructor cannot complete.
+        Assert.ThrowsException<NullReferenceException>(() => ElementsFactory.SAP.CreateObject("Definition", crossword, 1, 2));
+        Assert.ThrowsException<ApplicationException>(() => ElementsFactory.SAP.CreateObject("Definition", crossword, 1, 2));
+    });
+
+    [TestMethod]
+    public void TextLoggerWritesEntriesAndClosesFileOnExit()
+    {
+        var originalFileName = TextLogger.textLogFileName;
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            TextLogger.textLogFileName = Path.Combine(folder, "log.txt");
+            using var exit = new ManualResetEvent(false);
+            var logger = new TextLogger();
+            ((IEventWatcher)logger).WatchThisEvent(exit);
+            logger.AcceptLogEntry(LogLevel.Default, "first");
+            logger.AcceptLogEntry(LogLevel.Default, "second");
+            exit.Set();
+
+            CollectionAssert.AreEqual(new[] { "first", "second" }, ReadLinesOnceFileIsClosed(TextLogger.textLogFileName));
+        }
+        finally
+        {
+            TextLogger.textLogFileName = originalFileName;
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [TestMethod]
+    public void SaveDataCreatesTheFolderAndWritesTheFile()
+    {
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            var file = Path.Combine(folder, "new", "settings.xml");
+            var data = new System.Data.DataSet("settings");
+            data.Tables.Add("values").Columns.Add("name");
+            data.Tables[0].Rows.Add("stored");
+
+            data.SaveData(file);
+
+            var loaded = new System.Data.DataSet();
+            loaded.ReadXml(file);
+            Assert.AreEqual("stored", loaded.Tables[0].Rows[0]["name"]);
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [TestMethod]
+    public void SaveDataIgnoresMissingDataSet()
+    {
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            var file = Path.Combine(folder, "settings.xml");
+            System.Data.DataSet missing = null!;
+            missing.SaveData(file);
+            Assert.IsFalse(File.Exists(file));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [TestMethod]
+    public void SaveDataRejectsPathsWithoutFolder()
+    {
+        var data = new System.Data.DataSet();
+        Assert.ThrowsException<ArgumentNullException>(() => data.SaveData(null!));
+        Assert.ThrowsException<ArgumentNullException>(() => data.SaveData(string.Empty));
+        Assert.ThrowsException<ArgumentNullException>(() => data.SaveData(Path.GetPathRoot(Path.GetTempPath())!));
+        Assert.ThrowsException<ArgumentException>(() => data.SaveData("settings.xml"));
+    }
+
+    [TestMethod]
+    public void SettingsPathBuildsPathsFromItsParts()
+    {
+        var settings = new SettingsPath("Product", "root", "Company", "default.xml");
+        var expectedRoot = Path.Combine("root", "Company", "Product");
+        Assert.AreEqual(expectedRoot, settings.RootSettingsPath);
+        Assert.AreEqual(Path.Combine(expectedRoot, "default.xml"), settings.DefaultFilePath);
+        Assert.AreEqual(Path.Combine(expectedRoot, "other.xml"), settings.GetFilePath("other.xml"));
+    }
+
+    [TestMethod]
+    public void SettingsPathUsesAppDataAndCompanyByDefault()
+    {
+        var expected = Path.Combine(Environment.ExpandEnvironmentVariables("%APPDATA%"), "Q-Bits", "Product");
+        Assert.AreEqual(expected, new SettingsPath("Product").RootSettingsPath);
+    }
+
+    [TestMethod]
+    public void SettingsPathRequiresDefaultFileOnlyWhenItIsMissing()
+    {
+        Assert.ThrowsException<ApplicationException>(() => new SettingsPath("Product").DefaultFilePath);
+        var emptyName = new SettingsPath("Product", "root", "Company", string.Empty);
+        Assert.AreEqual(emptyName.RootSettingsPath, emptyName.DefaultFilePath);
+    }
+
+    [DataTestMethod]
+    [DataRow(0.0, "zero złotych 0/100")]
+    [DataRow(1.0, "jeden złoty 0/100")]
+    [DataRow(-1.0, "minus jeden złoty 0/100")]
+    [DataRow(21.5, "dwadzieścia jeden złotych 50/100")]
+    [DataRow(1000.0, "jeden tysiąc złotych 0/100")]
+    [DataRow(2118.48, "dwa tysiące sto osiemnaście złotych 48/100")]
+    [DataRow(16000001.0, "szesnaście milionów jeden złotych 0/100")]
+    [DataRow(1000000000.0, "jeden miliard złotych 0/100")]
+    public void QuotaIsConvertedToPolishText(double quota, string expected)
+    {
+        Assert.AreEqual(expected, FinancialHelper.ConvertQuotaToText(quota));
+    }
+
+    [TestMethod]
+    public void PalindromerSampleDictionaryIsCreatedOnce()
+    {
+        var dictionary = Palindromer.SampleDictonary;
+        Assert.AreSame(dictionary, Palindromer.SampleDictonary);
+        Assert.AreEqual(53, dictionary.Elements("w").Count());
+    }
+
+    [TestMethod]
+    public void PalindromerAddsLowerCaseUniqueWords()
+    {
+        var dictionary = new System.Xml.Linq.XElement("dict");
+        Palindromer.AddWord(dictionary, "Kot");
+        Palindromer.AddWord(dictionary, "KOT");
+        Assert.AreEqual("kot", dictionary.Elements("w").Single().Value);
+    }
+
+    [TestMethod]
+    public void PalindromerSearchIsNotImplemented()
+    {
+        Assert.ThrowsException<NotImplementedException>(() => Palindromer.FindPalindrom("kot"));
+    }
+
+    [TestMethod]
+    public void ThreadSafeObjectWrapsAndReturnsItsValue()
+    {
+        const string value = "wrapped";
+        ThreadSafeObject<string> wrapped = value;
+        string unwrapped = wrapped;
+        Assert.AreSame(value, unwrapped);
+        Assert.AreEqual(value, wrapped.ToString());
+        Assert.AreEqual(value.GetHashCode(), wrapped.GetHashCode());
+    }
+
+    [TestMethod]
+    public void ThreadSafeObjectHasItsOwnStableLockKey()
+    {
+        ThreadSafeObject<string> first = "a", second = "a";
+        Assert.AreSame(first.Key, first.Key);
+        Assert.AreNotSame(first.Key, second.Key);
+    }
+
+    [TestMethod]
+    public void ThreadSafeObjectWithoutValueFailsOnlyWhenTheValueIsUsed()
+    {
+        var empty = new ThreadSafeObject<string>();
+        string unwrapped = empty;
+        Assert.IsNull(unwrapped);
+        Assert.ThrowsException<NullReferenceException>(() => empty.ToString());
+        Assert.ThrowsException<NullReferenceException>(() => empty.GetHashCode());
+    }
+
+    private static string CreateTemporaryFolder()
+    {
+        return Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "LibraryBehaviorTests", Guid.NewGuid().ToString())).FullName;
+    }
+
+    /// <summary>Waits for the logger thread to close the file. Opening without sharing fails while it is still open.</summary>
+    private static string[] ReadLinesOnceFileIsClosed(string path)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (true)
+        {
+            try
+            {
+                using var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None));
+                return reader.ReadToEnd().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            }
+            catch (IOException) when (DateTime.UtcNow < deadline)
+            {
+                Thread.Sleep(100);
+            }
+        }
+    }
 
     /// <summary>WPF and Windows Forms objects must be created on a thread in single-threaded apartment mode.</summary>
     private static void RunOnUIThread(Action test)

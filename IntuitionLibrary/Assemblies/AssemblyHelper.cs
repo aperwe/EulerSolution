@@ -13,7 +13,7 @@ namespace QBits.Intuition.Assemblies
         /// </summary>
         public static string AssemblyVersion(WhichAssembly whichAssembly)
         {
-            Assembly assembly = null;
+            Assembly? assembly = null;
             switch (whichAssembly)
             {
                 case WhichAssembly.EntryAssembly: assembly = Assembly.GetEntryAssembly(); break;

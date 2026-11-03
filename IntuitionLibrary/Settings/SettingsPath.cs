@@ -15,8 +15,7 @@ namespace QBits.Intuition.Settings
         string Product;
         string InitialPath;
         string Company;
-        string DefaultFile;
-        bool DefaultFileSpecified;
+        string? DefaultFile;
         #endregion
 
         /// <summary>
@@ -26,12 +25,11 @@ namespace QBits.Intuition.Settings
         /// <param name="initialRootPath">By default, this is %APPDATA%.</param>
         /// <param name="defaultFile">Optional name of the default file, if you are using only a single settings file.</param>
         /// <param name="company">Company name.</param>
-        public SettingsPath(string product, string initialRootPath = "%APPDATA%", string company = "Q-Bits", string defaultFile = null)
+        public SettingsPath(string product, string initialRootPath = "%APPDATA%", string company = "Q-Bits", string? defaultFile = null)
         {
             Product = product;
             InitialPath = initialRootPath;
             Company = company;
-            DefaultFileSpecified = defaultFile != null;
             DefaultFile = defaultFile;
         }
         /// <summary>
@@ -55,7 +53,7 @@ namespace QBits.Intuition.Settings
         {
             get
             {
-                if (!DefaultFileSpecified) throw new ApplicationException("Default path has not been specified.");
+                if (DefaultFile == null) throw new ApplicationException("Default path has not been specified.");
                 return System.IO.Path.Combine(RootSettingsPath, DefaultFile);
             }
         }

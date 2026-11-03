@@ -7,11 +7,11 @@ namespace QBits.Intuition.Crosswords
     class Jolka : Crossword
     {
         #region Implementors should contain this section
-        internal static new UniversalFactory<string, Crossword>.ctor ctor
+        internal static new UniversalFactory<string, Crossword>.ObjectCreator ctor
         {
             get
             {
-                return new UniversalFactory<string, Crossword>.ctor(createFunc);
+                return new UniversalFactory<string, Crossword>.ObjectCreator(createFunc);
             }
         }
         static Crossword createFunc()
