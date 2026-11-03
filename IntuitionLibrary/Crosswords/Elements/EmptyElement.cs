@@ -8,11 +8,11 @@ namespace QBits.Intuition.Crosswords.Elements
     class EmptyElement : BaseCrosswordElement
     {
         #region Factory model part
-        internal static new ElementsFactory.ctor ctor
+        internal static new ElementsFactory.ObjectCreator ctor
         {
             get
             {
-                return new ElementsFactory.ctor(createFunc);
+                return new ElementsFactory.ObjectCreator(createFunc);
             }
         }
         static BaseCrosswordElement createFunc(Crossword crossword, int column, int row)

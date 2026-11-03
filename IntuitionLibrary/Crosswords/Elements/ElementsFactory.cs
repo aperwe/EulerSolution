@@ -16,13 +16,13 @@ namespace QBits.Intuition.Crosswords.Elements
         /// <param name="column"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public new delegate BaseCrosswordElement ctor(Crossword crossword, int column, int row);
+        public new delegate BaseCrosswordElement ObjectCreator(Crossword crossword, int column, int row);
         /// <summary>
         /// Registers the constructor of the specified type of the crossword instance.
         /// </summary>
         /// <param name="type">Class type name.</param>
         /// <param name="constructor">Class constructor of the crossword element.</param>
-        public void RegisterConstructor(string type, ctor constructor)
+        public void RegisterConstructor(string type, ObjectCreator constructor)
         {
             if (objectCreators.ContainsKey(type)) throw new ApplicationException("Constructor already registered");
             objectCreators.Add(type, constructor);
@@ -52,6 +52,6 @@ namespace QBits.Intuition.Crosswords.Elements
         /// <summary>
         /// Collection or constructors of crossword elements.
         /// </summary>
-        protected new Dictionary<string, ctor> objectCreators = new Dictionary<string, ctor>();
+        protected new Dictionary<string, ObjectCreator> objectCreators = new Dictionary<string, ObjectCreator>();
     }
 }

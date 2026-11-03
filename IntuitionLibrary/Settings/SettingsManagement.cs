@@ -19,7 +19,8 @@ namespace QBits.Intuition.Settings
         public static void SaveData(this DataSet me, string dbFileName)
         {
             if (me == null) return;
-            var dbDir = System.IO.Path.GetDirectoryName(dbFileName);
+            var dbDir = System.IO.Path.GetDirectoryName(dbFileName)
+                ?? throw new ArgumentNullException(nameof(dbFileName), $"Path '{dbFileName}' does not name a folder.");
             if (!System.IO.Directory.Exists(dbDir))
             {
                 System.IO.Directory.CreateDirectory(dbDir);

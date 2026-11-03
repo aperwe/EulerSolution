@@ -12,7 +12,7 @@ namespace QBits.Intuition.Crosswords.Elements
     public abstract class BaseCrosswordElement : IFactorableByString, XmlSerializable
     {
         #region Factory model part
-        internal static ElementsFactory.ctor ctor
+        internal static ElementsFactory.ObjectCreator ctor
         {
             get
             {
