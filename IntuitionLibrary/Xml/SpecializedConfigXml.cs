@@ -17,7 +17,7 @@ namespace QBits.Intuition.Xml
 
         public XmlNode CreateParam(string name, string value)
         {
-            XmlNode configParam = CreateChildNode(RootNode, "param");
+            XmlNode configParam = CreateChildNode(RootNode!, "param"); //The constructor always creates the root node.
             AddAttribute("name", name, configParam);
             AddAttribute("value", value, configParam);
             return configParam;
@@ -37,7 +37,7 @@ namespace QBits.Intuition.Xml
             /// </summary>
             /// <param name="paramName">Name of config node to look up in the document.</param>
             /// <returns>Looked up XmlNode of the specified name or null.</returns>
-            public XmlNode this[string paramName]
+            public XmlNode? this[string paramName]
             {
                 get
                 {
@@ -59,15 +59,15 @@ namespace QBits.Intuition.Xml
             /// <remarks>This is a safe accessor. If the node with specified value does not exist, no exception is thrown, but a value of null is returned.</remarks>
             /// <param name="paramName">Name of config node to look up in the document.</param>
             /// <returns>Value of 'value' attribute with the specified name or null.</returns>
-            public string this[string paramName]
+            public string? this[string paramName]
             {
                 get
                 {
-                    string retVal = null;
+                    string? retVal = null;
                     string xpath = string.Format("/config/param[@name='{0}']", paramName);
                     try
                     {
-                        retVal = Params.Document.SelectSingleNode(xpath).Attributes["value"].Value;
+                        retVal = Params.Document.SelectSingleNode(xpath)?.Attributes?["value"]?.Value;
                     }
                     catch { }
                     return retVal;

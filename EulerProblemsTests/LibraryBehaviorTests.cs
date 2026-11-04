@@ -4,6 +4,7 @@ using QBits.Intuition.Collections;
 using QBits.Intuition.Crosswords;
 using QBits.Intuition.Crosswords.Elements;
 using QBits.Intuition.DesignPatterns.Factory;
+using QBits.Intuition.Financials.Banking;
 using QBits.Intuition.Logger;
 using QBits.Intuition.Mathematics;
 using QBits.Intuition.Settings;
@@ -11,6 +12,7 @@ using QBits.Intuition.Text;
 using QBits.Intuition.Text.Palindroms;
 using QBits.Intuition.Threading;
 using QBits.Intuition.UI;
+using QBits.Intuition.Xml;
 using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -490,6 +492,117 @@ public class LibraryBehaviorTests
         Assert.IsNull(unwrapped);
         Assert.ThrowsException<NullReferenceException>(() => empty.ToString());
         Assert.ThrowsException<NullReferenceException>(() => empty.GetHashCode());
+    }
+
+    [TestMethod]
+    public void TransactionRecordStartsEmpty()
+    {
+        var record = new TransactionRecord();
+        Assert.IsNull(record.TransactionKind);
+        Assert.IsNull(record.TransactionTitle);
+        Assert.IsNull(record.ReceivingAccount);
+        Assert.IsNull(record.ReceiverName);
+        Assert.IsNull(record.ReceiverAddressLine1);
+        Assert.IsNull(record.ReceiverAddressLine2);
+        Assert.IsNull(record.SenderAccount);
+        Assert.IsNull(record.SenderName);
+        Assert.IsNull(record.SenderAddressLine1);
+        Assert.IsNull(record.SenderAddressLine2);
+        Assert.AreEqual(default(DateTime), record.TransactionDate);
+        Assert.AreEqual(0m, record.TransactionAmount);
+    }
+
+    [TestMethod]
+    public void TransactionRecordKeepsItsValues()
+    {
+        var record = new TransactionRecord
+        {
+            TransactionKind = "kind", TransactionTitle = "title", ReceivingAccount = "receiving",
+            ReceiverName = "receiver", ReceiverAddressLine1 = "r1", ReceiverAddressLine2 = "r2",
+            SenderAccount = "sending", SenderName = "sender", SenderAddressLine1 = "s1", SenderAddressLine2 = "s2",
+            TransactionNumber = 4547, TransactionAmount = 188.43m,
+        };
+        CollectionAssert.AreEqual(
+            new[] { "kind", "title", "receiving", "receiver", "r1", "r2", "sending", "sender", "s1", "s2" },
+            new[] { record.TransactionKind, record.TransactionTitle, record.ReceivingAccount, record.ReceiverName,
+                record.ReceiverAddressLine1, record.ReceiverAddressLine2, record.SenderAccount, record.SenderName,
+                record.SenderAddressLine1, record.SenderAddressLine2 });
+        Assert.AreEqual(4547, record.TransactionNumber);
+        Assert.AreEqual(188.43m, record.TransactionAmount);
+    }
+
+    [TestMethod]
+    public void SimpleXmlDocumentStartsWithDeclarationAndRoot()
+    {
+        var document = new SimpleXmlDocument("unused.xml", "root");
+        Assert.AreEqual("<?xml version=\"1.0\"?><root />", document.Document.OuterXml);
+        Assert.AreSame(document.Document.DocumentElement, document.RootNode);
+    }
+
+    [TestMethod]
+    public void SimpleXmlDocumentWithoutRootHasOnlyDeclaration()
+    {
+        var document = new SimpleXmlDocument("unused.xml");
+        Assert.AreEqual("<?xml version=\"1.0\"?>", document.Document.OuterXml);
+        Assert.IsNull(document.RootNode);
+    }
+
+    [TestMethod]
+    public void SimpleXmlDocumentAddsChildrenAndAttributes()
+    {
+        var document = new SimpleXmlDocument("unused.xml", "root");
+        var child = document.CreateChildNode(document.RootNode!, "param");
+        document.AddAttribute("name", "value", child);
+        Assert.AreSame(child, document.RootNode!.FirstChild);
+        Assert.AreEqual("<root><param name=\"value\" /></root>", document.RootNode!.OuterXml);
+    }
+
+    [TestMethod]
+    public void SimpleXmlDocumentCannotAddAttributeToTextNode()
+    {
+        var document = new SimpleXmlDocument("unused.xml", "root");
+        var text = document.Document.CreateTextNode("text");
+        Assert.ThrowsException<NullReferenceException>(() => document.AddAttribute("name", "value", text));
+    }
+
+    [TestMethod]
+    public void SimpleXmlDocumentSavesToItsFile()
+    {
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            var file = Path.Combine(folder, "document.xml");
+            var document = new SimpleXmlDocument(file, "root");
+            document.AddAttribute("name", "value", document.CreateChildNode(document.RootNode!, "param"));
+            document.Save();
+
+            var loaded = new System.Xml.XmlDocument();
+            loaded.Load(file);
+            Assert.AreEqual("<root><param name=\"value\" /></root>", loaded.DocumentElement!.OuterXml);
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [TestMethod]
+    public void NonPersistentXmlDocumentBuildsNodes()
+    {
+        var document = new NonPersistentXMLDocument("root");
+        var loose = document.CreateNode("loose");
+        Assert.AreEqual("loose", loose.Name);
+        Assert.IsNull(loose.ParentNode);
+
+        var item = document.CreateTextNode(document.RootNode!, "item", "text");
+        Assert.AreSame(item, document.RootNode!.FirstChild);
+        Assert.AreEqual("<root><item>text</item></root>", document.RootNode!.OuterXml);
+    }
+
+    [TestMethod]
+    public void NonPersistentXmlDocumentCannotBeSaved()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() => new NonPersistentXMLDocument("root").Save());
     }
 
     private static string CreateTemporaryFolder()
