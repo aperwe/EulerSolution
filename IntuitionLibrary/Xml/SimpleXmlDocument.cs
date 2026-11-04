@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -10,19 +11,20 @@ namespace QBits.Intuition.Xml
     public class SimpleXmlDocument
     {
         /// <summary>Default constructor.</summary>
-        public SimpleXmlDocument(string fileName)
+        public SimpleXmlDocument(string? fileName)
         {
             BasicConstructor(fileName);
         }
         /// <summary>Constructs the document based on the given file and root name.</summary>
         /// <param name="fileName"></param>
         /// <param name="rootNodeName"></param>
-        public SimpleXmlDocument(string fileName, string rootNodeName)
+        public SimpleXmlDocument(string? fileName, string rootNodeName)
         {
             BasicConstructor(fileName);
             CreateRootNode(rootNodeName);
         }
-        private void BasicConstructor(string fileName)
+        [MemberNotNull(nameof(doc))]
+        private void BasicConstructor(string? fileName)
         {
             docFileName = fileName;
             doc = new XmlDocument();
@@ -31,7 +33,7 @@ namespace QBits.Intuition.Xml
         /// <summary>Persists the current XML implementation to the peristent storage.</summary>
         public void Save()
         {
-            doc.Save(docFileName);
+            doc.Save(docFileName ?? throw new ArgumentNullException(nameof(docFileName), "This document has no file to save to."));
         }
         /// <summary>
         /// Adds an attribute to the XML document.
@@ -43,14 +45,14 @@ namespace QBits.Intuition.Xml
         {
             XmlAttribute fName = doc.CreateAttribute(attributeName);
             fName.Value = attributeValue;
-            currentNode.Attributes.Append(fName);
+            currentNode.Attributes!.Append(fName); //Only element nodes have attributes. Others fail here, as before.
         }
         /// <summary>Creates a new child node in the document.</summary>
         /// <param name="type">Node type to create.</param>
         /// <param name="name">Node name.</param>
         /// <param name="uri">Node URI.</param>
         /// <returns>Reference to the newly created node.</returns>
-        protected XmlNode CreateChildNode(XmlNodeType type, string name, string uri)
+        protected XmlNode CreateChildNode(XmlNodeType type, string name, string? uri)
         {
             XmlNode newNode = doc.CreateNode(type, name, uri);
             return newNode;
@@ -61,10 +63,12 @@ namespace QBits.Intuition.Xml
         /// <returns>Child node name.</returns>
         public XmlNode CreateChildNode(XmlNode currentNode, string name)
         {
-            return currentNode.AppendChild(CreateChildNode(XmlNodeType.Element, name, null));
+            var child = CreateChildNode(XmlNodeType.Element, name, null);
+            currentNode.AppendChild(child);
+            return child;
         }
-        /// <summary>Gets the root node of the XML document.</summary>
-        public XmlNode RootNode => docRootNode;
+        /// <summary>Gets the root node of the XML document, or null if it was constructed without one.</summary>
+        public XmlNode? RootNode => docRootNode;
         /// <summary>Gets the XML document.</summary>
         public XmlDocument Document
         {
@@ -72,7 +76,7 @@ namespace QBits.Intuition.Xml
         }
         private void InitDocumentStructure(XmlDocument xmlFile)
         {
-            XmlNode encodingNode = xmlFile.CreateNode(XmlNodeType.XmlDeclaration, null, null);
+            XmlNode encodingNode = xmlFile.CreateNode(XmlNodeType.XmlDeclaration, string.Empty, null); //The name is ignored for a declaration.
             xmlFile.AppendChild(encodingNode);
         }
 
@@ -81,8 +85,8 @@ namespace QBits.Intuition.Xml
             docRootNode = doc.CreateNode(XmlNodeType.Element, nodeName, null);
             doc.AppendChild(docRootNode);
         }
-        string docFileName;
+        string? docFileName;
         XmlDocument doc;
-        XmlNode docRootNode;
+        XmlNode? docRootNode;
     }
 }
