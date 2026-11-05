@@ -41,8 +41,9 @@ namespace QBits.Intuition.Crosswords.Elements
             }
         }
 
-        void ElementClickedEH(object sender, EventArgs e)
+        void ElementClickedEH(object? sender, EventArgs e)
         {
+            if (_wControl == null) return; //No button to show the menu next to.
             ContextMenuStrip popup = new ContextMenuStrip();
             popup.AutoSize = true;
             ToolStripDropDownButton changeTo = new ToolStripDropDownButton("Change to...");
@@ -59,13 +60,13 @@ namespace QBits.Intuition.Crosswords.Elements
             popup.Update();
         }
 
-        void ChangeToLetterEH(object sender, EventArgs e)
+        void ChangeToLetterEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Changing element ({0},{1}) to letter.", _row, _column);
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(Letter.ObjectType, _crossword, _column, _row);
             _crossword.SubstituteCrosswordElement(bce, _column, _row);
         }
-        void ChangeToDefinitionEH(object sender, EventArgs e)
+        void ChangeToDefinitionEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Changing element ({0},{1}) to definition.", _row, _column);
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(Definition.ObjectType, _crossword, _column, _row);
