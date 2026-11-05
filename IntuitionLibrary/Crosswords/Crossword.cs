@@ -65,7 +65,7 @@ namespace QBits.Intuition.Crosswords
         {
             _columns = columns;
             _rows = rows;
-            if (_letters != null)
+            if (_letters.Length > 0)
             {
                 LoggerSAP.Log("Array of letter not empty. Deleting it.");
             }
@@ -142,9 +142,9 @@ namespace QBits.Intuition.Crosswords
             }
         }
         /// <summary>
-        /// Array container for crossword elements.
+        /// Array container for crossword elements. Empty until SetDimensions() is called.
         /// </summary>
-        protected BaseCrosswordElement[,] _letters;
+        protected BaseCrosswordElement[,] _letters = new BaseCrosswordElement[0, 0];
         /// <summary>
         /// GUI control that is a parent for this crossword.
         /// </summary>
@@ -175,13 +175,14 @@ namespace QBits.Intuition.Crosswords
         #region IContainer Members
 
         List<IComponent> _components = new List<IComponent>();
-        void IContainer.Add(IComponent component, string name)
+        void IContainer.Add(IComponent? component, string? name)
         {
             throw new Exception("Not supported.");
         }
 
-        void IContainer.Add(IComponent component)
+        void IContainer.Add(IComponent? component)
         {
+            if (component == null) return; //Like .NET's Container, there is nothing to add.
             if (_components.Contains(component))
             {
                 throw new Exception("This component is already contained.");
@@ -197,9 +198,9 @@ namespace QBits.Intuition.Crosswords
             }
         }
 
-        void IContainer.Remove(IComponent component)
+        void IContainer.Remove(IComponent? component)
         {
-            if (_components.Contains(component))
+            if (component != null && _components.Contains(component))
             {
                 _components.Remove(component);
             }
@@ -252,19 +253,19 @@ namespace QBits.Intuition.Crosswords
         /// <param name="myNode">Node from disk file, containing serialized information about this crossword.</param>
         virtual public void DeserializeFromNode(System.Xml.XmlNode myNode)
         {
-            int columns = int.Parse(myNode.Attributes["columns"].Value);
-            int rows = int.Parse(myNode.Attributes["rows"].Value);
+            int columns = int.Parse(CrosswordXml.RequiredAttribute(myNode, "columns"));
+            int rows = int.Parse(CrosswordXml.RequiredAttribute(myNode, "rows"));
             SetDimensions(columns, rows);
-            foreach (XmlNode element in myNode.SelectNodes("elements/crosswordItem"))
+            foreach (XmlNode element in myNode.SelectNodes("elements/crosswordItem")!) //Returns null only for nodes that cannot be searched. Crossword nodes are elements.
             {
                 BaseCrosswordElement bce = RecreateElementFromXmlNode(element, this);
             }
         }
         private static BaseCrosswordElement RecreateElementFromXmlNode(XmlNode element, Crossword loadedObject)
         {
-            string type = element.Attributes["type"].Value;
-            int column = int.Parse(element.Attributes["column"].Value);
-            int row = int.Parse(element.Attributes["row"].Value);
+            string type = CrosswordXml.RequiredAttribute(element, "type");
+            int column = int.Parse(CrosswordXml.RequiredAttribute(element, "column"));
+            int row = int.Parse(CrosswordXml.RequiredAttribute(element, "row"));
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(type, loadedObject, column, row);
             bce.DeserializeFromNode(element);
             loadedObject.SubstituteCrosswordElement(bce, column, row);
@@ -277,10 +278,7 @@ namespace QBits.Intuition.Crosswords
         /// <summary>
         /// Returns object type of the current implementor.
         /// </summary>
-        virtual public string GetObjectType()
-        {
-            return null;
-        }
+        public abstract string GetObjectType();
 
         #endregion
 

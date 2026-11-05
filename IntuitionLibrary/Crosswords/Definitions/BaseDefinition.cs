@@ -16,7 +16,7 @@ namespace QBits.Intuition.Crosswords.Definitions
         /// </summary>
         protected BaseDefinition()
         {
-            DefinitionChangedEvt += new EventHandler(delegate(object sender, EventArgs e) { }); //Default handler, obviously doing nothing. Just to make sure raising the Event Handler does not throw exception.
+            DefinitionChangedEvt += new EventHandler(delegate(object? sender, EventArgs e) { }); //Default handler, obviously doing nothing. Just to make sure raising the Event Handler does not throw exception.
         }
         /// <summary>
         /// Direction of definition.
@@ -35,11 +35,11 @@ namespace QBits.Intuition.Crosswords.Definitions
         /// <summary>
         /// Holds the definition of the crossword element.
         /// </summary>
-        protected string _definicja;
+        protected string? _definicja;
         /// <summary>
-        /// Gets or sets the definition for crossword element.
+        /// Gets or sets the definition for crossword element. Null until it is set.
         /// </summary>
-        public virtual string definicja
+        public virtual string? definicja
         {
             get
             {
@@ -48,7 +48,7 @@ namespace QBits.Intuition.Crosswords.Definitions
             set
             {
                 _definicja = value;
-                DefinitionChangedEvt(this, null);
+                DefinitionChangedEvt(this, EventArgs.Empty);
             }
         }
         /// <summary>
@@ -78,11 +78,15 @@ namespace QBits.Intuition.Crosswords.Definitions
 
         #region IComponent Members
         /// <summary>
-        /// Can be implemented in the implementor.
+        /// Never raised, because Dispose() is not implemented. Handlers are therefore not stored.
         /// </summary>
-        public event EventHandler Disposed;
+        public event EventHandler? Disposed
+        {
+            add { }
+            remove { }
+        }
         /// <summary>Returns current site.</summary>
-        public ISite Site
+        public ISite? Site
         {
             get
             {
@@ -113,7 +117,7 @@ namespace QBits.Intuition.Crosswords.Definitions
             get { return this; }
         }
 
-        IContainer ISite.Container
+        IContainer? ISite.Container
         {
             get { return null; }
         }
@@ -123,7 +127,7 @@ namespace QBits.Intuition.Crosswords.Definitions
             get { return false; }
         }
 
-        string ISite.Name
+        string? ISite.Name
         {
             get
             {

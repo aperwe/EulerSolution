@@ -16,10 +16,9 @@ namespace QBits.Intuition.Crosswords
         /// <returns></returns>
         public static Crossword LoadCrosswordFromXml(XmlDocument file)
         {
-            Crossword loadedObject = null;
-            XmlNode root = file.DocumentElement;
-            string type = root.Attributes["type"].Value;
-            loadedObject = UniversalFactory<string, Crossword>.SAP.CreateObject(type);
+            XmlNode root = file.DocumentElement ?? throw new XmlException("Crossword data has no root node.");
+            string type = CrosswordXml.RequiredAttribute(root, "type");
+            Crossword loadedObject = UniversalFactory<string, Crossword>.SAP.CreateObject(type);
             loadedObject.DeserializeFromNode(root);
             return loadedObject;
         }
