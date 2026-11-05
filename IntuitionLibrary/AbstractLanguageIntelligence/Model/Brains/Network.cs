@@ -14,8 +14,8 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
         /// </summary>
         private ICollection<BaseCell> Cells = new HashSet<BaseCell>(new CellComparer());
 
-        private InputLayer inputLayer;
-        private OutputLayer outputLayer;
+        private InputLayer? inputLayer;
+        private OutputLayer? outputLayer;
 
         /// <summary>
         /// Internal collection of middle layers of the neural network.
@@ -49,7 +49,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.Brains
         /// <summary>
         /// Name of this network.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets the volume in space in which the network is located.

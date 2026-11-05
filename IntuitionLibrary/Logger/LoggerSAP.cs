@@ -71,7 +71,7 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
-        public static void Log(string entry, params object[] args)
+        public static void Log(string entry, params object?[] args)
         {
             Log(string.Format(entry, args));
         }
@@ -99,7 +99,7 @@ namespace QBits.Intuition.Logger
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
         /// <param name="logLevel">Severity of this log entry. Default is highest, Verbose (equivalent to Diagnostic) is lowest.</param>
-        public static void Log(LogLevel logLevel, string entry, params object[] args)
+        public static void Log(LogLevel logLevel, string entry, params object?[] args)
         {
             Log(logLevel, string.Format(entry, args));
         }
@@ -108,7 +108,7 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
-        public static void Trace(string entry, params object[] args)
+        public static void Trace(string entry, params object?[] args)
         {
             Log(LogLevel.Diagnostic, string.Format(entry, args));
         }
@@ -132,7 +132,7 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
-        public static void Warning(string entry, params object[] args)
+        public static void Warning(string entry, params object?[] args)
         {
             Log(LogLevel.Warning, string.Format(entry, args));
         }
@@ -156,7 +156,7 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
-        public static void Error(string entry, params object[] args)
+        public static void Error(string entry, params object?[] args)
         {
             Log(LogLevel.Error, string.Format(entry, args));
         }
@@ -180,7 +180,7 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
-        public static void Critical(string entry, params object[] args)
+        public static void Critical(string entry, params object?[] args)
         {
             Log(LogLevel.Critical, string.Format(entry, args));
         }
@@ -204,7 +204,7 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="entry">Format string for the log entry</param>
         /// <param name="args">Parameters that will be used with the <paramref name="entry"/> format string to produce a full log entry</param>
-        public static void Verbose(string entry, params object[] args)
+        public static void Verbose(string entry, params object?[] args)
         {
             Log(LogLevel.Verbose, string.Format(entry, args));
         }

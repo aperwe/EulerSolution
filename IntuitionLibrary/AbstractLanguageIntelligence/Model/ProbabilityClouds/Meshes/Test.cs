@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -14,6 +15,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds.M
         }
 
 
+        [MemberNotNull(nameof(mesh1))]
         private void Test1()
         {
             Logger.LoggerSAP.Log("Performing {0}().", "Test1");
@@ -35,6 +37,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds.M
             mesh1.AddNode(new MeshNode.MeshNodeTemplate("Node 14"));
             mesh1.AddNode(new MeshNode.MeshNodeTemplate("Node 15"));
         }
+        [MemberNotNull(nameof(mesh2))]
         private void Test2()
         {
             string fileName = "MS-DOS.csv";

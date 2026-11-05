@@ -106,7 +106,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds.M
             LoggerSAP.Log("Finished reading {0} ({1} entries).", _csvEdbFileName, lineCount);
         }
         string _csvEdbFileName;
-        CSVAnalyser parser;
+        CSVAnalyser? parser;
         class CSVAnalyser : AbstractThreadedMesh
         {
             internal CSVAnalyser(EdbCsvMeshBuilder container)

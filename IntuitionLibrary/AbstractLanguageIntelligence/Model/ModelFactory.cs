@@ -40,7 +40,7 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model
         /// <summary>
         /// Private field.
         /// </summary>
-        static ModelFactory _SAP;
+        static ModelFactory? _SAP;
         /// <summary>
         /// Type of the method that knows how to construct a model type.
         /// </summary>

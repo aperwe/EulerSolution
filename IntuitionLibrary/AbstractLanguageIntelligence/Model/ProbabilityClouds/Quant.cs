@@ -19,6 +19,6 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds
         /// <summary>
         /// Quant object - could be a wave function, representation of a physical particle, a macroscopic object, etc.
         /// </summary>
-        public object Particle;
+        public object? Particle;
     }
 }

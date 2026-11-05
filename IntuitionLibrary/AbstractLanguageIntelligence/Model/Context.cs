@@ -28,10 +28,10 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model
         /// The entry point for the context thread.
         /// </summary>
         /// <param name="threadParamObj"></param>
-        private void ContextThreadEntryPoint(object threadParamObj)
+        private void ContextThreadEntryPoint(object? threadParamObj)
         {
             LoggerSAP.Log(string.Format("ALIContext thread has started. Thread name: {0}", Thread.CurrentThread.Name));
-            Context threadParam = (Context)threadParamObj;
+            Context threadParam = (Context)threadParamObj!; //The constructor always starts the thread with this object.
             while (threadParam.isActive) //Message loop
             {
                 //Do some useful work here
@@ -44,8 +44,8 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model
             }
             LoggerSAP.Log(string.Format("ALIContext thread has finished. Thread name: {0}", Thread.CurrentThread.Name));
         }
-        Thread contextThread = null;
-        Test meshTest = null;
+        Thread contextThread;
+        Test? meshTest = null;
         bool isActive = true; //Mark the thread as active (it will continue running until this flag is set to true).
     }
 }
