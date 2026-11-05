@@ -1,4 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QBits.Intuition.AbstractLanguageIntelligence.Model;
+using QBits.Intuition.AbstractLanguageIntelligence.Model.Brains;
+using QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds;
 using QBits.Intuition.Assemblies;
 using QBits.Intuition.Collections;
 using QBits.Intuition.Crosswords;
@@ -603,6 +606,135 @@ public class LibraryBehaviorTests
     public void NonPersistentXmlDocumentCannotBeSaved()
     {
         Assert.ThrowsException<ArgumentNullException>(() => new NonPersistentXMLDocument("root").Save());
+    }
+
+    [TestMethod]
+    public void NetworkStartsEmptyAndUnnamed()
+    {
+        var network = new Network();
+        Assert.IsNull(network.Name);
+        Assert.AreEqual(0L, network.CellCount);
+        Assert.AreEqual("Name=, Size=0", network.ToString());
+        Assert.AreEqual("Name=brain, Size=0", new Network("brain").ToString());
+    }
+
+    [TestMethod]
+    public void NetworkCreatesInterfaceLayersOnce()
+    {
+        var network = new Network();
+        Assert.AreSame(network.InputLayer, network.InputLayer);
+        Assert.AreSame(network.OutputLayer, network.OutputLayer);
+        Assert.AreSame(network, network.InputLayer.Owner);
+        Assert.AreSame(network, network.OutputLayer.Owner);
+    }
+
+    [TestMethod]
+    public void NetworkKeepsItsCellsAndLayers()
+    {
+        var network = new Network();
+        var cell = network.CreateCell<Neuron>();
+        var layer = network.AddMiddleLayer();
+
+        Assert.AreEqual(1L, network.CellCount);
+        Assert.AreSame(cell, network.FindCell(cell.UniqueID));
+        Assert.AreSame(cell, network.GetRandomCell());
+        Assert.ThrowsException<InvalidOperationException>(() => network.FindCell(Guid.NewGuid()));
+        CollectionAssert.AreEqual(new[] { layer }, network.AllMiddleLayers.ToArray());
+    }
+
+    [TestMethod]
+    public void NeuronFiresOnlyForStrongSignals()
+    {
+        var neuron = new Neuron();
+        int fired = 0;
+        EventHandler handler = (sender, _) => { if (sender == neuron) Interlocked.Increment(ref fired); };
+        Neuron.NeuronExcited += handler;
+        try
+        {
+            neuron.Excite(100);
+            Assert.AreEqual(0, fired);
+            neuron.Excite(101);
+            Assert.AreEqual(1, fired);
+        }
+        finally
+        {
+            Neuron.NeuronExcited -= handler;
+        }
+    }
+
+    [TestMethod]
+    public void NeuronWithoutListenersCanFire()
+    {
+        new Neuron().Excite(500);
+    }
+
+    [TestMethod]
+    public void NeuronPassesSignalToConnectedNeuron()
+    {
+        Neuron first = new(), second = new();
+        first.ConnectTo(second);
+        using var secondFired = new ManualResetEventSlim(false);
+        EventHandler handler = (sender, _) => { if (sender == second) secondFired.Set(); };
+        Neuron.NeuronExcited += handler;
+        try
+        {
+            first.Excite(150);
+            Assert.IsTrue(secondFired.Wait(TimeSpan.FromSeconds(30)));
+            Assert.AreEqual(1, first.OutputCount);
+            Assert.IsFalse(second.HasOutputs);
+        }
+        finally
+        {
+            Neuron.NeuronExcited -= handler;
+        }
+    }
+
+    [TestMethod]
+    public void ModelFactoryUsesRegisteredGenerators()
+    {
+        var type = "LibraryBehaviorTests-" + Guid.NewGuid();
+        var model = new AliModel();
+        ModelFactory.AddModelGenerator(type, () => model);
+
+        Assert.AreSame(model, ModelFactory.GenerateModel(type));
+        Assert.AreSame(ModelFactory.SAP, ModelFactory.SAP);
+        Assert.ThrowsException<ArgumentException>(() => ModelFactory.AddModelGenerator(type, () => model));
+        Assert.ThrowsException<KeyNotFoundException>(() => ModelFactory.GenerateModel("unknown-" + Guid.NewGuid()));
+    }
+
+    [TestMethod]
+    public void QuantStartsEmptyAndKeepsValues()
+    {
+        var quant = new Quant();
+        Assert.AreEqual(0.0, quant.Weight);
+        Assert.IsNull(quant.Particle);
+        quant.Weight = 0.5;
+        quant.Particle = "particle";
+        Assert.AreEqual(0.5, quant.Weight);
+        Assert.AreEqual("particle", quant.Particle);
+    }
+
+    [TestMethod]
+    public void LoggerFormatsMissingArgumentsAsEmpty()
+    {
+        var logger = new RecordingLogger();
+        LoggerSAP.RegisterLogger(logger);
+        try
+        {
+            string? missing = null;
+            LoggerSAP.Log("[{0}|{1}]", missing, "value");
+            Assert.IsTrue(logger.Entries.Single().EndsWith(" [|value]"), logger.Entries.Single());
+        }
+        finally
+        {
+            LoggerSAP.UnregisterLogger(logger);
+        }
+    }
+
+    private sealed class RecordingLogger : ILogger
+    {
+        public List<string> Entries { get; } = new();
+        public void AcceptLogEntry(LogLevel logLevel, string entry) => Entries.Add(entry);
     }
 
     private static string CreateTemporaryFolder()

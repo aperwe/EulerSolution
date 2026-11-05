@@ -30,14 +30,14 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds.M
         /// when specific thread doesn't catch all it's exceptions.
         /// </summary>
         /// <param name="threadParamObj">Object from ParametrizedThreadStart. It is ourselves, actually.</param>
-        private void DefaultSafeThreadStarter(object threadParamObj)
+        private void DefaultSafeThreadStarter(object? threadParamObj)
         {
             try
             {
                 string className = GetType().Name;
                 LoggerSAP.Log("{0} ({1}) thread was born.", Thread.CurrentThread.Name, className);
                 Thread.Sleep(2); //Wait for the framework to initialize 'this' object. Without this wait, members assigned to in constructor may not be initialized.
-                AbstractThreadedMesh param = (AbstractThreadedMesh)threadParamObj;
+                AbstractThreadedMesh param = (AbstractThreadedMesh)threadParamObj!; //The constructor always starts the thread with this object.
                 MeshThreadEntryPoint(param);
                 LoggerSAP.Log("{0} ({1}) thread has died.", Thread.CurrentThread.Name, className);
             }
@@ -49,8 +49,8 @@ namespace QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds.M
             }
         }
         abstract protected void MeshThreadEntryPoint(AbstractThreadedMesh threadParamObj);
-        protected Semaphore semaphore = null;
-        Thread meshThread = null;
+        protected Semaphore semaphore;
+        Thread meshThread;
         /// <summary>
         /// Indicates whether the thread of this mesh is running or if it should be stopped.
         /// Setting this flag to false will close the thread as soon as it passes around its message loop.
