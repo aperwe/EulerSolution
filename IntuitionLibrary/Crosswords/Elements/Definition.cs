@@ -217,7 +217,7 @@ namespace QBits.Intuition.Crosswords.Elements
         {
             return ObjectType;
         }
-        public override string ToString()
+        public override string? ToString()
         {
             return _def.definicja;
         }

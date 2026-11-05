@@ -10,12 +10,12 @@ namespace QBits.Intuition.Crosswords.Definitions
     {
         #region IContainer Members
 
-        public void Add(IComponent component, string name)
+        public void Add(IComponent? component, string? name)
         {
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void Add(IComponent component)
+        public void Add(IComponent? component)
         {
             throw new Exception("The method or operation is not implemented.");
         }
@@ -25,7 +25,7 @@ namespace QBits.Intuition.Crosswords.Definitions
             get { throw new Exception("The method or operation is not implemented."); }
         }
 
-        public void Remove(IComponent component)
+        public void Remove(IComponent? component)
         {
             throw new Exception("The method or operation is not implemented.");
         }

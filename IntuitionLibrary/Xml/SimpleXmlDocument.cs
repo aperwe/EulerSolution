@@ -41,7 +41,7 @@ namespace QBits.Intuition.Xml
         /// <param name="attributeName"></param>
         /// <param name="attributeValue"></param>
         /// <param name="currentNode"></param>
-        public void AddAttribute(string attributeName, string attributeValue, XmlNode currentNode)
+        public void AddAttribute(string attributeName, string? attributeValue, XmlNode currentNode)
         {
             XmlAttribute fName = doc.CreateAttribute(attributeName);
             fName.Value = attributeValue;

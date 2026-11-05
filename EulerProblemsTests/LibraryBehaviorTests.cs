@@ -5,6 +5,7 @@ using QBits.Intuition.AbstractLanguageIntelligence.Model.ProbabilityClouds;
 using QBits.Intuition.Assemblies;
 using QBits.Intuition.Collections;
 using QBits.Intuition.Crosswords;
+using QBits.Intuition.Crosswords.Definitions;
 using QBits.Intuition.Crosswords.Elements;
 using QBits.Intuition.DesignPatterns.Factory;
 using QBits.Intuition.Financials.Banking;
@@ -317,8 +318,7 @@ public class LibraryBehaviorTests
     [TestMethod]
     public void CrosswordFactoriesCreateKnownTypes() => RunOnUIThread(() =>
     {
-        CrosswordTypeRegistrar.RegisterKnownCrosswordTypes();
-        CrosswordTypeRegistrar.RegisterKnownElementTypes();
+        EnsureCrosswordTypesRegistered();
 
         var crossword = UniversalFactory<string, Crossword>.SAP.CreateObject("Jolka");
         Assert.AreEqual("Jolka", crossword.GetType().Name);
@@ -331,6 +331,190 @@ public class LibraryBehaviorTests
         Assert.ThrowsException<NullReferenceException>(() => ElementsFactory.SAP.CreateObject("Definition", crossword, 1, 2));
         Assert.ThrowsException<ApplicationException>(() => ElementsFactory.SAP.CreateObject("Definition", crossword, 1, 2));
     });
+
+    [TestMethod]
+    public void CrosswordWithoutParentFillsLettersButCannotShowThem()
+    {
+        EnsureCrosswordTypesRegistered();
+        var crossword = new TestCrossword();
+        crossword.SetDimensions(2, 1);
+        Assert.ThrowsException<InvalidOperationException>(() => crossword.MakeEmptyCrossword());
+        Assert.AreEqual(
+            "<crossword columns=\"2\" rows=\"1\" type=\"TestCrossword\"><elements>" +
+            "<crosswordItem column=\"0\" row=\"0\" type=\"Letter\" letter=\"\" definite=\"False\" />" +
+            "<crosswordItem column=\"1\" row=\"0\" type=\"Letter\" letter=\"\" definite=\"False\" /></elements></crossword>",
+            SerializeCrossword(crossword));
+    }
+
+    [TestMethod]
+    public void CrosswordShowsAndReplacesItsElements() => RunOnUIThread(() =>
+    {
+        EnsureCrosswordTypesRegistered();
+        using var panel = new System.Windows.Forms.Panel();
+        var crossword = new TestCrossword { Parent = panel };
+        crossword.SetDimensions(2, 3);
+        crossword.MakeEmptyCrossword();
+        var positions = panel.Controls.Cast<System.Windows.Forms.Control>().Select(control => (control.Left, control.Top));
+        CollectionAssert.AreEquivalent(new[] { (0, 0), (55, 0), (0, 44), (55, 44), (0, 88), (55, 88) }, positions.ToArray());
+
+        crossword.SubstituteCrosswordElement(ElementsFactory.SAP.CreateObject("EmptyElement", crossword, 1, 2), 1, 2);
+        Assert.AreEqual(6, panel.Controls.Count);
+        var replaced = panel.Controls.Cast<System.Windows.Forms.Control>().Single(control => control.Left == 55 && control.Top == 88);
+        Assert.AreEqual(System.Drawing.Color.Green, replaced.BackColor);
+
+        crossword.RemoveWindowsControls();
+        Assert.AreEqual(0, panel.Controls.Count);
+    });
+
+    [TestMethod]
+    public void CrosswordIsLoadedAndSavedThroughXml()
+    {
+        EnsureCrosswordTypesRegistered();
+        const string saved = "<crossword columns=\"2\" rows=\"1\" type=\"Jolka\"><elements>" +
+            "<crosswordItem column=\"0\" row=\"0\" type=\"Letter\" letter=\"A\" definite=\"True\" />" +
+            "<crosswordItem column=\"1\" row=\"0\" type=\"EmptyElement\" /></elements></crossword>";
+        var file = new System.Xml.XmlDocument();
+        file.LoadXml(saved);
+
+        var crossword = CrosswordLoader.LoadCrosswordFromXml(file);
+
+        Assert.AreEqual("Jolka", crossword.GetType().Name);
+        Assert.AreEqual(saved, SerializeCrossword(crossword));
+    }
+
+    [DataTestMethod]
+    [DataRow("<crossword columns=\"1\" rows=\"1\" />", "type")]
+    [DataRow("<crossword columns=\"1\" type=\"Jolka\" />", "rows")]
+    [DataRow("<crossword columns=\"1\" rows=\"1\" type=\"Jolka\"><elements><crosswordItem row=\"0\" type=\"EmptyElement\" /></elements></crossword>", "column")]
+    public void CrosswordLoaderNamesTheMissingAttribute(string saved, string attribute)
+    {
+        EnsureCrosswordTypesRegistered();
+        var file = new System.Xml.XmlDocument();
+        file.LoadXml(saved);
+        var error = Assert.ThrowsException<System.Xml.XmlException>(() => CrosswordLoader.LoadCrosswordFromXml(file));
+        StringAssert.Contains(error.Message, $"'{attribute}'");
+    }
+
+    [TestMethod]
+    public void CrosswordLoaderRejectsEmptyDocument()
+    {
+        Assert.ThrowsException<System.Xml.XmlException>(() => CrosswordLoader.LoadCrosswordFromXml(new System.Xml.XmlDocument()));
+    }
+
+    [TestMethod]
+    public void CrosswordContainsEachComponentOnce()
+    {
+        System.ComponentModel.IContainer container = new TestCrossword();
+        using var component = new System.ComponentModel.Component();
+        container.Add(component);
+        Assert.ThrowsException<Exception>(() => container.Add(component));
+        CollectionAssert.AreEqual(new[] { component }, container.Components.Cast<System.ComponentModel.IComponent>().ToArray());
+
+        container.Remove(component);
+        Assert.AreEqual(0, container.Components.Count);
+        Assert.ThrowsException<Exception>(() => container.Remove(component));
+        Assert.ThrowsException<Exception>(() => container.Remove(null));
+        Assert.ThrowsException<Exception>(() => container.Add(component, "named"));
+    }
+
+    [TestMethod]
+    public void CrosswordDisposesItsComponents()
+    {
+        System.ComponentModel.IContainer container = new TestCrossword();
+        var component = new System.ComponentModel.Component();
+        bool disposed = false;
+        component.Disposed += (_, _) => disposed = true;
+        container.Add(component);
+        container.Dispose();
+        Assert.IsTrue(disposed);
+    }
+
+    [TestMethod]
+    public void CrosswordIgnoresMissingComponent()
+    {
+        System.ComponentModel.IContainer container = new TestCrossword();
+        container.Add(null);
+        Assert.AreEqual(0, container.Components.Count);
+        container.Dispose();
+    }
+
+    [TestMethod]
+    public void BaseDefinitionStartsEmpty()
+    {
+        var definition = new TestDefinition();
+        Assert.IsNull(definition.definicja);
+        Assert.AreEqual(Kierunek.Nieokreślony, definition.Kierunek);
+        Assert.AreEqual(0, definition.propozycje.Count);
+    }
+
+    [TestMethod]
+    public void BaseDefinitionReportsChangedText()
+    {
+        var definition = new TestDefinition();
+        object? sender = null;
+        EventArgs? args = null;
+        definition.DefinitionChangedEvt += (s, e) => { sender = s; args = e; };
+        definition.definicja = "clue";
+        Assert.AreEqual("clue", definition.definicja);
+        Assert.AreSame(definition, sender);
+        Assert.AreSame(EventArgs.Empty, args);
+    }
+
+    [TestMethod]
+    public void BaseDefinitionIsItsOwnSite()
+    {
+        var definition = new TestDefinition();
+        System.ComponentModel.ISite site = definition;
+        Assert.AreSame(definition, definition.Site);
+        Assert.AreSame(definition, site.Component);
+        Assert.IsNull(site.Container);
+        Assert.IsFalse(site.DesignMode);
+        EventHandler handler = (_, _) => { };
+        definition.Disposed += handler;
+        definition.Disposed -= handler;
+    }
+
+    [TestMethod]
+    public void BaseDefinitionReportsUnimplementedMembers()
+    {
+        var definition = new TestDefinition();
+        System.ComponentModel.ISite site = definition;
+        Assert.ThrowsException<Exception>(() => definition.Site = site);
+        Assert.ThrowsException<Exception>(() => definition.Dispose());
+        Assert.ThrowsException<Exception>(() => site.Name);
+        Assert.ThrowsException<Exception>(() => site.Name = "name");
+        Assert.ThrowsException<Exception>(() => site.GetService(typeof(object)));
+    }
+
+    private sealed class TestCrossword : Crossword
+    {
+        public override void DrawCrossword() { }
+        public override string GetObjectType() => "TestCrossword";
+    }
+
+    private sealed class TestDefinition : BaseDefinition { }
+
+    private static readonly object CrosswordRegistrationLock = new();
+    private static bool crosswordTypesRegistered;
+
+    /// <summary>Registering a crossword type twice throws, so all tests share one registration.</summary>
+    private static void EnsureCrosswordTypesRegistered()
+    {
+        lock (CrosswordRegistrationLock)
+        {
+            if (crosswordTypesRegistered) return;
+            CrosswordTypeRegistrar.RegisterKnownCrosswordTypes();
+            CrosswordTypeRegistrar.RegisterKnownElementTypes();
+            crosswordTypesRegistered = true;
+        }
+    }
+
+    private static string SerializeCrossword(Crossword crossword)
+    {
+        var document = new NonPersistentXMLDocument("crossword");
+        crossword.SerializeToNode(document.RootNode!, document);
+        return document.RootNode!.OuterXml;
+    }
 
     [TestMethod]
     public void TextLoggerWritesEntriesAndClosesFileOnExit()
@@ -558,6 +742,14 @@ public class LibraryBehaviorTests
         document.AddAttribute("name", "value", child);
         Assert.AreSame(child, document.RootNode!.FirstChild);
         Assert.AreEqual("<root><param name=\"value\" /></root>", document.RootNode!.OuterXml);
+    }
+
+    [TestMethod]
+    public void SimpleXmlDocumentWritesMissingAttributeValueAsEmpty()
+    {
+        var document = new SimpleXmlDocument("unused.xml", "root");
+        document.AddAttribute("name", null, document.RootNode!);
+        Assert.AreEqual("<root name=\"\" />", document.RootNode!.OuterXml);
     }
 
     [TestMethod]
