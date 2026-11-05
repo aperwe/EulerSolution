@@ -386,6 +386,8 @@ public class LibraryBehaviorTests
     [DataRow("<crossword columns=\"1\" rows=\"1\" />", "type")]
     [DataRow("<crossword columns=\"1\" type=\"Jolka\" />", "rows")]
     [DataRow("<crossword columns=\"1\" rows=\"1\" type=\"Jolka\"><elements><crosswordItem row=\"0\" type=\"EmptyElement\" /></elements></crossword>", "column")]
+    [DataRow("<crossword columns=\"1\" rows=\"1\" type=\"Jolka\"><elements><crosswordItem column=\"0\" row=\"0\" type=\"Letter\" definite=\"False\" /></elements></crossword>", "letter")]
+    [DataRow("<crossword columns=\"1\" rows=\"1\" type=\"Jolka\"><elements><crosswordItem column=\"0\" row=\"0\" type=\"Letter\" letter=\"A\" /></elements></crossword>", "definite")]
     public void CrosswordLoaderNamesTheMissingAttribute(string saved, string attribute)
     {
         EnsureCrosswordTypesRegistered();
@@ -399,6 +401,66 @@ public class LibraryBehaviorTests
     public void CrosswordLoaderRejectsEmptyDocument()
     {
         Assert.ThrowsException<System.Xml.XmlException>(() => CrosswordLoader.LoadCrosswordFromXml(new System.Xml.XmlDocument()));
+    }
+
+    [TestMethod]
+    public void CrosswordElementsShowTheirLoadedState() => RunOnUIThread(() =>
+    {
+        EnsureCrosswordTypesRegistered();
+        var saved = new System.Xml.XmlDocument();
+        saved.LoadXml("<crossword columns=\"2\" rows=\"1\"><elements>" +
+            "<crosswordItem column=\"0\" row=\"0\" type=\"Letter\" letter=\"A\" definite=\"True\" />" +
+            "<crosswordItem column=\"1\" row=\"0\" type=\"EmptyElement\" /></elements></crossword>");
+        using var panel = new System.Windows.Forms.Panel();
+        var crossword = new TestCrossword { Parent = panel };
+        crossword.DeserializeFromNode(saved.DocumentElement!);
+        crossword.CreateLetters();
+
+        var letter = crossword.ElementAt(0, 0);
+        var empty = crossword.ElementAt(1, 0);
+        Assert.AreEqual("Letter", letter.GetObjectType());
+        Assert.AreEqual("EmptyElement", empty.GetObjectType());
+        Assert.AreEqual("A", letter.ToString());
+        var letterButton = panel.Controls.Cast<System.Windows.Forms.Control>().Single(control => control.Left == 0);
+        var emptyButton = panel.Controls.Cast<System.Windows.Forms.Control>().Single(control => control.Left == 55);
+        Assert.AreEqual("A", letterButton.Text);
+        Assert.IsTrue(letterButton.Font.Bold);
+        Assert.AreEqual(System.Drawing.Color.Green, emptyButton.BackColor);
+        Assert.AreEqual(System.Windows.Forms.FlatStyle.Flat, ((System.Windows.Forms.Button)emptyButton).FlatStyle);
+    });
+
+    [TestMethod]
+    public void CrosswordLetterUpdatesItsButton() => RunOnUIThread(() =>
+    {
+        EnsureCrosswordTypesRegistered();
+        using var panel = new System.Windows.Forms.Panel();
+        var crossword = new TestCrossword { Parent = panel };
+        crossword.SetDimensions(1, 1);
+        crossword.MakeEmptyCrossword();
+        var button = panel.Controls[0];
+        Assert.AreEqual(string.Empty, button.Text);
+        Assert.IsFalse(button.Font.Bold);
+
+        var update = new System.Xml.XmlDocument();
+        update.LoadXml("<crosswordItem letter=\"B\" definite=\"True\" />");
+        crossword.ElementAt(0, 0).DeserializeFromNode(update.DocumentElement!);
+        Assert.AreEqual("B", button.Text);
+        Assert.IsTrue(button.Font.Bold);
+        Assert.AreEqual("B", crossword.ElementAt(0, 0).ToString());
+
+        crossword.ElementAt(0, 0).RemoveWindowsControl();
+        crossword.ElementAt(0, 0).RemoveWindowsControl();
+        Assert.AreEqual(0, panel.Controls.Count);
+    });
+
+    [TestMethod]
+    public void ElementsFactoryHasOneInstanceAndRejectsUnknownAndDuplicateTypes()
+    {
+        EnsureCrosswordTypesRegistered();
+        Assert.AreSame(ElementsFactory.SAP, ElementsFactory.SAP);
+        Assert.IsNull(BaseCrosswordElement.ObjectType);
+        Assert.ThrowsException<KeyNotFoundException>(() => ElementsFactory.SAP.CreateObject("unknown", new TestCrossword(), 0, 0));
+        Assert.ThrowsException<ApplicationException>(() => ElementsFactory.SAP.RegisterConstructor("Letter", (crossword, column, row) => null!));
     }
 
     [TestMethod]
@@ -490,6 +552,7 @@ public class LibraryBehaviorTests
     {
         public override void DrawCrossword() { }
         public override string GetObjectType() => "TestCrossword";
+        public BaseCrosswordElement ElementAt(int column, int row) => _letters[column, row];
     }
 
     private sealed class TestDefinition : BaseDefinition { }

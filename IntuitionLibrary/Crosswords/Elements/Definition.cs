@@ -58,8 +58,9 @@ namespace QBits.Intuition.Crosswords.Elements
                 _wControl.Text = _def.definicja; //May come from serialization
             }
         }
-        void ElementClickedEH(object sender, EventArgs e)
+        void ElementClickedEH(object? sender, EventArgs e)
         {
+            if (_wControl == null) return; //No button to show the menu next to.
             ContextMenuStrip popup = new ContextMenuStrip();
             popup.AutoSize = true;
             ToolStripDropDownButton changeTo = new ToolStripDropDownButton("Change to...");
@@ -97,20 +98,21 @@ namespace QBits.Intuition.Crosswords.Elements
             string p = string.Format("{0} ({1})", w, w.Length);
             return p;
         }
-        void ChangeToEmptyEH(object sender, EventArgs e)
+        void ChangeToEmptyEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Changing element ({0},{1}) to empty.", _row, _column);
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(EmptyElement.ObjectType, _crossword, _column, _row);
             _crossword.SubstituteCrosswordElement(bce, _column, _row);
         }
-        void ChangeToLetterEH(object sender, EventArgs e)
+        void ChangeToLetterEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Changing element ({0},{1}) to letter.", _row, _column);
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(Letter.ObjectType, _crossword, _column, _row);
             _crossword.SubstituteCrosswordElement(bce, _column, _row);
         }
-        void AssignDefinitionEH(object sender, EventArgs e)
+        void AssignDefinitionEH(object? sender, EventArgs e)
         {
+            if (_wControl == null) return; //No button to place the text box over.
             LoggerSAP.Log("Assigning definition.");
             _tb = new TextBox();
             _tb.Location = _wControl.Location;
@@ -120,9 +122,10 @@ namespace QBits.Intuition.Crosswords.Elements
             _tb.Text = _def.definicja;
             _tb.BringToFront();
         }
-        TextBox _tb;
-        void DefinitionSetEH(object sender, EventArgs e)
+        TextBox? _tb;
+        void DefinitionSetEH(object? sender, EventArgs e)
         {
+            if (_tb == null) return; //No text box to read the definition from.
             LoggerSAP.Log("Finished entering the definition.");
             _def.DefinitionChangedEvt += new EventHandler(DefinitionSetEH2);
             _def.definicja = _tb.Text;
@@ -132,13 +135,15 @@ namespace QBits.Intuition.Crosswords.Elements
         /// <summary>
         /// Handles event from the underlying class BaseDefinition cointained within _def.
         /// </summary>
-        void DefinitionSetEH2(object sender, EventArgs e)
+        void DefinitionSetEH2(object? sender, EventArgs e)
         {
-            BaseDefinition bd = (BaseDefinition)sender;
+            if (_wControl == null) return; //No button to show the definition on.
+            BaseDefinition bd = (BaseDefinition)sender!; //BaseDefinition always raises this event with itself.
             _wControl.Text = bd.definicja;
         }
-        void AddPossibleWordClickedEH(object sender, EventArgs e)
+        void AddPossibleWordClickedEH(object? sender, EventArgs e)
         {
+            if (_wControl == null) return; //No button to place the text box over.
             LoggerSAP.Log("Adding possible word to ({0},{1}) definition.", _row, _column);
             _tb = new TextBox();
             _tb.Location = _wControl.Location;
@@ -147,8 +152,9 @@ namespace QBits.Intuition.Crosswords.Elements
             _tb.Focus();
             _tb.BringToFront();
         }
-        void PossibleWordAddedEH(object sender, EventArgs e)
+        void PossibleWordAddedEH(object? sender, EventArgs e)
         {
+            if (_tb == null) return; //No text box to read the word from.
             LoggerSAP.Log("Finished entering a possible word.");
             string newWord = _tb.Text;
             _tb.Dispose();
@@ -185,17 +191,17 @@ namespace QBits.Intuition.Crosswords.Elements
         public override void DeserializeFromNode(System.Xml.XmlNode myNode)
         {
             base.DeserializeFromNode(myNode);
-            Definitions.Kierunek k = (Definitions.Kierunek)Enum.Parse(typeof(Definitions.Kierunek), myNode.Attributes["direction"].Value);
+            Definitions.Kierunek k = (Definitions.Kierunek)Enum.Parse(typeof(Definitions.Kierunek), CrosswordXml.RequiredAttribute(myNode, "direction"));
             switch (k)
             {
                 case Crosswords.Definitions.Kierunek.Nieokreślony: throw new Exception("Invalid file");
                 case Crosswords.Definitions.Kierunek.Pionowo: _def = BaseDefinition.CreateDefinition(k); break;
                 case Crosswords.Definitions.Kierunek.Poziomo: _def = BaseDefinition.CreateDefinition(k); break;
             }
-            _def.definicja = myNode.Attributes["definition"].Value;
-            foreach (XmlNode element in myNode.SelectNodes("possibilities/possibility"))
+            _def.definicja = CrosswordXml.RequiredAttribute(myNode, "definition");
+            foreach (XmlNode element in myNode.SelectNodes("possibilities/possibility")!) //Returns null only for nodes that cannot be searched. Crossword nodes are elements.
             {
-                _def.propozycje.Add(element.Attributes["word"].Value);
+                _def.propozycje.Add(CrosswordXml.RequiredAttribute(element, "word"));
             }
         }
         #endregion

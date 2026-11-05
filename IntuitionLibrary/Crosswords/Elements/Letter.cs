@@ -65,11 +65,11 @@ namespace QBits.Intuition.Crosswords.Elements
             set
             {
                 _definite = value;
-                DefiniteChanged(this, null);
+                DefiniteChanged(this, EventArgs.Empty);
             }
         }
 
-        void DefiniteChangedEH(object sender, EventArgs e)
+        void DefiniteChangedEH(object? sender, EventArgs e)
         {
             if (_wControl != null) //React to fDefinite change only if we have GUI control
             {
@@ -84,8 +84,9 @@ namespace QBits.Intuition.Crosswords.Elements
             }
         }
         event EventHandler DefiniteChanged;
-        void ElementClickedEH(object sender, EventArgs e)
+        void ElementClickedEH(object? sender, EventArgs e)
         {
+            if (_wControl == null) return; //No button to show the menu next to.
             ContextMenuStrip popup = new ContextMenuStrip();
             popup.AutoSize = true;
             ToolStripDropDownButton changeTo = new ToolStripDropDownButton("Change to...");
@@ -109,18 +110,18 @@ namespace QBits.Intuition.Crosswords.Elements
             popup.Update();
         }
 
-        void DefiniteClickedEH(object sender, EventArgs e)
+        void DefiniteClickedEH(object? sender, EventArgs e)
         {
             fDefinite = !fDefinite;
             LoggerSAP.Log("Letter {0} is now {1}.", letter, fDefinite ? "Definite" : "Not definite");
         }
-        void ChangeToEmptyEH(object sender, EventArgs e)
+        void ChangeToEmptyEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Changing element ({0},{1}) to empty.", _row, _column);
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(EmptyElement.ObjectType, _crossword, _column, _row);
             _crossword.SubstituteCrosswordElement(bce, _column, _row);
         }
-        void AssignLetterEH(object sender, EventArgs e)
+        void AssignLetterEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Assigning letter.");
             _tb = new TextBox();
@@ -131,15 +132,16 @@ namespace QBits.Intuition.Crosswords.Elements
             _tb.Text = letter;
         }
 
-        void LetterSetEH(object sender, EventArgs e)
+        void LetterSetEH(object? sender, EventArgs e)
         {
+            if (_tb == null) return; //No text box to read the letter from.
             LoggerSAP.Log("Finished entering the letter.");
             letter = _tb.Text.ToUpperInvariant();
             _tb.Dispose();
         }
-        TextBox _tb;
+        TextBox? _tb;
 
-        void ChangeToDefinitionEH(object sender, EventArgs e)
+        void ChangeToDefinitionEH(object? sender, EventArgs e)
         {
             LoggerSAP.Log("Changing element ({0},{1}) to definition.", _row, _column);
             BaseCrosswordElement bce = ElementsFactory.SAP.CreateObject(Definition.ObjectType, _crossword, _column, _row);
@@ -156,8 +158,8 @@ namespace QBits.Intuition.Crosswords.Elements
         public override void DeserializeFromNode(System.Xml.XmlNode myNode)
         {
             base.DeserializeFromNode(myNode);
-            letter = myNode.Attributes["letter"].Value;
-            fDefinite = bool.Parse(myNode.Attributes["definite"].Value);
+            letter = CrosswordXml.RequiredAttribute(myNode, "letter");
+            fDefinite = bool.Parse(CrosswordXml.RequiredAttribute(myNode, "definite"));
         }
         #endregion
 

@@ -12,7 +12,7 @@ namespace QBits.Intuition.Crosswords.Elements
     public abstract class BaseCrosswordElement : IFactorableByString, XmlSerializable
     {
         #region Factory model part
-        internal static ElementsFactory.ObjectCreator ctor
+        internal static ElementsFactory.ObjectCreator? ctor
         {
             get
             {
@@ -67,7 +67,7 @@ namespace QBits.Intuition.Crosswords.Elements
         /// <summary>
         /// Windows control associated with this element. Null if nothing.
         /// </summary>
-        protected Control _wControl;
+        protected Control? _wControl;
         /// <summary>
         /// Adusts the size of the dropdown menu.
         /// </summary>
@@ -90,7 +90,7 @@ namespace QBits.Intuition.Crosswords.Elements
             }
         }
         /// <summary>Returns the current object type.</summary>
-        public static string ObjectType
+        public static string? ObjectType
         {
             get
             {
@@ -120,10 +120,7 @@ namespace QBits.Intuition.Crosswords.Elements
 
         #region FactorableByString Members
         /// <summary>Returns the objet type.</summary>
-        virtual public string GetObjectType()
-        {
-            return null;
-        }
+        public abstract string GetObjectType();
 
         #endregion
     }

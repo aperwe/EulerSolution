@@ -48,7 +48,7 @@ namespace QBits.Intuition.Crosswords.Elements
         {
             return objectCreators[type](crossword, column, row);
         }
-        static ElementsFactory _SAP;
+        static ElementsFactory? _SAP;
         /// <summary>
         /// Collection or constructors of crossword elements.
         /// </summary>
