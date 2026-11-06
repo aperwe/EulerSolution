@@ -133,7 +133,7 @@ How many Sundays fell on the first of the month during the twentieth century (1 
             int maxDaysInThisMonth = daysInMonth[Month];
             if (Month == Month.February) //Special case for February. Check if it has 28 (default) or 29 days.
             {
-                maxDaysInThisMonth = CalculateNumberOfDaysInFebruary();
+                maxDaysInThisMonth = CalculateNumberOfDaysInFebruary(Year);
             }
             if (DayOfMonth > maxDaysInThisMonth) //Turn of the month
             {
@@ -147,22 +147,11 @@ How many Sundays fell on the first of the month during the twentieth century (1 
             }
         }
 
-        private int CalculateNumberOfDaysInFebruary()
+        internal static int CalculateNumberOfDaysInFebruary(int year)
         {
-            int februaryDuration = 28; //Starting default
-            if (Year % 4 == 0) //Is leap year every fourth year?
-            {
-                if (Year % 100 != 0) //Except every full century?
-                {
-                    if (Year % 400 == 0) //Unless divisible by 400
-                    {
-                        februaryDuration = 29;
-                    }
-
-                }
-            }
-
-            return februaryDuration;
+            //Leap year every fourth year, except every full century, unless it is divisible by 400.
+            bool isLeapYear = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+            return isLeapYear ? 29 : 28;
         }
 
         internal bool Equals(int comparedYear, Month comparedMonth, int comparedDay)
