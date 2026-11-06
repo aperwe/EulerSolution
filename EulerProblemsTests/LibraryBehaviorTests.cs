@@ -650,7 +650,32 @@ public class LibraryBehaviorTests
         Assert.ThrowsException<ArgumentNullException>(() => data.SaveData(null!));
         Assert.ThrowsException<ArgumentNullException>(() => data.SaveData(string.Empty));
         Assert.ThrowsException<ArgumentNullException>(() => data.SaveData(Path.GetPathRoot(Path.GetTempPath())!));
-        Assert.ThrowsException<ArgumentException>(() => data.SaveData("settings.xml"));
+    }
+
+    /// <summary>Changes the current folder for the test process. This is safe because the tests here do not run in parallel.</summary>
+    [TestMethod]
+    public void SaveDataWritesFileNameWithoutFolderToCurrentFolder()
+    {
+        var folder = CreateTemporaryFolder();
+        var originalFolder = Environment.CurrentDirectory;
+        try
+        {
+            Environment.CurrentDirectory = folder;
+            var data = new System.Data.DataSet("settings");
+            data.Tables.Add("values").Columns.Add("name");
+            data.Tables[0].Rows.Add("stored");
+
+            data.SaveData("settings.xml");
+
+            var loaded = new System.Data.DataSet();
+            loaded.ReadXml(Path.Combine(folder, "settings.xml"));
+            Assert.AreEqual("stored", loaded.Tables[0].Rows[0]["name"]);
+        }
+        finally
+        {
+            Environment.CurrentDirectory = originalFolder;
+            Directory.Delete(folder, true);
+        }
     }
 
     [TestMethod]
