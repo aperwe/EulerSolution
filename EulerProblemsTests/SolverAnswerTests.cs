@@ -112,9 +112,19 @@ public class SolverAnswerTests
 
         await Assert.ThrowsExceptionAsync<OperationCanceledException>(() => Task.Run(solver.StartSolving));
 
-        // The solver checks the exponent only after multiplying, so this line reports 2^20 today.
-        StringAssert.Contains(progress, "2^10^1 = 2^20 = 1048576.");
-        StringAssert.Contains(progress, "2^10^2 = 2^100 = 1496703205376.");
+        StringAssert.Contains(progress, string.Join(Environment.NewLine,
+            "Starting Int64", "2^10^0 = 2^1 = 2.", "2^10^1 = 2^10 = 1024.", "2^10^2 = 2^100 = 1496703205376."));
+
+        // Every line must have the next n, an exponent of exactly 10^n, and the last 13 digits of 2 to that exponent.
+        var lines = progress.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            .SkipWhile(line => !line.EndsWith("Starting Int64")).Skip(1).ToList();
+        var modulus = System.Numerics.BigInteger.Pow(10, 13);
+        for (int n = 0; n < lines.Count; n++)
+        {
+            var exponent = System.Numerics.BigInteger.Pow(10, n);
+            var lastDigits = System.Numerics.BigInteger.ModPow(2, exponent, modulus);
+            Assert.AreEqual($"2^10^{n} = 2^{exponent} = {lastDigits}.", lines[n]);
+        }
     }
 
     /// <summary>Uses a temporary folder, so the run cannot affect the real checkpoints.</summary>

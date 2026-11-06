@@ -24,7 +24,7 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
         protected void SolveInt64(out string answer)
         {
             Int64 n = 0; //Starting index of the exponent of 2^10^n => so 2^10^0 = 2^1 = 2
-            Int64 value = 1; //Starting value = 2^1 = 2
+            Int64 value = 1; //Starting value = 2^0 = 1, for the starting exponent 0
             //Calculate starting value of 10^n = 10^0 = 1
             Int64 tenToN = (Int64)Math.Pow(10, (double)n);
 
@@ -50,12 +50,18 @@ https://www.youtube.com/shorts/X4C3Sz-10eA")]
                 effectiveMultiplicator *= multiplicator; //Calculate 2^exponent * speed multiplier
             }
 
+            //The loop below steps the exponent by speedFactor, so it never reaches 10^0 = 1. Report 2^1 before it starts.
+            answer += $"2^10^{n} = 2^{tenToN} = {multiplicator}.{Environment.NewLine}";
+            UpdateProgress(answer);
+            n++;
+            tenToN = (Int64)Math.Pow(10, (double)n);
+
             for (Int64 exponent = 0; ; exponent += 1 * speedFactor) //Twice as fast
             {
                 StopToken.ThrowIfCancellationRequested();
 
                 //Check if exponent is a power of 10
-                if (exponent >= tenToN)
+                if (exponent == tenToN)
                 {
 
                     answer += $"2^10^{n} = 2^{exponent} = {value.ToString()}.{Environment.NewLine}";
