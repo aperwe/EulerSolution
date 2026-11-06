@@ -23,6 +23,14 @@
 - Run the relevant build and tests where possible. Report the results and any checks that could not be completed.
 - Do not commit, push, or merge unless the user explicitly requests those actions.
 
+## Shared library
+
+`IntuitionLibrary` started as a separate library shared by other projects. It remains a shared library, although this repository now contains it (#119).
+
+- Do not remove code from `IntuitionLibrary` because this repository does not use it. Bugs in unused areas are real bugs.
+- Keep the public API compatible. A behaviour change that callers could notice, for example throwing where a method used to return a value, needs the user's decision.
+- Test changes to library behaviour before and after the change. Run the new tests on the unchanged code first, and report any result that looks wrong.
+
 ## Testing policy
 
 These rules apply to local work and to any CI/CD pipeline. CI work is tracked in #117.
