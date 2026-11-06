@@ -1,0 +1,7 @@
+<Project>
+  <!-- Settings shared by every project below this folder. MSBuild imports this file automatically. -->
+  <PropertyGroup>
+    <!-- The solution builds without warnings (#111). Fail the build if a new one appears. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
