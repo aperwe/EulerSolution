@@ -667,6 +667,75 @@ public class LibraryBehaviorTests
             CollectionAssert.AreEqual(new[] { "first" }, ReadLinesOnceFileIsClosed(file));
         });
 
+    [TestMethod]
+    public void TextLoggerAnnouncesItsShutdownWithItsFilePath()
+        => WithTemporaryLogFile(file =>
+        {
+            var recorder = new RecordingLogger();
+            LoggerSAP.RegisterLogger(recorder);
+            try
+            {
+                ((IDisposable)new TextLogger()).Dispose();
+
+                Assert.IsTrue(recorder.Entries.Any(entry => entry.EndsWith("] Text logger exiting: " + file)), string.Join(Environment.NewLine, recorder.Entries));
+            }
+            finally
+            {
+                LoggerSAP.UnregisterLogger(recorder);
+            }
+        });
+
+    [TestMethod]
+    public void TextLoggerWritesToTheFileGivenToItsConstructor()
+        => WithTemporaryLogFile(staticFile =>
+        {
+            var file = Path.Combine(Path.GetDirectoryName(staticFile)!, "given.txt");
+            var logger = new TextLogger(file);
+            logger.AcceptLogEntry(LogLevel.Default, "first");
+
+            ((IDisposable)logger).Dispose();
+
+            CollectionAssert.AreEqual(new[] { "first" }, ReadLinesOnceFileIsClosed(file));
+            Assert.IsFalse(File.Exists(staticFile), "The logger also wrote to textLogFileName.");
+        });
+
+    [TestMethod]
+    public void TwoTextLoggersWriteToTheirOwnFilesAtTheSameTime()
+    {
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            var firstFile = Path.Combine(folder, "first.txt");
+            var secondFile = Path.Combine(folder, "second.txt");
+            var first = new TextLogger(firstFile);
+            var second = new TextLogger(secondFile);
+            for (int i = 0; i < 3; i++)
+            {
+                first.AcceptLogEntry(LogLevel.Default, "first " + i);
+                second.AcceptLogEntry(LogLevel.Default, "second " + i);
+            }
+
+            ((IDisposable)first).Dispose();
+            ((IDisposable)second).Dispose();
+
+            CollectionAssert.AreEqual(new[] { "first 0", "first 1", "first 2" }, ReadLinesOnceFileIsClosed(firstFile));
+            CollectionAssert.AreEqual(new[] { "second 0", "second 1", "second 2" }, ReadLinesOnceFileIsClosed(secondFile));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow("   ")]
+    public void TextLoggerRejectsAMissingFilePath(string? path)
+    {
+        Assert.ThrowsException<ArgumentException>(() => new TextLogger(path!));
+    }
+
     /// <summary>TextLogger writes to a file named by a static field, so each test points it to its own temporary file.</summary>
     private static void WithTemporaryLogFile(Action<string> test)
     {
