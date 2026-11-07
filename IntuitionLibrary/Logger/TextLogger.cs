@@ -7,21 +7,31 @@ using System.Threading;
 namespace QBits.Intuition.Logger
 {
     /// <summary>
-    /// Custom logging facility for Crossword. Do not use in other projects.
+    /// Writes log entries to a text file, one entry per line, on a background thread.
     /// <para/>The logger stops, writes the remaining entries and closes its file when the watched exit event is set,
     /// when it is disposed, or when the process exits.
     /// </summary>
     public class TextLogger : ILogger, IEventWatcher, IDisposable
     {
         /// <summary>
-        /// Name of the log file for this custom logging facility. Hardcoded.
+        /// Path of the log file used by the parameterless constructor.
         /// </summary>
         static public string textLogFileName = "CrosswordLogger.txt";
         /// <summary>
-        /// Creates a new instance of custom text logger for Crossword
+        /// Creates a new text logger that writes to <see cref="textLogFileName"/>.
         /// </summary>
-        public TextLogger()
+        public TextLogger() : this(textLogFileName)
         {
+        }
+        /// <summary>
+        /// Creates a new text logger that writes to the given file. An existing file is overwritten.
+        /// </summary>
+        /// <param name="logFilePath">Path of the log file.</param>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="logFilePath"/> is null, empty or only white space.</exception>
+        public TextLogger(string logFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(logFilePath)) throw new ArgumentException("A log file path is required.", nameof(logFilePath));
+            this.logFilePath = logFilePath;
             logThread = new Thread(LogThread);
             logThread.Priority = ThreadPriority.BelowNormal;
             logThread.Name = "TextLogger";
@@ -34,14 +44,14 @@ namespace QBits.Intuition.Logger
         Thread logThread;
         void LogThread()
         {
-            using StreamWriter sw = new StreamWriter(textLogFileName);
+            using StreamWriter sw = new StreamWriter(logFilePath);
             while (!IsExitRequested())
             {
                 //Wake up for a new entry or a stop request, or after a short time to check the exit event.
                 WaitHandle.WaitAny(new WaitHandle[] { newLogEntryEvent, stopRequested }, ExitCheckIntervalInMiliseconds);
                 WriteWaitingEntries(sw);
             }
-            LoggerSAP.Log("Crossword text logger exitting.");
+            LoggerSAP.Log("Text logger exiting: " + logFilePath);
             WriteWaitingEntries(sw);
         }
 
@@ -72,6 +82,7 @@ namespace QBits.Intuition.Logger
 
         void OnProcessExit(object? sender, EventArgs e) => Dispose();
 
+        readonly string logFilePath;
         const int ExitCheckIntervalInMiliseconds = 100;
         ThreadSafeObject<Queue<string>> logEntries = new Queue<string>();
         AutoResetEvent newLogEntryEvent = new AutoResetEvent(false);
