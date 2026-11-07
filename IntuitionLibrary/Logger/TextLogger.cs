@@ -7,9 +7,11 @@ using System.Threading;
 namespace QBits.Intuition.Logger
 {
     /// <summary>
-    /// Custom logging facility for Crossword. Do not user in other projects.
+    /// Custom logging facility for Crossword. Do not use in other projects.
+    /// <para/>The logger stops, writes the remaining entries and closes its file when the watched exit event is set,
+    /// when it is disposed, or when the process exits.
     /// </summary>
-    public class TextLogger : ILogger, IEventWatcher
+    public class TextLogger : ILogger, IEventWatcher, IDisposable
     {
         /// <summary>
         /// Name of the log file for this custom logging facility. Hardcoded.
@@ -23,6 +25,8 @@ namespace QBits.Intuition.Logger
             logThread = new Thread(LogThread);
             logThread.Priority = ThreadPriority.BelowNormal;
             logThread.Name = "TextLogger";
+            logThread.IsBackground = true; //Does not keep the process alive. On process exit, OnProcessExit writes the remaining entries.
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             logThread.Start();
         }
 
@@ -30,58 +34,61 @@ namespace QBits.Intuition.Logger
         Thread logThread;
         void LogThread()
         {
-            StreamWriter sw = new StreamWriter(textLogFileName);
-            Thread.Sleep(TimeContants.InMiliseconds_OneSecond); //Wait 1 s
-            //if there is an exitEvent set, use it, otherwise continue to 
-            if (null != exitEvent)
+            using StreamWriter sw = new StreamWriter(textLogFileName);
+            while (!IsExitRequested())
             {
-                while (!exitEvent.WaitOne(TimeContants.InMiliseconds_TenSeconds, false)) //Every 10 s do a forcible flush, unless a new item comes in the meantime.
-                {
-                    lock (logEntries.Key) //Lock the threaded access.
-                    {
-                        if (((Queue<string>)logEntries).Count > 0) //Do something only when there is anything to flush to file.
-                        {
-                            sw.WriteLine(((Queue<string>)logEntries).Dequeue());
-                            while (((Queue<string>)logEntries).Count > 30) sw.WriteLine(((Queue<string>)logEntries).Dequeue());
-                        }
-                        else
-                        {
-                            sw.Flush();
-                        }
-                    }
-                }
-                //App exit has been signalled.
-                LoggerSAP.Log("Crossword text logger exitting.");
-                lock (logEntries.Key)
-                {
-                    while (((Queue<string>)logEntries).Count > 0) //Flush everything.
-                    {
-                        sw.WriteLine(((Queue<string>)logEntries).Dequeue());
-                    }
-                }
-                sw.Flush();
-                sw.Close();
+                //Wake up for a new entry or a stop request, or after a short time to check the exit event.
+                WaitHandle.WaitAny(new WaitHandle[] { newLogEntryEvent, stopRequested }, ExitCheckIntervalInMiliseconds);
+                WriteWaitingEntries(sw);
             }
-            else //No exit event. Just write off
+            LoggerSAP.Log("Crossword text logger exitting.");
+            WriteWaitingEntries(sw);
+        }
+
+        void WriteWaitingEntries(StreamWriter sw)
+        {
+            lock (logEntries.Key)
             {
-                while (true)
+                while (((Queue<string>)logEntries).Count > 0)
                 {
-                    lock (logEntries.Key)
-                    {
-                        while (((Queue<string>)logEntries).Count > 0) //Flush everything.
-                        {
-                            sw.WriteLine(((Queue<string>)logEntries).Dequeue());
-                        }
-                    }
-                    sw.Flush();
-                    Thread.Sleep(TimeContants.InMiliseconds_10Miliseconds);
+                    sw.WriteLine(((Queue<string>)logEntries).Dequeue());
                 }
+            }
+            sw.Flush();
+        }
+
+        bool IsExitRequested()
+        {
+            if (stopRequested.WaitOne(0)) return true;
+            try
+            {
+                return exitEvent?.WaitOne(0) == true;
+            }
+            catch (ObjectDisposedException)
+            {
+                return true; //The owner disposed the exit event, so it will never be set.
             }
         }
 
+        void OnProcessExit(object? sender, EventArgs e) => Dispose();
+
+        const int ExitCheckIntervalInMiliseconds = 100;
         ThreadSafeObject<Queue<string>> logEntries = new Queue<string>();
         AutoResetEvent newLogEntryEvent = new AutoResetEvent(false);
+        ManualResetEvent stopRequested = new ManualResetEvent(false);
         EventWaitHandle? exitEvent;
+        #endregion
+
+        #region IDisposable Members
+        /// <summary>
+        /// Stops the logger, writes the remaining entries and closes the log file. Returns when the file is closed.
+        /// </summary>
+        public void Dispose()
+        {
+            AppDomain.CurrentDomain.ProcessExit -= OnProcessExit;
+            stopRequested.Set();
+            logThread.Join();
+        }
         #endregion
 
         #region ILogger Members

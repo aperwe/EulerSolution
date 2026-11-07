@@ -604,6 +604,95 @@ public class LibraryBehaviorTests
     }
 
     [TestMethod]
+    public void TextLoggerDisposeWritesEntriesAndClosesFile()
+        => WithTemporaryLogFile(file =>
+        {
+            var logger = new TextLogger();
+            logger.AcceptLogEntry(LogLevel.Default, "first");
+            logger.AcceptLogEntry(LogLevel.Default, "second");
+
+            ((IDisposable)logger).Dispose();
+
+            // Opening the file without sharing succeeds only if the logger has already closed it.
+            using var reader = new StreamReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None));
+            CollectionAssert.AreEqual(new[] { "first", "second" }, reader.ReadToEnd().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        });
+
+    [TestMethod]
+    public void TextLoggerWritesEntriesPromptlyWhileWatchingAnExitEvent()
+        => WithTemporaryLogFile(file =>
+        {
+            using var exit = new ManualResetEvent(false);
+            var logger = new TextLogger();
+            ((IEventWatcher)logger).WatchThisEvent(exit);
+            try
+            {
+                logger.AcceptLogEntry(LogLevel.Default, "first");
+                Assert.IsTrue(SpinWait.SpinUntil(() => ReadOpenFile(file).Contains("first"), TimeSpan.FromSeconds(3)),
+                    "The entry did not reach the file within 3 seconds.");
+            }
+            finally
+            {
+                exit.Set();
+                ReadLinesOnceFileIsClosed(file);
+            }
+        });
+
+    [TestMethod]
+    public void TextLoggerHonoursAnExitEventGivenLater()
+        => WithTemporaryLogFile(file =>
+        {
+            using var exit = new ManualResetEvent(false);
+            var logger = new TextLogger();
+            Thread.Sleep(1500); // Longer than the 1 second the logger used to wait before it looked for an exit event.
+            ((IEventWatcher)logger).WatchThisEvent(exit);
+            logger.AcceptLogEntry(LogLevel.Default, "first");
+
+            exit.Set();
+
+            CollectionAssert.AreEqual(new[] { "first" }, ReadLinesOnceFileIsClosed(file));
+        });
+
+    [TestMethod]
+    public void TextLoggerTreatsADisposedExitEventAsExit()
+        => WithTemporaryLogFile(file =>
+        {
+            var exit = new ManualResetEvent(false);
+            var logger = new TextLogger();
+            ((IEventWatcher)logger).WatchThisEvent(exit);
+            logger.AcceptLogEntry(LogLevel.Default, "first");
+
+            exit.Dispose();
+
+            CollectionAssert.AreEqual(new[] { "first" }, ReadLinesOnceFileIsClosed(file));
+        });
+
+    /// <summary>TextLogger writes to a file named by a static field, so each test points it to its own temporary file.</summary>
+    private static void WithTemporaryLogFile(Action<string> test)
+    {
+        var originalFileName = TextLogger.textLogFileName;
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            TextLogger.textLogFileName = Path.Combine(folder, "log.txt");
+            test(TextLogger.textLogFileName);
+        }
+        finally
+        {
+            TextLogger.textLogFileName = originalFileName;
+            Directory.Delete(folder, true);
+        }
+    }
+
+    /// <summary>Reads a file that the logger may still have open for writing.</summary>
+    private static string ReadOpenFile(string path)
+    {
+        if (!File.Exists(path)) return "";
+        using var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+        return reader.ReadToEnd();
+    }
+
+    [TestMethod]
     public void SaveDataCreatesTheFolderAndWritesTheFile()
     {
         var folder = CreateTemporaryFolder();
