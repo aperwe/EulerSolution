@@ -8,6 +8,8 @@ using EulerProblems.Problems.Problems40to49;
 using EulerProblems.Problems.Problems50to59;
 using EulerProblems.Problems.Problems60to69;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
+using System.Numerics;
 using System.Reflection;
 
 namespace EulerProblemsTests;
@@ -99,32 +101,55 @@ public class SolverAnswerTests
         StringAssert.Contains(answer, expectedAnswerText);
     }
 
-    /// <summary>This solver never finishes on its own, so the test force-stops it.</summary>
-    [TestMethod]
-    [TestCategory(SlowCategory)]
-    [Timeout(OpenEndedTestLimitMs)]
-    public async Task PowersOf2To10ToNPublishesCorrectValuesUntilStopped()
+    // The digits shown for n = 0 to 11 before #153, which kept the last 13 digits and reached n = 11 in 5 minutes.
+    // The value for n = 7 lacked its leading zero, so the test compares them as numbers.
+    private static readonly string[] PowersOf2To10ToNDigitsBefore153 =
     {
-        using var stop = new CancellationTokenSource(OpenEndedRunTime);
-        var solver = new PowersOf2To10ToN { StopToken = stop.Token };
-        string progress = "";
-        solver.AnswerAvailableEventHandler += (_, e) => progress = e.Answer;
+        "2", "1024", "1496703205376", "7205668069376", "4792596709376", "4389883109376",
+        "3162747109376", "891387109376", "8177787109376", "1041787109376", "9681787109376", "6081787109376",
+    };
 
-        await Assert.ThrowsExceptionAsync<OperationCanceledException>(() => Task.Run(solver.StartSolving));
+    /// <summary>This solver finishes on its own after n = LastN, so the test checks its final answer.</summary>
+    [TestMethod]
+    [Timeout(SolverTimeLimitMs)]
+    public void PowersOf2To10ToNComputesEveryLineQuickly()
+    {
+        var solver = new PowersOf2To10ToN();
+        string answer = "";
+        solver.AnswerAvailableEventHandler += (_, e) => answer = e.Answer;
 
-        StringAssert.Contains(progress, string.Join(Environment.NewLine,
-            "Starting Int64", "2^10^0 = 2^1 = 2.", "2^10^1 = 2^10 = 1024.", "2^10^2 = 2^100 = 1496703205376."));
+        var stopwatch = Stopwatch.StartNew();
+        solver.StartSolving();
+        stopwatch.Stop();
+        Console.WriteLine($"PowersOf2To10ToN calculated n = 0 to {PowersOf2To10ToN.LastN} in {stopwatch.Elapsed}.");
+        // Measures speed without stopping the solver. Each line costs about the same, so a run to n = 100 takes milliseconds.
+        Assert.IsTrue(stopwatch.Elapsed < TimeSpan.FromSeconds(10), $"The run took {stopwatch.Elapsed}.");
 
-        // Every line must have the next n, an exponent of exactly 10^n, and the last 13 digits of 2 to that exponent.
-        var lines = progress.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-            .SkipWhile(line => !line.EndsWith("Starting Int64")).Skip(1).ToList();
-        var modulus = System.Numerics.BigInteger.Pow(10, 13);
+        var lines = answer.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            .SkipWhile(line => line != $"Last {PowersOf2To10ToN.DigitCount} digits of 2^10^n:").Skip(1).ToList();
+        Assert.AreEqual(PowersOf2To10ToN.LastN + 1, lines.Count);
+
+        // Every line must have the next n, an exponent of exactly 10^n, and the last digits of 2 to that exponent.
+        // A number shorter than DigitCount digits is shown whole. A longer one shows exactly DigitCount digits, with leading zeros.
+        var modulus = BigInteger.Pow(10, PowersOf2To10ToN.DigitCount);
         for (int n = 0; n < lines.Count; n++)
         {
-            var exponent = System.Numerics.BigInteger.Pow(10, n);
-            var lastDigits = System.Numerics.BigInteger.ModPow(2, exponent, modulus);
-            Assert.AreEqual($"2^10^{n} = 2^{exponent} = {lastDigits}.", lines[n]);
+            var exponent = BigInteger.Pow(10, n);
+            var lastDigits = BigInteger.ModPow(2, exponent, modulus);
+            bool isWhole = exponent < 1000 && BigInteger.Pow(2, (int)exponent) < modulus;
+            string expectedDigits = isWhole ? lastDigits.ToString() : lastDigits.ToString().PadLeft(PowersOf2To10ToN.DigitCount, '0');
+            Assert.AreEqual($"2^10^{n} = 2^{exponent} = {expectedDigits}.", lines[n]);
         }
+
+        for (int n = 0; n < PowersOf2To10ToNDigitsBefore153.Length; n++)
+        {
+            string digits = DigitsOf(lines[n]);
+            Assert.AreEqual(BigInteger.Parse(PowersOf2To10ToNDigitsBefore153[n]), BigInteger.Parse(digits[^Math.Min(13, digits.Length)..]), $"n = {n}");
+        }
+
+        Assert.AreEqual(DigitsOf(lines[^2]), DigitsOf(lines[^1]), "The last digits should have stopped changing.");
+
+        static string DigitsOf(string line) => line[(line.LastIndexOf(" = ") + 3)..].TrimEnd('.');
     }
 
     /// <summary>Uses a temporary folder, so the run cannot affect the real checkpoints.</summary>
