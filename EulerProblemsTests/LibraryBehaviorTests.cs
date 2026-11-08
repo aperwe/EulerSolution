@@ -204,6 +204,133 @@ public class LibraryBehaviorTests
         }
     }
 
+    /// <summary>Before #139 a derived class could fill the cache only by writing to Cache itself. That must keep working.</summary>
+    [TestMethod]
+    public void StringCachesReturnStringsStoredDirectlyByADerivedClass()
+    {
+        var cache = new DirectStringCache(2);
+        Assert.AreEqual(2, cache.CurrentCapacity);
+        Assert.AreEqual(10, new DirectStringCache().CurrentCapacity);
+
+        cache.Store("b");
+        var first = cache.CachedStrings;
+        CollectionAssert.AreEquivalent(new[] { "b" }, first.ToArray());
+        Assert.AreSame(first, cache.CachedStrings);
+
+        // Direct writes are not limited by Capacity, and a copy returned earlier does not change.
+        cache.Store("c");
+        cache.Store("a");
+        CollectionAssert.AreEquivalent(new[] { "a", "b", "c" }, cache.CachedStrings.ToArray());
+        CollectionAssert.AreEquivalent(new[] { "b" }, first.ToArray());
+
+        var sorted = new DirectSortedStringCache();
+        foreach (var value in new[] { "c", "a", "b" }) sorted.Store(value);
+        CollectionAssert.AreEqual(new[] { "a", "b", "c" }, sorted.CachedStrings.ToArray());
+    }
+
+    [TestMethod]
+    public void StringCacheAddStoresEachStringOnce()
+    {
+        var cache = new StringCache();
+        Assert.IsTrue(cache.Add("a"));
+        Assert.IsTrue(cache.Add("b"));
+        Assert.IsFalse(cache.Add("a"));
+        Assert.IsTrue(cache.Add("A"), "Comparison is case-sensitive.");
+        CollectionAssert.AreEquivalent(new[] { "a", "b", "A" }, cache.CachedStrings.ToArray());
+        Assert.ThrowsException<ArgumentNullException>(() => cache.Add(null!));
+    }
+
+    [TestMethod]
+    public void StringCacheAddRemovesTheLeastRecentlyUsedStringWhenFull()
+    {
+        var cache = new StringCache(3);
+        foreach (var value in new[] { "a", "b", "c" }) cache.Add(value);
+
+        cache.Add("a"); // "a" becomes the most recently used, so "b" is now the least recently used.
+        Assert.IsTrue(cache.Add("d"));
+        CollectionAssert.AreEquivalent(new[] { "a", "c", "d" }, cache.CachedStrings.ToArray());
+
+        Assert.IsTrue(cache.Add("e"));
+        CollectionAssert.AreEquivalent(new[] { "a", "d", "e" }, cache.CachedStrings.ToArray());
+    }
+
+    [TestMethod]
+    public void StringCacheKeepsTenStringsByDefault()
+    {
+        var cache = new StringCache();
+        for (int i = 0; i <= 10; i++) cache.Add(i.ToString());
+        CollectionAssert.AreEquivalent(Enumerable.Range(1, 10).Select(i => i.ToString()).ToArray(), cache.CachedStrings.ToArray());
+    }
+
+    [DataTestMethod]
+    [DataRow(0)]
+    [DataRow(-1)]
+    public void StringCacheWithoutCapacityStoresNothing(int capacity)
+    {
+        var cache = new StringCache(capacity);
+        Assert.IsFalse(cache.Add("a"));
+        Assert.AreEqual(0, cache.CachedStrings.Count());
+    }
+
+    [TestMethod]
+    public void StringCacheReturnsANewCopyOnlyAfterItsContentsChange()
+    {
+        var cache = new StringCache();
+        cache.Add("a");
+        var first = cache.CachedStrings;
+
+        cache.Add("a");
+        Assert.AreSame(first, cache.CachedStrings, "Using a cached string again does not change the contents.");
+
+        cache.Add("b");
+        var second = cache.CachedStrings;
+        Assert.AreNotSame(first, second);
+        CollectionAssert.AreEquivalent(new[] { "a" }, first.ToArray());
+        CollectionAssert.AreEquivalent(new[] { "a", "b" }, second.ToArray());
+    }
+
+    [TestMethod]
+    public void SortedStringCacheAddsAndRemovesLikeStringCache()
+    {
+        var cache = new SortedStringCache();
+        foreach (var value in new[] { "c", "a", "b" }) cache.Add(value);
+        CollectionAssert.AreEqual(new[] { "a", "b", "c" }, cache.CachedStrings.ToArray());
+
+        for (int i = 0; i < 8; i++) cache.Add("z" + i);
+        CollectionAssert.AreEqual(new[] { "a", "b", "z0", "z1", "z2", "z3", "z4", "z5", "z6", "z7" }, cache.CachedStrings.ToArray(),
+            "The 11th string removes \"c\", the first one added.");
+    }
+
+    [TestMethod]
+    public void StringCacheAddWorksWithStringsChangedDirectlyByADerivedClass()
+    {
+        var cache = new DirectStringCache(2);
+        cache.Store("x");
+        cache.Add("a");
+        Assert.IsTrue(cache.Add("b"));
+        CollectionAssert.AreEquivalent(new[] { "a", "b" }, cache.CachedStrings.ToArray(), "A string stored directly counts as the least recently used.");
+
+        cache.Forget("a");
+        Assert.IsTrue(cache.Add("c"));
+        CollectionAssert.AreEquivalent(new[] { "b", "c" }, cache.CachedStrings.ToArray(), "A string removed directly frees its place.");
+        Assert.IsTrue(cache.Add("d"));
+        CollectionAssert.AreEquivalent(new[] { "c", "d" }, cache.CachedStrings.ToArray());
+    }
+
+    private sealed class DirectStringCache : StringCache
+    {
+        public DirectStringCache() { }
+        public DirectStringCache(int capacity) : base(capacity) { }
+        public int CurrentCapacity => Capacity;
+        public void Store(string value) { Cache.Add(value); CacheDirty = true; }
+        public void Forget(string value) { Cache.Remove(value); CacheDirty = true; }
+    }
+
+    private sealed class DirectSortedStringCache : SortedStringCache
+    {
+        public void Store(string value) { Cache.Add(value); CacheDirty = true; }
+    }
+
     [TestMethod]
     public void ContinuedFractionFindsSquareRootSequence()
     {
