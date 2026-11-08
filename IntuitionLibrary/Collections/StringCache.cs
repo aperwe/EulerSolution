@@ -7,10 +7,15 @@ using System.Text;
 namespace QBits.Intuition.Collections
 {
     /// <summary>
-    /// Supports adding strings to colletion, limiting its maximum count of elements, and returning the cached collection.
+    /// Supports adding strings to collection, limiting its maximum count of elements, and returning the cached collection.
+    /// When the cache is full, <see cref="Add"/> removes the least recently used string. This class is not thread-safe.
     /// </summary>
     public class StringCache
     {
+        /// <summary>
+        /// Strings in the order of their last use by <see cref="Add"/>: the least recently used first.
+        /// </summary>
+        private readonly LinkedList<string> usageOrder = new();
         /// <summary>
         /// Internal set of string cache.
         /// </summary>
@@ -44,8 +49,59 @@ namespace QBits.Intuition.Collections
         {
             Capacity = capacity;
             Cache = new HashSet<string>();
+            usageOrder.Clear();
             CacheDirty = true;
             ReturnedCache = Array.Empty<string>();
+        }
+
+        /// <summary>
+        /// Adds a string to the cache. If the cache already holds <see cref="Capacity"/> strings, the least recently used one is removed.
+        /// Adding a string that is already cached makes it the most recently used one.
+        /// </summary>
+        /// <param name="value">String to add. Comparison is case-sensitive.</param>
+        /// <returns>True if the string was added; false if it was already cached, or if <see cref="Capacity"/> is 0 or less.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+        public bool Add(string value)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            SynchronizeUsageOrder();
+
+            if (Cache.Contains(value))
+            {
+                usageOrder.Remove(value);
+                usageOrder.AddLast(value);
+                return false;
+            }
+            if (Capacity <= 0) return false;
+
+            while (Cache.Count >= Capacity)
+            {
+                Cache.Remove(usageOrder.First!.Value);
+                usageOrder.RemoveFirst();
+            }
+            Cache.Add(value);
+            usageOrder.AddLast(value);
+            CacheDirty = true;
+            return true;
+        }
+
+        /// <summary>
+        /// A derived class can change <see cref="Cache"/> directly. Strings it removed are forgotten,
+        /// and strings it added count as the least recently used ones.
+        /// </summary>
+        private void SynchronizeUsageOrder()
+        {
+            for (var node = usageOrder.First; node != null;)
+            {
+                var next = node.Next;
+                if (!Cache.Contains(node.Value)) usageOrder.Remove(node);
+                node = next;
+            }
+            if (usageOrder.Count == Cache.Count) return;
+            foreach (var value in Cache.Where(value => !usageOrder.Contains(value)).ToList())
+            {
+                usageOrder.AddFirst(value);
+            }
         }
         /// <summary>
         /// Copy of the cache as Enumerable.
@@ -73,7 +129,7 @@ namespace QBits.Intuition.Collections
     }
 
     /// <summary>
-    /// Supports adding strings to colletion, limiting its maximum count of elements, and returning the cached collection which is sorted by the cached string.
+    /// Supports adding strings to collection, limiting its maximum count of elements, and returning the cached collection which is sorted by the cached string.
     /// </summary>
     public class SortedStringCache : StringCache
     {
