@@ -736,6 +736,29 @@ public class LibraryBehaviorTests
         Assert.ThrowsException<ArgumentException>(() => new TextLogger(path!));
     }
 
+    [TestMethod]
+    public void TextLoggerReportsAMissingFolderToTheCaller()
+    {
+        var folder = CreateTemporaryFolder();
+        try
+        {
+            Assert.ThrowsException<DirectoryNotFoundException>(() => new TextLogger(Path.Combine(folder, "missing", "log.txt")));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [TestMethod]
+    public void TextLoggerReportsALockedFileToTheCaller()
+        => WithTemporaryLogFile(file =>
+        {
+            using var lockedFile = new FileStream(file, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+
+            Assert.ThrowsException<IOException>(() => new TextLogger());
+        });
+
     /// <summary>TextLogger writes to a file named by a static field, so each test points it to its own temporary file.</summary>
     private static void WithTemporaryLogFile(Action<string> test)
     {

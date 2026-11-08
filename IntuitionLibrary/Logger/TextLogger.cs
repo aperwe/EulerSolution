@@ -20,6 +20,10 @@ namespace QBits.Intuition.Logger
         /// <summary>
         /// Creates a new text logger that writes to <see cref="textLogFileName"/>.
         /// </summary>
+        /// <exception cref="ArgumentException">Thrown when <see cref="textLogFileName"/> is null, empty or only white space.</exception>
+        /// <exception cref="IOException">Thrown when the log file cannot be opened, for example because its folder does not exist
+        /// (<see cref="DirectoryNotFoundException"/>) or another process has it open.</exception>
+        /// <exception cref="UnauthorizedAccessException">Thrown when writing to the log file is not allowed.</exception>
         public TextLogger() : this(textLogFileName)
         {
         }
@@ -28,10 +32,14 @@ namespace QBits.Intuition.Logger
         /// </summary>
         /// <param name="logFilePath">Path of the log file.</param>
         /// <exception cref="ArgumentException">Thrown when <paramref name="logFilePath"/> is null, empty or only white space.</exception>
+        /// <exception cref="IOException">Thrown when the log file cannot be opened, for example because its folder does not exist
+        /// (<see cref="DirectoryNotFoundException"/>) or another process has it open.</exception>
+        /// <exception cref="UnauthorizedAccessException">Thrown when writing to the log file is not allowed.</exception>
         public TextLogger(string logFilePath)
         {
             if (string.IsNullOrWhiteSpace(logFilePath)) throw new ArgumentException("A log file path is required.", nameof(logFilePath));
             this.logFilePath = logFilePath;
+            writer = new StreamWriter(logFilePath); //Opened here, so that a failure reaches the caller. On the logger thread it would end the process.
             logThread = new Thread(LogThread);
             logThread.Priority = ThreadPriority.BelowNormal;
             logThread.Name = "TextLogger";
@@ -44,7 +52,7 @@ namespace QBits.Intuition.Logger
         Thread logThread;
         void LogThread()
         {
-            using StreamWriter sw = new StreamWriter(logFilePath);
+            using StreamWriter sw = writer;
             while (!IsExitRequested())
             {
                 //Wake up for a new entry or a stop request, or after a short time to check the exit event.
@@ -83,6 +91,7 @@ namespace QBits.Intuition.Logger
         void OnProcessExit(object? sender, EventArgs e) => Dispose();
 
         readonly string logFilePath;
+        readonly StreamWriter writer;
         const int ExitCheckIntervalInMiliseconds = 100;
         ThreadSafeObject<Queue<string>> logEntries = new Queue<string>();
         AutoResetEvent newLogEntryEvent = new AutoResetEvent(false);
